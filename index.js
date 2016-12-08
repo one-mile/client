@@ -2,10 +2,16 @@ var redux = require('redux')
 var morphdom = require('morphdom')
 var reducer = require('./reducer')
 
+var header = require('./components/header')
+var login = require('./components/login')
+
 var app = document.createElement('div')
 document.querySelector('main').appendChild(app)
 
-var initialState = { title: 'one shot' }
+var initialState = {
+  title: 'One Shot',
+  view: 'login'
+ }
 
 var store = redux.createStore(reducer, initialState)
 store.subscribe(() => {
@@ -14,7 +20,7 @@ store.subscribe(() => {
 })
 
 function render (state, dispatch) {
-  return require('./components/app')(state, store.dispatch)
+  return login(state, dispatch)
 }
 
 store.dispatch({type: 'INIT'})
