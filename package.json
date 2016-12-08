@@ -1,0 +1,26 @@
+{
+  "name": "one-shot",
+  "version": "1.0.0",
+  "description": "i am a yopro",
+  "main": "index.js",
+  "scripts": {
+    "start": "budo . -d --serve bundle.js --live"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mel-booth/one shot"
+  },
+  "author": "mel-booth",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mel-booth/one shot/issues"
+  },
+  "homepage": "https://github.com/mel-booth/one shot",
+  "dependencies": {
+    "budo": "^9.2.2",
+    "clone": "^2.1.0",
+    "morphdom": "^2.2.1",
+    "redux": "^3.6.0",
+    "yo-yo": "^1.3.1"
+  }
+}
