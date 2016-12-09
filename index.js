@@ -10,19 +10,32 @@ document.querySelector('main').appendChild(app)
 
 var initialState = {
   title: 'One Shot',
-  view: 'login'
+  view: 'login',
+  user: {}
+  // username: '',
+  // user_id: 0,
+  // shotsRemaining: 0
  }
 
-
-
 var store = redux.createStore(reducer, initialState)
-store.subscribe(() => {
-  var view = render(store.getState(), store.dispatch)
+const {getState, dispatch, subscribe} = store
+subscribe(() => {
+  var view = render(getState(), dispatch)
   morphdom(app, view)
 })
 
 function render (state, dispatch) {
-  return login(state, dispatch)
+  switch(state.view) {
+    case 'login':
+      return login(state, dispatch)
+    case 'signup':
+      return 'memes'
+    case 'home':
+      return 'home'
+    default:
+      return login(state, dispatch)
+  }
+
 }
 
 store.dispatch({type: 'INIT'})

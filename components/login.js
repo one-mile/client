@@ -1,7 +1,6 @@
 const yo = require('yo-yo')
-var request = require('superagent')
-
-var header = require ('./header')
+const request = require('superagent')
+const header = require ('./header')
 
 
 module.exports = login
@@ -10,6 +9,24 @@ function loginRequest(form) {
 }
 
 function login (state, dispatch) {
+  function onSubmit (e) {
+    e.preventDefault()
+    var username = document.getElementById('username').value
+    var password = document.getElementById('password').value
+    request
+      .post('http://one-shot-api.herokuapp.com/api/v1/users/login')
+      .send({username, password})
+      .end((error, response) => {
+        if (error) {
+          console.log(error, 'Error goes here')
+        } else {
+          console.log("got it!!!!!", response.body.user)
+          dispatch({type: 'RECEIVE_USER', payload: response.body.user})
+        }
+      })
+    console.log(username);
+  }
+
   return yo`
     <div>
     ${header(state)}
@@ -20,20 +37,4 @@ function login (state, dispatch) {
       <button class='signupBtn' type='submit'>Sign Up</button>
     </div>
   `
-}
-
-function onSubmit (e) {
-  e.preventDefault()
-  var username = document.getElementById('username').value
-  var password = document.getElementById('password').value
-request
-    .post('https://one-shot-api.herokuapp.com/api/v1/users/login')
-    .end((error, response) => {
-      if (error) {
-        console.log(error, 'Error goes here')
-      } else {
-        store.dispatch({type: 'GO_TO_HOME', payload: response.body})
-      }
-    })
-  console.log(username);
 }
