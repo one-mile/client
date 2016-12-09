@@ -6,6 +6,9 @@ module.exports = (state, action) => {
   switch (action.type) {
     case 'INIT':
       return newState
+    case 'TOGGLE_LOADING':
+      newState.isLoading = !newState.isLoading
+      return newState
     case 'RECEIVE_USER':
       newState.user = action.payload
       console.log("hello there",newState.user);

@@ -11,7 +11,8 @@ document.querySelector('main').appendChild(app)
 var initialState = {
   title: 'One Shot',
   view: 'login',
-  user: {}
+  user: {},
+  isLoading: false
   // username: '',
   // user_id: 0,
   // shotsRemaining: 0
