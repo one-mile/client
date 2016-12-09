@@ -5,7 +5,7 @@ function home (state, dispatch) {
   return yo `
   <div>
     ${header(state)}
-    <hr>
+    <p>home</p>
   </div>
   `
 }

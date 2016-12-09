@@ -4,6 +4,7 @@ var morphdom = require('morphdom')
 var reducer = require('./reducer')
 var header = require('./components/header')
 var login = require('./components/login')
+var home = require('./components/home')
 
 var app = document.createElement('div')
 document.querySelector('main').appendChild(app)
@@ -11,7 +12,8 @@ document.querySelector('main').appendChild(app)
 var initialState = {
   title: 'One Shot',
   view: 'login',
-  user: {}
+  user: {},
+  isLoading: false
   // username: '',
   // user_id: 0,
   // shotsRemaining: 0
@@ -31,7 +33,7 @@ function render (state, dispatch) {
     case 'signup':
       return 'memes'
     case 'home':
-      return 'home'
+      return home(state, dispatch)
     default:
       return login(state, dispatch)
   }
