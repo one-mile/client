@@ -11,16 +11,16 @@ module.exports = (state, action) => {
         newState.user = action.payload.user
         return newState
 
-      // case 'GO_TO_HOME':
-      //   newState.
-      //   return newState
-      //
-      // case 'GO_TO_LOGIN':
-      //   return newState
-      //
-      // case 'GO_TO_SIGNUP':
-      //   return newState
-      //
+      case 'GO_TO_HOME':
+        newState = action.payload.users
+        return newState
+
+      case 'GO_TO_LOGIN':
+        return newState
+
+      case 'GO_TO_SIGNUP':
+        return newState
+
 
     default:
       return newState
