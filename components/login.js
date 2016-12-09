@@ -17,7 +17,7 @@ function login (state, dispatch) {
     var password = document.getElementById('password').value
     dispatch({type: "TOGGLE_LOADING"})
     request
-      .post(local + 'users/login')
+      .post(heroku + 'users/login')
       .send({username, password})
       .end((error, response) => {
         console.log("first response", response);
@@ -28,7 +28,7 @@ function login (state, dispatch) {
           dispatch({type: "TOGGLE_LOADING"})
           dispatch({type: 'RECEIVE_USER', payload: response.body.user})
           request
-            .get(local + 'entries')
+            .get(heroku + 'entries')
             .end( (error, response) => {
               console.log("response is", response)
             })
