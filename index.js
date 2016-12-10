@@ -7,6 +7,7 @@ var login = require('./components/login')
 var home = require('./components/home')
 var target = require('./components/target')
 var user = require('./components/user')
+var signup = require('./components/signup')
 
 var app = document.createElement('div')
 document.querySelector('main').appendChild(app)
@@ -33,7 +34,7 @@ function render (state, dispatch) {
     case 'login':
       return login(state, dispatch)
     case 'signup':
-      return 'memes'
+      return signup(state, dispatch)
     case 'home':
       return home(state, dispatch)
     case 'target':

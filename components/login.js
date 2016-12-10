@@ -40,8 +40,8 @@ function login (state, dispatch) {
       <input id='username' type='text' placeholder='username'/>
       <input id='password' type='password' placeholder='password'/>
       <button onclick=${onSubmit} class='loginBtn' type='submit'>Sign In</button>
-      <button class='signupBtn' type='submit'>Sign Up</button>
       </form>`}
+      <button onclick=${ () => dispatch({type: 'GO_TO_SIGNUP'})} class='signupBtn' type='submit'>Sign Up</button>
     </div>
   `
 }

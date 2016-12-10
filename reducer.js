@@ -29,8 +29,10 @@ module.exports = (state, action) => {
       newState.view = 'home'
       return newState
     case 'GO_TO_LOGIN':
+      newState.view = 'login'
       return newState
     case 'GO_TO_SIGNUP':
+      newState.view = 'signup'
       return newState
     default:
       return newState
