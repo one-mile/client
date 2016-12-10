@@ -39,7 +39,7 @@ function login (state, dispatch) {
       <h3>Login</h3>
       <input id='username' type='text' placeholder='username'/>
       <input id='password' type='password' placeholder='password'/>
-      <button onclick=${onSubmit} class='loginBtn' type='submit'>Sign In</button>
+      <button onclick=${onSubmit} class='loginBtn' type='submit'>Log In</button>
       </form>`}
       <button onclick=${ () => dispatch({type: 'GO_TO_SIGNUP'})} class='signupBtn' type='submit'>Sign Up</button>
     </div>

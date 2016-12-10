@@ -38,6 +38,8 @@ function signup (state, dispatch) {
     } else if (password !== rptPassword) {
       // alert("passwords not match")
       dispatch({type: "AUTH_ERROR", payload: "Passwords do not match"})
+    } else if (!password.includes('.') && !password.includes('@') ) {
+      dispatch({type: "AUTH_ERROR", payload: "Please enter a valid email address"})
     } else {
         dispatch({type: "TOGGLE_LOADING"})
         request
