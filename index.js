@@ -13,7 +13,8 @@ var initialState = {
   title: 'One Shot',
   view: 'login',
   user: {},
-  isLoading: false
+  isLoading: false,
+  entries: []
   // username: '',
   // user_id: 0,
   // shotsRemaining: 0

@@ -14,6 +14,9 @@ module.exports = (state, action) => {
       console.log("hello there",newState.user);
       newState.view = 'home'
       return newState
+    case 'RECEIVE_ENTRIES':
+      newState.entries = action.payload.entries
+      return newState
     case 'GO_TO_HOME':
       newState = action.payload
       return newState

@@ -4,6 +4,7 @@ const header = require ('./header')
 
 var heroku = 'http://one-shot-api.herokuapp.com/api/v1/'
 var local = 'http://localhost:3000/api/v1/'
+var url = local
 
 module.exports = login
 function loginRequest(form) {
@@ -17,24 +18,30 @@ function login (state, dispatch) {
     var password = document.getElementById('password').value
     dispatch({type: "TOGGLE_LOADING"})
     request
-      .post(heroku + 'users/login')
+      .post(url + 'users/login')
       .send({username, password})
       .end((error, response) => {
         console.log("first response", response);
         if (error) {
           console.log(error, 'Error goes here')
         } else {
-          console.log("got it!!!!!", response.body.user)
-          dispatch({type: "TOGGLE_LOADING"})
+          // console.log("got it!!!!!", response.body.user)
           dispatch({type: 'RECEIVE_USER', payload: response.body.user})
-          request
-            .get(heroku + 'entries')
-            .end( (error, response) => {
-              console.log("response is", response)
-            })
+          dispatch({type: "TOGGLE_LOADING"})
+
+
+          // request
+          //   .get(url + 'entries')
+          //   .end( (error, res2) => {
+          //     if (error) console.log(error);
+          //     else {
+          //       console.log("response is", res2)
+          //       dispatch({type: 'RECEIVE_ENTRIES', payload: res2.body})
+          //       dispatch({type: "TOGGLE_LOADING"})
+          //     }
+          //   })
         }
       })
-    console.log(username);
   }
 
   return yo`
