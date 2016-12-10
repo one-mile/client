@@ -37,10 +37,11 @@ function goToUser(state, dispatch, id) {
         dispatch({type: "TOGGLE_LOADING"})
       }
       else {
+        console.log({res});
         var dType = "GET_TARGET_ENTRIES"
         if (id == state.user.user_id) dType = "GET_MY_ENTRIES"
-        dispatch({type: dType, payload: res.body.user_entries})
-
+        dispatch({type: dType, payload: res.body})
+        dispatch({type: "TOGGLE_LOADING"})
       }
     })
 }
@@ -70,7 +71,6 @@ function home (state, dispatch) {
 }
 
 function getEntries (state, dispatch, bool) {
-  console.log(state.entries.length);
   if (state.entries.length === 0 && !state.isLoading || bool) {
     dispatch({type: "TOGGLE_LOADING"})
     request

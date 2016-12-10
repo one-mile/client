@@ -16,6 +16,7 @@ var initialState = {
   title: 'flooki',
   view: 'login',
   user: {},
+  authError: null,
   isLoading: false,
   entries: [],
   myEntries: [],
