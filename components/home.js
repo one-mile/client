@@ -48,10 +48,8 @@ function entryHeader(entry, dispatch) {
   var timeDateEntry = entry.entry_created_at // In prep for date/time reformatting
   return yo`
     <div class='image-header'>
-      <div class='user-text'>
-        <h2 onclick=${() => goToUser(dispatch, entry.user_id)}>${entry.username}</h2>
-        <h3>Added at: ${timeDateEntry} </h3>
-      </div>
+        <h2 class="user-name" onclick=${() => goToUser(dispatch, entry.user_id)}>${entry.username}</h2>
+        <h2>Added at: ${timeDateEntry} </h2>
     </div>
   `
 }

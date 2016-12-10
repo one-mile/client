@@ -37,7 +37,7 @@ img {
 
 .pageHeader, .pageFooter, .image-header {
   width: 100%;
-  background-color: #94004a;
+  background-color: #940004a;
   background: rgba(248,80,50,1);
   background: -moz-linear-gradient(left, rgba(248,80,50,1) 0%, rgba(80,68,74,1) 0%, rgba(148,0,74,1) 100%);
   background: -webkit-gradient(left top, right top, color-stop(0%, rgba(248,80,50,1)), color-stop(0%, rgba(80,68,74,1)), color-stop(100%, rgba(148,0,74,1)));
@@ -48,12 +48,12 @@ img {
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f85032', endColorstr='#94004a', GradientType=1 );
 }
 
-.image-text {
-  opacity:1;
+.image-header{
+  margin-top: 7%;
+  margin-bottom: 0;
 }
 
-.image-header {
-  opacity:0.2;
-  margin-top: 10%;
-  margin-bottom: 0;
+.user-name:hover {
+  cursor:alias;
+  color: white;
 }
