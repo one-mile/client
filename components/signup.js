@@ -35,11 +35,25 @@ function signup (state, dispatch) {
     } else if (password !== rptPassword) {
       alert("passwords not match")
     } else {
+        dispatch({type: "TOGGLE_LOADING"})
         request
           .post(url + 'users/signup')
           .send({username, password, email})
           .end( (err, response) => {
-            console.log("response is", response);
+            console.log("signup response is", response)
+            request
+              .post(url + 'users/login')
+              .send({username, password})
+              .end((error, response) => {
+                console.log("login response", response);
+                if (error) {
+                  console.log(error, 'Error goes here')
+                } else {
+                  // console.log("got it!!!!!", response.body.user)
+                  dispatch({type: 'RECEIVE_USER', payload: response.body.user})
+                  dispatch({type: "TOGGLE_LOADING"})
+                }
+              })
           })
     }
   }
