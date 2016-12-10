@@ -34,6 +34,9 @@ module.exports = (state, action) => {
     case 'GO_TO_SIGNUP':
       newState.view = 'signup'
       return newState
+    case 'AUTH_ERROR':
+      newState.authError = action.payload
+      return newState
     default:
       return newState
   }
