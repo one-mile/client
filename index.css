@@ -14,8 +14,40 @@ img {
   margin-top: 0px;
 }
 
+input {
+  box-sizing: border-box;
+  text-align: center;
+  width:80%;
+  padding: 12px 20px;
+  margin: auto;
+  border: solid grey 5px;
+  border-radius: 15px;
+  box-sizing: border-box;
+}
+
+#username, #password {
+  font-size: 25px;
+  box-sizing: border-box;
+  margin: auto;
+  border: solid grey 5px;
+  border-radius: 15px;
+}
+
+.loginBtn, .signupBtn {
+
+  text-align: center;
+  width:80%;
+  padding: 12px 20px;
+  margin: auto;
+  margin-top: 10vh;
+  border: solid grey 5px;
+  border-radius: 15px;
+}
+
+
 .login, .homediv {
   margin-top: 15vh;
+  margin-bottom: 15vh;
 }
 
 .entries h2 {
@@ -30,9 +62,15 @@ img {
 }
 
 .pageHeader {
+
   height: 10%;
   top:0;
   position: fixed;
+}
+
+.pageHeader h1 {
+  text-align: center;
+  display: inline-block;
 }
 
 .pageHeader, .pageFooter, .image-header {
@@ -50,7 +88,7 @@ img {
 
 .image-header{
   margin-top: 7%;
-  margin-bottom: 0;
+  margin-bottom: 12%;
 }
 
 .user-name:hover {
