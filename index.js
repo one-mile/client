@@ -12,16 +12,13 @@ var app = document.createElement('div')
 document.querySelector('main').appendChild(app)
 
 var initialState = {
-  title: 'One Shot',
+  title: 'flooki',
   view: 'login',
   user: {},
   isLoading: false,
   entries: [],
   myEntries: [],
   targetEntries: []
-  // username: '',
-  // user_id: 0,
-  // shotsRemaining: 0
  }
 
 var store = redux.createStore(reducer, initialState)
@@ -40,6 +37,7 @@ function render (state, dispatch) {
     case 'home':
       return home(state, dispatch)
     case 'target':
+    console.log("target view");
       return target(state, dispatch)
     case 'me':
       return user(state, dispatch)

@@ -25,6 +25,7 @@ module.exports = (state, action) => {
       newState.view = 'me'
       return newState
     case 'GO_TO_HOME':
+      newState.isLoading = false;
       newState.view = 'home'
       return newState
     case 'GO_TO_LOGIN':
