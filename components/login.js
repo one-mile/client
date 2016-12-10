@@ -1,10 +1,11 @@
 const yo = require('yo-yo')
 const request = require('superagent')
-const header = require ('./header')
+const header = require ('./header').header
+const footer = require ('./header').footer
 
 var heroku = 'http://one-shot-api.herokuapp.com/api/v1/'
 var local = 'http://localhost:3000/api/v1/'
-var url = local
+var url = heroku
 
 module.exports = login
 function loginRequest(form) {
@@ -47,15 +48,14 @@ function login (state, dispatch) {
   return yo`
     <div>
     ${header(state)}
-      <h3>Login</h3>
-      ${state.isLoading ? yo`<h3 class="loading">Loading...</h3>`
+    ${state.isLoading ? yo`<h3 class="loading">Loading...</h3>`
       : yo`<form class="login">
+      <h3>Login</h3>
       <input id='username' type='text' placeholder='username'/>
       <input id='password' type='password' placeholder='password'/>
       <button onclick=${onSubmit} class='loginBtn' type='submit'>Sign In</button>
       <button class='signupBtn' type='submit'>Sign Up</button>
       </form>`}
-
     </div>
   `
 }

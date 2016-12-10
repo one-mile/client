@@ -1,5 +1,6 @@
 var yo = require('yo-yo')
-var header = require ('./header')
+const header = require ('./header').header
+const footer = require ('./header').footer
 var request = require('superagent')
 var onload = require('on-load')
 
@@ -27,24 +28,44 @@ function renderEntries (state, dispatch) {
   `
 }
 
+function goToUser(dispatch, id) {
+  dispatch({type: "TOGGLE_LOADING"})
+  console.log({id});
+  request
+    .get(`${url}entries/${id}`)
+    .end((err, res) => {
+      if (err) {
+        dispatch({type: "TOGGLE_LOADING"})
+      }
+      else {
+        console.log(res.body);
+        dispatch({type: "GET_TARGET_ENTRIES", payload: res.body.user_entries})
+      }
+    })
+}
+
 function entryHeader(entry, dispatch) {
-  var timeDateEntry = entry.created_at // In prep for date/time reformatting
+  var timeDateEntry = entry.entry_created_at // In prep for date/time reformatting
   return yo`
     <div class='image-header'>
-      <h2>username: ${entry.username}</h2>
-      <h3>Added at: ${timeDateEntry} </h3>
+      <div class='user-text'>
+        <h2 onclick=${() => goToUser(dispatch, entry.user_id)}>${entry.username}</h2>
+        <h3>Added at: ${timeDateEntry} </h3>
+      </div>
     </div>
   `
 }
 
 
 function home (state, dispatch) {
+  console.log("home", state);
   return yo `
-  <div id="homediv">
+  <div class="homediv">
     ${header(state)}
     ${state.isLoading ? yo`<p>loading</p>` : renderEntries(state, dispatch) }
     ${getEntries(state, dispatch)}
     <button onclick=${()=>{getEntries(state, dispatch, true)}}>click me man</button>
+    ${footer(dispatch)}
   </div>
 
   `
