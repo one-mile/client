@@ -1,13 +1,13 @@
 var yo = require('yo-yo')
 var header = require ('./header')
-var takePicture = require ('./takePicture')
+var accessCamera = require ('./camera')
 
 function home (state, dispatch) {
   return yo `
   <div>
     ${header(state)}
     <p>home</p>
-    ${takePicture(state)}
+    ${accessCamera(state)}
   </div>
   `
 }
