@@ -24,8 +24,8 @@ function renderEntries (state, dispatch) {
 function entryHeader(entry, dispatch) {
   return yo`
     <div class='image-header'>
-      <h2>username: [tba]</h2>
-      <h3>Added at: ${entry.created_at} </h3>
+      <h2>username: ${entry.username}</h2>
+      <h3>Added at: ${entry.entry_created_at} </h3>
     </div>
   `
 }
