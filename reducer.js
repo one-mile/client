@@ -17,8 +17,16 @@ module.exports = (state, action) => {
     case 'RECEIVE_ENTRIES':
       newState.entries = action.payload.entries
       return newState
+    case 'GET_TARGET_ENTRIES':
+      newState.targetEntries = action.payload.user_entries
+      newState.view = 'target'
+      return newState
+    case 'GET_MY_ENTRIES':
+      newState.myEntries = action.payload.user_entries
+      newState.view = 'me'
+      return newState
     case 'GO_TO_HOME':
-      newState = action.payload
+      newState.view = 'home'
       return newState
     case 'GO_TO_LOGIN':
       return newState

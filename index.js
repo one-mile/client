@@ -5,6 +5,8 @@ var reducer = require('./reducer')
 var header = require('./components/header')
 var login = require('./components/login')
 var home = require('./components/home')
+var target = require('./components/target')
+var user = require('./components/user')
 
 var app = document.createElement('div')
 document.querySelector('main').appendChild(app)
@@ -14,7 +16,9 @@ var initialState = {
   view: 'login',
   user: {},
   isLoading: false,
-  entries: []
+  entries: [],
+  myEntries: [],
+  targetEntries: []
   // username: '',
   // user_id: 0,
   // shotsRemaining: 0
@@ -35,6 +39,10 @@ function render (state, dispatch) {
       return 'memes'
     case 'home':
       return home(state, dispatch)
+    case 'target':
+      return target(state, dispatch)
+    case 'me':
+      return user(state, dispatch)
     default:
       return login(state, dispatch)
   }

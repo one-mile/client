@@ -1,5 +1,6 @@
 var yo = require('yo-yo')
-var header = require ('./header')
+const header = require ('./header').header
+const footer = require ('./header').footer
 var request = require('superagent')
 var onload = require('on-load')
 
@@ -7,10 +8,10 @@ var heroku = 'http://one-shot-api.herokuapp.com/api/v1/'
 var local = 'http://localhost:3000/api/v1/'
 var url = local
 
-function renderEntry(entry, dispatch) {
+function renderEntry(entry, state, dispatch) {
   return yo`
   <div class='entry'>
-    ${entryHeader(entry, dispatch)}
+    ${entryHeader(entry, state, dispatch)}
     <img src=${entry.image_url}></img>
   </div>
   `
@@ -21,30 +22,50 @@ function renderEntries (state, dispatch) {
   return yo `
     <div class='entries'>
       ${state.entries.map( (entry) => {
-        return renderEntry(entry, dispatch)
+        return renderEntry(entry, state, dispatch)
       } )}
     </div>
   `
 }
 
-function entryHeader(entry, dispatch) {
-  var timeDateEntry = entry.created_at // In prep for date/time reformatting
+function goToUser(state, dispatch, id) {
+  dispatch({type: "TOGGLE_LOADING"})
+  console.log({id});
+  request
+    .get(`${url}entries/${id}`)
+    .end((err, res) => {
+      if (err) {
+        dispatch({type: "TOGGLE_LOADING"})
+      }
+      else {
+        var dType = "GET_TARGET_ENTRIES"
+        if (id == state.user.user_id) dType = "GET_MY_ENTRIES"
+        dispatch({type: dType, payload: res.body.user_entries})
+
+      }
+    })
+}
+
+function entryHeader(entry, state, dispatch) {
+  var timeDateEntry = entry.entry_created_at // In prep for date/time reformatting
   return yo`
     <div class='image-header'>
-      <h2>username: ${entry.username}</h2>
-      <h3>Added at: ${timeDateEntry} </h3>
+        <h2 class="user-name" onclick=${() => goToUser(state, dispatch, entry.user_id)}>${entry.username}</h2>
+        <h2>Added at: ${timeDateEntry} </h2>
     </div>
   `
 }
 
 
 function home (state, dispatch) {
+  console.log("home", state);
   return yo `
-  <div id="homediv">
+  <div class="homediv">
     ${header(state)}
     ${state.isLoading ? yo`<p>loading</p>` : renderEntries(state, dispatch) }
     ${getEntries(state, dispatch)}
     <button onclick=${()=>{getEntries(state, dispatch, true)}}>click me man</button>
+    ${footer(dispatch)}
   </div>
 
   `

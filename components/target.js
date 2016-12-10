@@ -2,14 +2,14 @@ var yo = require('yo-yo')
 const header = require ('./header').header
 const footer = require ('./header').footer
 
-function user (state, dispatch) {
+function target (state, dispatch) {
   return yo `
-  <div class="homediv">
+  <div class=homediv>
     ${header(state)}
-    <p>hello I am me</p>
+    <p>hello I am other</p>
     ${footer(dispatch)}
   </div>
   `
 }
 
-module.exports = user
+module.exports = target
