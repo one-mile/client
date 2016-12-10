@@ -1,13 +1,90 @@
+body {
+  padding: 0;
+  margin: 0;
+}
+
 h1 {
   text-align: center;
 }
 
-#camera {
-  width: 300px;
-  height: 300px;
-  border: solid 0.5px black;
+img {
+  max-width: 90%;
+  display: block;
+  margin: auto;
+  margin-top: 0px;
 }
 
-canvas {
-  background-color: blue;
+input {
+  box-sizing: border-box;
+  text-align: center;
+  width:80%;
+  padding: 12px 20px;
+  margin: auto;
+  border: solid grey 5px;
+  border-radius: 15px;
+  box-sizing: border-box;
+}
+
+#username, #password {
+  font-size: 25px;
+  box-sizing: border-box;
+  margin: auto;
+  border: solid grey 5px;
+  border-radius: 15px;
+}
+
+.loginBtn, .signupBtn {
+
+  text-align: center;
+  width:80%;
+  padding: 12px 20px;
+  margin: auto;
+  margin-top: 10vh;
+  border: solid grey 5px;
+  border-radius: 15px;
+}
+
+.login, .homediv {
+  margin-top: 15vh;
+  margin-bottom: 15vh;
+}
+
+.entries h2 {
+  text-align: center;
+}
+
+.pageFooter {
+  height: 8%;
+  bottom:0;
+  position: fixed;
+}
+
+.pageHeader {
+
+  height: 10%;
+  top:0;
+  position: fixed;
+}
+
+.pageHeader h1 {
+  text-align: center;
+  display: inline-block;
+}
+
+.pageHeader, .pageFooter, .image-header {
+  width: 100%;
+  background-color: #940004a;
+  background: rgba(248,80,50,1);
+  background: -moz-linear-gradient(left, rgba(248,80,50,1) 0%, rgba(80,68,74,1) 0%, rgba(148,0,74,1) 100%);
+  background: -webkit-gradient(left top, right top, color-stop(0%, rgba(248,80,50,1)), color-stop(0%, rgba(80,68,74,1)), color-stop(100%, rgba(148,0,74,1)));
+  background: -webkit-linear-gradient(left, rgba(248,80,50,1) 0%, rgba(80,68,74,1) 0%, rgba(148,0,74,1) 100%);
+  background: -o-linear-gradient(left, rgba(248,80,50,1) 0%, rgba(80,68,74,1) 0%, rgba(148,0,74,1) 100%);
+  background: -ms-linear-gradient(left, rgba(248,80,50,1) 0%, rgba(80,68,74,1) 0%, rgba(148,0,74,1) 100%);
+  background: linear-gradient(to right, rgba(248,80,50,1) 0%, rgba(80,68,74,1) 0%, rgba(148,0,74,1) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f85032', endColorstr='#94004a', GradientType=1 );
+}
+
+.image-header{
+  margin-top: 7%;
+  margin-bottom: 12%;
 }

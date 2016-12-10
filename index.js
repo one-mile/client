@@ -5,18 +5,20 @@ var reducer = require('./reducer')
 var header = require('./components/header')
 var login = require('./components/login')
 var home = require('./components/home')
+var target = require('./components/target')
+var user = require('./components/user')
 
 var app = document.createElement('div')
 document.querySelector('main').appendChild(app)
 
 var initialState = {
-  title: 'One Shot',
+  title: 'flooki',
   view: 'login',
   user: {},
-  isLoading: false
-  // username: '',
-  // user_id: 0,
-  // shotsRemaining: 0
+  isLoading: false,
+  entries: [],
+  myEntries: [],
+  targetEntries: []
  }
 
 var store = redux.createStore(reducer, initialState)
@@ -34,10 +36,14 @@ function render (state, dispatch) {
       return 'memes'
     case 'home':
       return home(state, dispatch)
+    case 'target':
+    console.log("target view");
+      return target(state, dispatch)
+    case 'me':
+      return user(state, dispatch)
     default:
       return login(state, dispatch)
   }
-
 }
 
 store.dispatch({type: 'INIT'})

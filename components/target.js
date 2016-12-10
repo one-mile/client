@@ -4,14 +4,14 @@ const footer = require ('./header').footer
 
 const url = require('./requestUrl')
 
-function user (state, dispatch) {
+function target (state, dispatch) {
   return yo `
-  <div class="homediv">
+  <div class=homediv>
     ${header(state, dispatch)}
-    <p>hello I am me</p>
+    <p>hello I am other</p>
     ${footer(dispatch)}
   </div>
   `
 }
 
-module.exports = user
+module.exports = target

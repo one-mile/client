@@ -11,11 +11,22 @@ module.exports = (state, action) => {
       return newState
     case 'RECEIVE_USER':
       newState.user = action.payload
-      console.log("hello there",newState.user);
       newState.view = 'home'
       return newState
+    case 'RECEIVE_ENTRIES':
+      newState.entries = action.payload.entries
+      return newState
+    case 'GET_TARGET_ENTRIES':
+      newState.targetEntries = action.payload.user_entries
+      newState.view = 'target'
+      return newState
+    case 'GET_MY_ENTRIES':
+      newState.myEntries = action.payload.user_entries
+      newState.view = 'me'
+      return newState
     case 'GO_TO_HOME':
-      newState = action.payload
+      newState.isLoading = false;
+      newState.view = 'home'
       return newState
     case 'GO_TO_LOGIN':
       return newState

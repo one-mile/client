@@ -1,12 +1,27 @@
 var yo = require('yo-yo')
 
-function header (state) {
+function header (state, dispatch, refresh) {
   return yo `
-  <div>
-    <h1>${state.title}</h1>
-    <hr>
-  </div>
+    <div class="pageHeader">
+      ${refresh ? yo`<h1 onclick=${() => refresh(state, dispatch, true)}>Refresh</h1>` : ""}
+      <h1>${state.title}</h1>
+    </div>
   `
 }
 
-module.exports = header
+function goHome(dispatch) {
+  dispatch({type: "GO_TO_HOME"})
+}
+
+function footer (dispatch) {
+  return yo `
+    <div class="pageFooter">
+      <h1 class="homeButton" onclick=${() => goHome(dispatch)}>Go Home</h1>
+    </div>
+  `
+}
+
+module.exports = {
+  header,
+  footer
+}
