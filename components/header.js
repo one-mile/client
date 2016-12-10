@@ -9,6 +9,10 @@ function header (state) {
   `
 }
 
+function goHome(dispatch) {
+  dispatch({type: "GO_TO_HOME"})
+}
+
 function footer (state, dispatch) {
   return yo `
     <div class="pageFooter">

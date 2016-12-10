@@ -8,10 +8,10 @@ var heroku = 'http://one-shot-api.herokuapp.com/api/v1/'
 var local = 'http://localhost:3000/api/v1/'
 var url = local
 
-function renderEntry(entry, dispatch) {
+function renderEntry(entry, state, dispatch) {
   return yo`
   <div class='entry'>
-    ${entryHeader(entry, dispatch)}
+    ${entryHeader(entry, state, dispatch)}
     <img src=${entry.image_url}></img>
   </div>
   `
@@ -22,13 +22,13 @@ function renderEntries (state, dispatch) {
   return yo `
     <div class='entries'>
       ${state.entries.map( (entry) => {
-        return renderEntry(entry, dispatch)
+        return renderEntry(entry, state, dispatch)
       } )}
     </div>
   `
 }
 
-function goToUser(dispatch, id) {
+function goToUser(state, dispatch, id) {
   dispatch({type: "TOGGLE_LOADING"})
   console.log({id});
   request
@@ -38,17 +38,19 @@ function goToUser(dispatch, id) {
         dispatch({type: "TOGGLE_LOADING"})
       }
       else {
-        console.log(res.body);
-        dispatch({type: "GET_TARGET_ENTRIES", payload: res.body.user_entries})
+        var dType = "GET_TARGET_ENTRIES"
+        if (id == state.user.user_id) dType = "GET_MY_ENTRIES"
+        dispatch({type: dType, payload: res.body.user_entries})
+
       }
     })
 }
 
-function entryHeader(entry, dispatch) {
+function entryHeader(entry, state, dispatch) {
   var timeDateEntry = entry.entry_created_at // In prep for date/time reformatting
   return yo`
     <div class='image-header'>
-        <h2 class="user-name" onclick=${() => goToUser(dispatch, entry.user_id)}>${entry.username}</h2>
+        <h2 class="user-name" onclick=${() => goToUser(state, dispatch, entry.user_id)}>${entry.username}</h2>
         <h2>Added at: ${timeDateEntry} </h2>
     </div>
   `

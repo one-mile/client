@@ -7,6 +7,7 @@ function user (state, dispatch) {
   <div class="homediv">
     ${header(state)}
     <p>hello I am me</p>
+    ${footer(dispatch)}
   </div>
   `
 }

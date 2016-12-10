@@ -7,6 +7,7 @@ function target (state, dispatch) {
   <div class=homediv>
     ${header(state)}
     <p>hello I am other</p>
+    ${footer(dispatch)}
   </div>
   `
 }

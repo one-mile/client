@@ -6,6 +6,7 @@ var header = require('./components/header')
 var login = require('./components/login')
 var home = require('./components/home')
 var target = require('./components/target')
+var user = require('./components/user')
 
 var app = document.createElement('div')
 document.querySelector('main').appendChild(app)
@@ -40,6 +41,8 @@ function render (state, dispatch) {
       return home(state, dispatch)
     case 'target':
       return target(state, dispatch)
+    case 'me':
+      return user(state, dispatch)
     default:
       return login(state, dispatch)
   }
