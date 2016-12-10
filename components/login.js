@@ -27,16 +27,21 @@ function login (state, dispatch) {
         } else {
           // console.log("got it!!!!!", response.body.user)
           dispatch({type: 'RECEIVE_USER', payload: response.body.user})
-          request
-            .get(url + 'entries')
-            .end( (error, response) => {
-              // console.log("response is", response)
-              dispatch({type: 'RECEIVE_ENTRIES', payload: response.body})
-              dispatch({type: "TOGGLE_LOADING"})
-            })
+          dispatch({type: "TOGGLE_LOADING"})
+
+
+          // request
+          //   .get(url + 'entries')
+          //   .end( (error, res2) => {
+          //     if (error) console.log(error);
+          //     else {
+          //       console.log("response is", res2)
+          //       dispatch({type: 'RECEIVE_ENTRIES', payload: res2.body})
+          //       dispatch({type: "TOGGLE_LOADING"})
+          //     }
+          //   })
         }
       })
-    console.log(username);
   }
 
   return yo`
