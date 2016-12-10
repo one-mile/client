@@ -16,6 +16,6 @@
       Mel Booth, Ursula Frickey, Harrison Symes, Katherine Nagels
   </author>
 
-  <plugin name="cordova-plugin-camera"/>
+  <!-- <plugin name="cordova-plugin-camera"/> -->
 
 </widget>

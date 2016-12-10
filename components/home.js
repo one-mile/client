@@ -1,4 +1,5 @@
 var yo = require('yo-yo')
+var accessCamera = require ('./camera')
 const header = require ('./header').header
 const footer = require ('./header').footer
 var request = require('superagent')
@@ -54,7 +55,6 @@ function entryHeader(entry, state, dispatch) {
   `
 }
 
-
 function home (state, dispatch) {
   console.log("home", state);
   return yo `
@@ -62,10 +62,10 @@ function home (state, dispatch) {
     ${header(state, dispatch, getEntries)}
     ${state.isLoading ? yo`<p>loading</p>` : renderEntries(state, dispatch) }
     ${getEntries(state, dispatch)}
+    ${accessCamera(state)}
     <button onclick=${()=>{getEntries(state, dispatch, true)}}>click me man</button>
     ${footer(dispatch)}
   </div>
-
   `
 }
 

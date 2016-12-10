@@ -44,7 +44,6 @@ input {
   border-radius: 15px;
 }
 
-
 .login, .homediv {
   margin-top: 15vh;
   margin-bottom: 15vh;
@@ -52,7 +51,6 @@ input {
 
 .entries h2 {
   text-align: center;
-
 }
 
 .pageFooter {
@@ -89,9 +87,4 @@ input {
 .image-header{
   margin-top: 7%;
   margin-bottom: 12%;
-}
-
-.user-name:hover {
-  cursor:alias;
-  color: white;
 }
