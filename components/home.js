@@ -4,9 +4,7 @@ const footer = require ('./header').footer
 var request = require('superagent')
 var onload = require('on-load')
 
-var heroku = 'http://one-shot-api.herokuapp.com/api/v1/'
-var local = 'http://localhost:3000/api/v1/'
-var url = local
+const url = require('./requestUrl')
 
 function renderEntry(entry, state, dispatch) {
   return yo`
@@ -61,7 +59,7 @@ function home (state, dispatch) {
   console.log("home", state);
   return yo `
   <div class="homediv">
-    ${header(state)}
+    ${header(state, dispatch, getEntries)}
     ${state.isLoading ? yo`<p>loading</p>` : renderEntries(state, dispatch) }
     ${getEntries(state, dispatch)}
     <button onclick=${()=>{getEntries(state, dispatch, true)}}>click me man</button>

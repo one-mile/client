@@ -3,9 +3,7 @@ const request = require('superagent')
 const header = require ('./header').header
 const footer = require ('./header').footer
 
-var heroku = 'http://one-shot-api.herokuapp.com/api/v1/'
-var local = 'http://localhost:3000/api/v1/'
-var url = heroku
+const url = require('./requestUrl')
 
 module.exports = login
 function loginRequest(form) {
@@ -29,25 +27,13 @@ function login (state, dispatch) {
           // console.log("got it!!!!!", response.body.user)
           dispatch({type: 'RECEIVE_USER', payload: response.body.user})
           dispatch({type: "TOGGLE_LOADING"})
-
-
-          // request
-          //   .get(url + 'entries')
-          //   .end( (error, res2) => {
-          //     if (error) console.log(error);
-          //     else {
-          //       console.log("response is", res2)
-          //       dispatch({type: 'RECEIVE_ENTRIES', payload: res2.body})
-          //       dispatch({type: "TOGGLE_LOADING"})
-          //     }
-          //   })
         }
       })
   }
 
   return yo`
     <div>
-    ${header(state)}
+    ${header(state, dispatch)}
     ${state.isLoading ? yo`<h3 class="loading">Loading...</h3>`
       : yo`<form class="login">
       <h3>Login</h3>

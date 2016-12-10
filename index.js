@@ -46,7 +46,6 @@ function render (state, dispatch) {
     default:
       return login(state, dispatch)
   }
-
 }
 
 store.dispatch({type: 'INIT'})
