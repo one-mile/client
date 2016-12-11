@@ -25,10 +25,12 @@ function accessCamera (state) {
     }
     return yo `
     <div>
-      <div id='hideInput'><input type="file" name="file" accept="image/*" id="camera" capture="camera"></div>
-      <button id='capture'>flooky</button>
-      <img src='about:blank' id='display'>
-      <canvas id='snapshot' width=300 height=250></canvas>
+      <label class='captureBtn'>
+      <img src='http://image.flaticon.com/icons/svg/34/34397.svg' width='50'/>
+      <input id="camera" type="file" accept="image/*" capture="camera" value='Take a photo'>
+      </label>
+      <input type='submit' value='I will be able to upload photos one day...!' id='capture'>flooky/>
+      <img id='display'>
     </div>
     `
   }

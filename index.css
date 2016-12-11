@@ -89,8 +89,20 @@ input {
   margin-bottom: 12%;
 }
 
-/*#hideInput {
-  width: 0;
-  height: 0;
+/*This makes the file input button less ugly*/
+.captureBtn {
+  position: relative;
   overflow: hidden;
-}*/
+  float: left;
+  clear: left;
+}
+.captureBtn input[type="file"] {
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  opacity: 0;
+  font-size: 100px;
+  filter: alpha(opacity=0);
+  cursor: pointer;
+}
