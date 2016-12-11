@@ -17,7 +17,6 @@ module.exports = (state, action) => {
       newState.entries = action.payload.entries
       return newState
     case 'GET_TARGET_ENTRIES':
-    console.log("target entries", action.payload.user_entries);
       newState.targetEntries = action.payload.user_entries
       newState.view = 'target'
       return newState
@@ -34,6 +33,15 @@ module.exports = (state, action) => {
       return newState
     case 'GO_TO_SIGNUP':
       newState.view = 'signup'
+      return newState
+    case 'TOGGLE_FLUKE':
+      if (action.payload.action === 'fluke') {
+        var flukedEntry = newState.entries.find( (entry) => entry.entry_id === action.payload.entry_id)
+        flukedEntry.flukes++
+      } else if (action.payload.action === 'defluke') {
+        var deFlukedEntry = newState.entries.find( (entry) => entry.entry_id === action.payload.entry_id)
+        deFlukedEntry.flukes--
+      }
       return newState
     case 'AUTH_ERROR':
       newState.authError = action.payload

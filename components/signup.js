@@ -4,8 +4,6 @@ const request = require('superagent')
 var header = require ('./header').header
 const url = require('./requestUrl')
 
-
-
 module.exports = signup
 
 function signup (state, dispatch) {
@@ -31,12 +29,9 @@ function signup (state, dispatch) {
     var password = document.getElementById('password').value
     var rptPassword = document.getElementById('rpt-password').value
     var email = document.getElementById('email').value
-    // console.log({username, password, rptPassword, email})
     if ( !(username && password && rptPassword && email)) {
-      // alert("missing")
       dispatch({type: "AUTH_ERROR", payload: "Please complete all fields"})
     } else if (password !== rptPassword) {
-      // alert("passwords not match")
       dispatch({type: "AUTH_ERROR", payload: "Passwords do not match"})
     } else if (!password.includes('.') && !password.includes('@') ) {
       dispatch({type: "AUTH_ERROR", payload: "Please enter a valid email address"})
@@ -46,7 +41,6 @@ function signup (state, dispatch) {
           .post(url + 'users/signup')
           .send({username, password, email})
           .end( (err, response) => {
-            console.log("signup response is", response)
             if (response.body.user_id === 0) {
               dispatch({type: "AUTH_ERROR", payload: "Username already taken"})
               return
@@ -55,11 +49,9 @@ function signup (state, dispatch) {
               .post(url + 'users/login')
               .send({username, password})
               .end((error, response) => {
-                console.log("login response", response);
                 if (error) {
                   console.log(error, 'Error goes here')
                 } else {
-                  // console.log("got it!!!!!", response.body.user)
                   dispatch({type: 'RECEIVE_USER', payload: response.body.user})
                   dispatch({type: "TOGGLE_LOADING"})
                 }

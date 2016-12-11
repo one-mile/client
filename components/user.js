@@ -5,7 +5,6 @@ const footer = require ('./header').footer
 const url = require('./requestUrl')
 
 function user (state, dispatch) {
-  console.log("user view");
   return yo `
   <div class="homediv">
     ${header(state, dispatch)}
@@ -19,7 +18,6 @@ function user (state, dispatch) {
 // REPETITION
 
 function renderEntries (state, dispatch) {
-  console.log({state});
   return yo `
     <div class='entries'>
       ${state.myEntries.map( (entry) => {
@@ -30,7 +28,6 @@ function renderEntries (state, dispatch) {
 }
 
 function renderEntry(entry, state, dispatch) {
-  console.log("state is", state);
   return yo`
   <div class='entry'>
     ${entryHeader(entry, state, dispatch)}

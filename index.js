@@ -39,7 +39,6 @@ function render (state, dispatch) {
     case 'home':
       return home(state, dispatch)
     case 'target':
-    console.log("target view");
       return target(state, dispatch)
     case 'me':
       return user(state, dispatch)

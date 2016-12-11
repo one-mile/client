@@ -11,13 +11,25 @@ function renderEntry(entry, state, dispatch) {
   return yo`
   <div class='entry'>
     ${entryHeader(entry, state, dispatch)}
-    <img src=${entry.image_url}></img>
+      <img onclick=${() => fluke(entry.entry_id, state.user.user_id, dispatch)} src=${entry.image_url}></img>
   </div>
   `
 }
 
+function fluke(entry_id, user_id, dispatch) {
+  request
+    .post(url + 'entries/fluke')
+    .send({entry_id, user_id})
+    .end((err, res) => {
+      if (res.body.success) {
+        dispatch({type: 'TOGGLE_FLUKE', payload: res.body})
+      } else {
+        console.log("ERROR")
+      }
+    })
+}
+
 function renderEntries (state, dispatch) {
-  // console.log({state});
   return yo `
     <div class='entries'>
       ${state.entries.map( (entry) => {
@@ -29,7 +41,6 @@ function renderEntries (state, dispatch) {
 
 function goToUser(state, dispatch, id) {
   dispatch({type: "TOGGLE_LOADING"})
-  console.log({id});
   request
     .get(`${url}entries/${id}`)
     .end((err, res) => {
@@ -37,7 +48,6 @@ function goToUser(state, dispatch, id) {
         dispatch({type: "TOGGLE_LOADING"})
       }
       else {
-        console.log({res});
         var dType = "GET_TARGET_ENTRIES"
         if (id == state.user.user_id) dType = "GET_MY_ENTRIES"
         dispatch({type: dType, payload: res.body})
@@ -50,14 +60,13 @@ function entryHeader(entry, state, dispatch) {
   var timeDateEntry = entry.entry_created_at // In prep for date/time reformatting
   return yo`
     <div class='image-header'>
-        <h2 class="user-name" onclick=${() => goToUser(state, dispatch, entry.user_id)}>${entry.username}</h2>
+        <h2 class="user-name" onclick=${() => goToUser(state, dispatch, entry.user_id)}>${entry.username}, flukes: ${entry.flukes}</h2>
         <h2>Added at: ${timeDateEntry} </h2>
     </div>
   `
 }
 
 function home (state, dispatch) {
-  console.log("home", state);
   return yo `
   <div class="homediv">
     ${header(state, dispatch, getEntries)}
@@ -75,11 +84,10 @@ function getEntries (state, dispatch, bool) {
     dispatch({type: "TOGGLE_LOADING"})
     request
       .get(url + 'entries')
-      .end( (error, res2) => {
+      .end( (error, res) => {
         if (error) console.log(error);
         else {
-          console.log("response is", res2)
-          dispatch({type: 'RECEIVE_ENTRIES', payload: res2.body})
+          dispatch({type: 'RECEIVE_ENTRIES', payload: res.body})
           dispatch({type: "TOGGLE_LOADING"})
         }
       })
