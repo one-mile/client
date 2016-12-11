@@ -2,17 +2,28 @@ var yo = require('yo-yo')
 
 function accessCamera (state) {
 
+  var handleSuccess = function(stream) {
+    var video = document.getElementById('video')
+    video.srcObject = stream
+
+  }
+  function onClick (){
+    var canvas = document.getElementById('snapshot')
+    console.log('CLICKING THE BUTTON DOES THIS');
+    var context = canvas.getContext('2d')
+    context.drawImage(video, 0, 0, canvas.width, canvas.height)
+  }
+
+  navigator.mediaDevices.getUserMedia({video: true})
+  .then(handleSuccess)
+
   return yo `
   <div>
     <video id='video'></video>
-    <button id='capture'>flooky</button>
-    <canvas id='snapshot' width=300 height=300></canvas>
+    <button id='capture' onclick=${onClick}>flooky</button>
+    <canvas id='snapshot' width=300></canvas>
   </div>
   `
-  var video = document.getElementById('video')
-  var snapshot = document.getElementById('snapshot')
-  var captureBtn = document.getElementById('capture')
-  
 }
 
 module.exports = accessCamera
