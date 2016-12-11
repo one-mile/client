@@ -28,7 +28,6 @@ function login (state, dispatch) {
 
   return yo`
     <div>
-    ${header(state, dispatch)}
     ${state.isLoading ? yo`<h3 class="loading">Loading...</h3>`
       : yo`<form class="login">
       <h3>Login</h3>
