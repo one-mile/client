@@ -6,7 +6,6 @@ function accessCamera (state) {
   if (takePhoto && displayPhoto) {
     takePhoto.onchange = function (e) {
       var files = e.target.files
-      // , file
       if (files && files.length > 0) {
         file = files[0]
       }

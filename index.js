@@ -1,5 +1,6 @@
 var redux = require('redux')
 var morphdom = require('morphdom')
+// var cloudinary = require('cloudinary-core')
 
 var reducer = require('./reducer')
 var header = require('./components/header')
@@ -8,6 +9,12 @@ var home = require('./components/home')
 var target = require('./components/target')
 var user = require('./components/user')
 var signup = require('./components/signup')
+
+//cloudinary
+// var cl = cloudinary.Cloudinary.new({ cloud_name: "dr2qeam2p" })
+//
+// cl.fromEnvironment()
+// cl.url("http://res.cloudinary.com/demo/image/upload/sample", {width: 100, crop: "fit"})
 
 var app = document.createElement('div')
 document.querySelector('main').appendChild(app)
@@ -49,3 +56,5 @@ function render (state, dispatch) {
 }
 
 store.dispatch({type: 'INIT'})
+
+// export CLOUDINARY_URL=cloudinary://169729934749937:l1DOB1dhx0AfDjAXstTdVmNeXvY@dr2qeam2p
