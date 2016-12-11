@@ -1,4 +1,5 @@
 const clone = require('clone')
+const flukeReducer = require('./components/flukeReduce')
 
 module.exports = (state, action) => {
   var newState = require('clone')(state)
@@ -15,9 +16,9 @@ module.exports = (state, action) => {
       return newState
     case 'RECEIVE_ENTRIES':
       newState.entries = action.payload.entries
+      newState.myFlukes = action.payload.myFlukes
       return newState
     case 'GET_TARGET_ENTRIES':
-    console.log("target entries", action.payload.user_entries);
       newState.targetEntries = action.payload.user_entries
       newState.view = 'target'
       return newState
@@ -34,6 +35,9 @@ module.exports = (state, action) => {
       return newState
     case 'GO_TO_SIGNUP':
       newState.view = 'signup'
+      return newState
+    case 'TOGGLE_FLUKE':
+      flukeReducer(newState, action.payload)
       return newState
     case 'AUTH_ERROR':
       newState.authError = action.payload

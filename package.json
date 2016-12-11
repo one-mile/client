@@ -23,6 +23,7 @@
     "cloudinary-core": "^2.1.7",
     "cors": "^2.8.1",
     "deep-freeze": "0.0.1",
+    "moment": "^2.17.1",
     "morphdom": "^2.2.1",
     "on-load": "^3.2.0",
     "redux": "^3.6.0",

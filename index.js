@@ -8,6 +8,8 @@ var home = require('./components/home')
 var target = require('./components/target')
 var user = require('./components/user')
 var signup = require('./components/signup')
+var App = require('./components/app')
+
 var request = require('superagent')
 
 var app = document.createElement('div')
@@ -27,12 +29,13 @@ document.getElementById("upload_widget_opener").addEventListener("click", functi
 var initialState = {
   title: 'flooki',
   view: 'login',
-  user: {},
+  user: null,
   authError: null,
   isLoading: false,
   entries: [],
   myEntries: [],
-  targetEntries: []
+  targetEntries: [],
+  myFlukes: []
  }
 
 var store = redux.createStore(reducer, initialState)
@@ -45,19 +48,19 @@ subscribe(() => {
 function render (state, dispatch) {
   switch(state.view) {
     case 'login':
-      return login(state, dispatch)
+      return App(state, dispatch, login)
     case 'signup':
-      return signup(state, dispatch)
+      return App(state, dispatch, signup)
     case 'home':
-      return home(state, dispatch)
+      return App(state, dispatch, home)
     case 'target':
-    console.log("target view");
-      return target(state, dispatch)
+      return App(state, dispatch, target)
     case 'me':
-      return user(state, dispatch)
+      return App(state, dispatch, user)
     default:
-      return login(state, dispatch)
+      return App(state, dispatch, login)
   }
+
 }
 
 store.dispatch({type: 'INIT'})
