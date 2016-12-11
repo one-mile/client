@@ -18,7 +18,6 @@ function target (state, dispatch) {
 // REPETITION
 
 function renderEntries (state, dispatch) {
-  console.log({state});
   return yo `
     <div class='entries'>
       ${state.targetEntries.map( (entry) => {
@@ -29,7 +28,6 @@ function renderEntries (state, dispatch) {
 }
 
 function renderEntry(entry, state, dispatch) {
-  console.log("state is", state);
   return yo`
   <div class='entry'>
     ${entryHeader(entry, state, dispatch)}

@@ -17,23 +17,19 @@ function renderEntry(entry, state, dispatch) {
 }
 
 function fluke(entry_id, user_id, dispatch) {
-  // console.log({entry_id, user_id});
-  // console.log("fluke!")
   request
     .post(url + 'entries/fluke')
     .send({entry_id, user_id})
     .end((err, res) => {
-      console.log("fluke. res is", res)
       if (res.body.success) {
         dispatch({type: 'TOGGLE_FLUKE', payload: res.body})
       } else {
-        console.log("ERORR");
+        console.log("ERROR")
       }
     })
 }
 
 function renderEntries (state, dispatch) {
-  // console.log({state});
   return yo `
     <div class='entries'>
       ${state.entries.map( (entry) => {
@@ -45,7 +41,6 @@ function renderEntries (state, dispatch) {
 
 function goToUser(state, dispatch, id) {
   dispatch({type: "TOGGLE_LOADING"})
-  console.log({id});
   request
     .get(`${url}entries/${id}`)
     .end((err, res) => {
@@ -53,7 +48,6 @@ function goToUser(state, dispatch, id) {
         dispatch({type: "TOGGLE_LOADING"})
       }
       else {
-        console.log({res});
         var dType = "GET_TARGET_ENTRIES"
         if (id == state.user.user_id) dType = "GET_MY_ENTRIES"
         dispatch({type: dType, payload: res.body})
@@ -73,7 +67,6 @@ function entryHeader(entry, state, dispatch) {
 }
 
 function home (state, dispatch) {
-  console.log("home", state);
   return yo `
   <div class="homediv">
     ${header(state, dispatch, getEntries)}
@@ -91,11 +84,10 @@ function getEntries (state, dispatch, bool) {
     dispatch({type: "TOGGLE_LOADING"})
     request
       .get(url + 'entries')
-      .end( (error, res2) => {
+      .end( (error, res) => {
         if (error) console.log(error);
         else {
-          console.log("response is", res2)
-          dispatch({type: 'RECEIVE_ENTRIES', payload: res2.body})
+          dispatch({type: 'RECEIVE_ENTRIES', payload: res.body})
           dispatch({type: "TOGGLE_LOADING"})
         }
       })

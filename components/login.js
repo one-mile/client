@@ -6,9 +6,6 @@ const footer = require ('./header').footer
 const url = require('./requestUrl')
 
 module.exports = login
-function loginRequest(form) {
-  console.log(form)
-}
 
 function login (state, dispatch) {
   function onSubmit (e) {
@@ -20,11 +17,9 @@ function login (state, dispatch) {
       .post(url + 'users/login')
       .send({username, password})
       .end((error, response) => {
-        console.log("first response", response);
         if (error) {
           console.log(error, 'Error goes here')
         } else {
-          // console.log("got it!!!!!", response.body.user)
           dispatch({type: 'RECEIVE_USER', payload: response.body.user})
           dispatch({type: "TOGGLE_LOADING"})
         }
