@@ -5,21 +5,16 @@ function accessCamera (state) {
   var displayPhoto = document.getElementById('display')
   if (takePhoto && displayPhoto) {
     takePhoto.onchange = function (e) {
-      var files = e.target.files, file
+      var files = e.target.files
+      // , file
       if (files && files.length > 0) {
-        file = files[0] }
-          else {
-            var URL = window.URL || window.webkitURL
-            var imgURL = URL.createObject
-            displayPhoto.src = imgURL
-            displayPhoto.onload = function() {
-              URL.revokeObjectURL(imgURL) //releases existing object URL created above - call this when object URL is no longer needed.
-            }
-          }
+        file = files[0]
+      }
         var fileReader = new FileReader()
         fileReader.onload = function(e) {
           displayPhoto.src = e.target.result
         }
+
       fileReader.readAsDataURL(file) //reads contents of file - result attribute holds data as a URL (base64)
       }
     }
@@ -36,3 +31,15 @@ function accessCamera (state) {
   }
 
 module.exports = accessCamera
+
+// var images = []
+// document.getElementById('save').onclick=function(e){
+//   e.preventDefault()
+//   var url = canvas.toDataURL("image/png")
+//   ajax.postImage(url, function(err, res){
+//     console.log(res.body);
+//     var imageEl = document.createElement('img')
+//       imageEl.src = res.body.images.url
+//       document.body.appendChild(imageEl)
+//   })
+// }
