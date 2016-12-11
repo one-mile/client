@@ -61,9 +61,9 @@ function home (state, dispatch) {
   return yo `
   <div class="homediv">
     ${header(state, dispatch, getEntries)}
-    ${state.isLoading ? yo`<p>loading</p>` : renderEntries(state, dispatch) }
-    ${getEntries(state, dispatch)}
     ${accessCamera(state)}
+    ${state.isLoading ? yo`<p>loading</p>` : renderEntries(state, dispatch)}
+    ${getEntries(state, dispatch)}
     <button onclick=${()=>{getEntries(state, dispatch, true)}}>click me man</button>
     ${footer(dispatch)}
   </div>
