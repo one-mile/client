@@ -15,7 +15,7 @@ document.querySelector('main').appendChild(app)
 var initialState = {
   title: 'flooki',
   view: 'login',
-  user: {},
+  user: null,
   authError: null,
   isLoading: false,
   entries: [],
