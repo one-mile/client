@@ -1,10 +1,11 @@
-var yo = require('yo-yo')
-var accessCamera = require ('./camera')
+const yo = require('yo-yo')
+const request = require('superagent')
+const onload = require('on-load')
+const moment = require('moment')
+
+const accessCamera = require ('./camera')
 const header = require ('./header').header
 const footer = require ('./header').footer
-var request = require('superagent')
-var onload = require('on-load')
-
 const url = require('./requestUrl')
 
 function renderEntry(entry, state, dispatch) {
@@ -57,11 +58,11 @@ function goToUser(state, dispatch, id) {
 }
 
 function entryHeader(entry, state, dispatch) {
-  var timeDateEntry = entry.entry_created_at // In prep for date/time reformatting
+  var formattedDate = moment(entry.entry_created_at).format('HH:mma, MMM Do')
   return yo`
     <div class='image-header'>
-        <h2 class="user-name" onclick=${() => goToUser(state, dispatch, entry.user_id)}>${entry.username}, flukes: ${entry.flukes}</h2>
-        <h2>Added at: ${timeDateEntry} </h2>
+        <h3 class='entry-info' onclick=${() => goToUser(state, dispatch, entry.user_id)}>posted by <span class='user-name'>${entry.username}</span> at ${formattedDate}</h3>
+        <h3>flukes: ${entry.flukes}</h3>
     </div>
   `
 }

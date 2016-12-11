@@ -49,7 +49,7 @@ input {
   margin-bottom: 15vh;
 }
 
-.entries h2 {
+.entries h3 {
   text-align: center;
 }
 
@@ -87,6 +87,14 @@ input {
 .image-header{
   margin-top: 7%;
   margin-bottom: 12%;
+}
+
+.entry-info {
+  font-style: italic;
+}
+
+.user-name {
+  font-style: normal;
 }
 
 /*#hideInput {
