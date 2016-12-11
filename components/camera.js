@@ -4,9 +4,13 @@ function accessCamera (state) {
 
   return yo `
   <div>
-  <input type="file" name="file" accept="image/*" id="file" capture="camera">
+
   </div>
   `
 }
 
 module.exports = accessCamera
+
+
+// ##Input function - works to access camera and take photo - can't save.
+// <input type="file" name="file" accept="image/*" id="file" capture="camera">
