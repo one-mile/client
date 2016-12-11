@@ -19,9 +19,9 @@ function accessCamera (state) {
 
   return yo `
   <div>
-    <video id='video'></video>
+    <video id='video' width=300 height=300></video>
     <button id='capture' onclick=${onClick}>flooky</button>
-    <canvas id='snapshot' width=300></canvas>
+    <canvas id='snapshot' width=300 height=250></canvas>
   </div>
   `
 }
