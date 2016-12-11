@@ -15,6 +15,7 @@ function accessCamera (state) {
         }
 
       fileReader.readAsDataURL(file) //reads contents of file - result attribute holds data as a URL (base64)
+      console.log(file);
       }
     }
     return yo `

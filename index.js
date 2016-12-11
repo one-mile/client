@@ -1,6 +1,5 @@
 var redux = require('redux')
 var morphdom = require('morphdom')
-// var cloudinary = require('cloudinary-core')
 
 var reducer = require('./reducer')
 var header = require('./components/header')
@@ -9,15 +8,21 @@ var home = require('./components/home')
 var target = require('./components/target')
 var user = require('./components/user')
 var signup = require('./components/signup')
-
-//cloudinary
-// var cl = cloudinary.Cloudinary.new({ cloud_name: "dr2qeam2p" })
-//
-// cl.fromEnvironment()
-// cl.url("http://res.cloudinary.com/demo/image/upload/sample", {width: 100, crop: "fit"})
+var request = require('superagent')
 
 var app = document.createElement('div')
 document.querySelector('main').appendChild(app)
+
+document.getElementById("upload_widget_opener").addEventListener("click", function () {
+      cloudinary.openUploadWidget({ cloud_name: 'toothandpail', upload_preset: 'fasiveib' },
+        function (error, result) {
+          request
+            .post('http://one-shot-api.herokuapp.com/api/v1/entries/new')
+            .type('application/json')
+            .send({ "user_id": state.user.user_id, "image_url": result[0].secure_url })
+          console.log(error, state.user.user_id, result[0].secure_url)
+        })
+    }, false)
 
 var initialState = {
   title: 'flooki',
@@ -56,5 +61,3 @@ function render (state, dispatch) {
 }
 
 store.dispatch({type: 'INIT'})
-
-// export CLOUDINARY_URL=cloudinary://169729934749937:l1DOB1dhx0AfDjAXstTdVmNeXvY@dr2qeam2p

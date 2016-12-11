@@ -74,7 +74,7 @@ function getEntries (state, dispatch, bool) {
   if (state.entries.length === 0 && !state.isLoading || bool) {
     dispatch({type: "TOGGLE_LOADING"})
     request
-      .get(url + 'entries')
+      .get(url + 'entries/' + state.user.user_id)
       .end( (error, res2) => {
         if (error) console.log(error);
         else {
