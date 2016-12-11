@@ -7,10 +7,8 @@ const url = require('./requestUrl')
 function user (state, dispatch) {
   return yo `
   <div class="homediv">
-    ${header(state, dispatch)}
     <p>hello I am me</p>
     ${renderEntries(state, dispatch)}
-    ${footer(dispatch)}
   </div>
   `
 }

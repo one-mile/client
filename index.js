@@ -8,6 +8,7 @@ var home = require('./components/home')
 var target = require('./components/target')
 var user = require('./components/user')
 var signup = require('./components/signup')
+var App = require('./components/app')
 
 var app = document.createElement('div')
 document.querySelector('main').appendChild(app)
@@ -33,17 +34,17 @@ subscribe(() => {
 function render (state, dispatch) {
   switch(state.view) {
     case 'login':
-      return login(state, dispatch)
+      return App(state, dispatch, login)
     case 'signup':
-      return signup(state, dispatch)
+      return App(state, dispatch, signup)
     case 'home':
-      return home(state, dispatch)
+      return App(state, dispatch, home)
     case 'target':
-      return target(state, dispatch)
+      return App(state, dispatch, target)
     case 'me':
-      return user(state, dispatch)
+      return App(state, dispatch, user)
     default:
-      return login(state, dispatch)
+      return App(state, dispatch, login)
   }
 }
 

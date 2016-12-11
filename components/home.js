@@ -69,13 +69,11 @@ function entryHeader(entry, state, dispatch) {
 
 function home (state, dispatch) {
   return yo `
-  <div class="homediv">
-    ${header(state, dispatch, getEntries)}
+  <div class="homediv">    
     ${accessCamera(state)}
     ${state.isLoading ? yo`<p>loading</p>` : renderEntries(state, dispatch)}
     ${getEntries(state, dispatch)}
     <button onclick=${()=>{getEntries(state, dispatch, true)}}>click me man</button>
-    ${footer(dispatch)}
   </div>
   `
 }

@@ -9,7 +9,6 @@ module.exports = signup
 function signup (state, dispatch) {
   return yo`
     <div class='homediv'>
-    ${header(state, dispatch)}
       <h1>Sign Up</h1>
       <form class='signup'>
         <input id='username' type='text' placeholder='Choose username'/>

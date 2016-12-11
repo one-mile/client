@@ -1,4 +1,5 @@
 const clone = require('clone')
+const flukeReducer = require('./components/flukeReduce')
 
 module.exports = (state, action) => {
   var newState = require('clone')(state)
@@ -35,13 +36,7 @@ module.exports = (state, action) => {
       newState.view = 'signup'
       return newState
     case 'TOGGLE_FLUKE':
-      if (action.payload.action === 'fluke') {
-        var flukedEntry = newState.entries.find( (entry) => entry.entry_id === action.payload.entry_id)
-        flukedEntry.flukes++
-      } else if (action.payload.action === 'defluke') {
-        var deFlukedEntry = newState.entries.find( (entry) => entry.entry_id === action.payload.entry_id)
-        deFlukedEntry.flukes--
-      }
+      flukeReducer(newState, action.payload)
       return newState
     case 'AUTH_ERROR':
       newState.authError = action.payload
