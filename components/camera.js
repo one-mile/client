@@ -9,6 +9,10 @@ function accessCamera (state) {
     <canvas id='snapshot' width=300 height=300></canvas>
   </div>
   `
+  var video = document.getElementById('video')
+  var snapshot = document.getElementById('snapshot')
+  var captureBtn = document.getElementById('capture')
+  
 }
 
 module.exports = accessCamera
