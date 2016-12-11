@@ -4,7 +4,9 @@ function accessCamera (state) {
 
   return yo `
   <div>
-
+    <video id='video'></video>
+    <button id='capture'>flooky</button>
+    <canvas id='snapshot' width=300 height=300></canvas>
   </div>
   `
 }
