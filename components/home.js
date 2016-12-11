@@ -11,9 +11,25 @@ function renderEntry(entry, state, dispatch) {
   return yo`
   <div class='entry'>
     ${entryHeader(entry, state, dispatch)}
-    <img src=${entry.image_url}></img>
+      <img onclick=${() => fluke(entry.entry_id, state.user.user_id, dispatch)} src=${entry.image_url}></img>
   </div>
   `
+}
+
+function fluke(entry_id, user_id, dispatch) {
+  // console.log({entry_id, user_id});
+  // console.log("fluke!")
+  request
+    .post(url + 'entries/fluke')
+    .send({entry_id, user_id})
+    .end((err, res) => {
+      console.log("fluke. res is", res)
+      if (res.body.success) {
+        dispatch({type: 'TOGGLE_FLUKE', payload: res.body})
+      } else {
+        console.log("ERORR");
+      }
+    })
 }
 
 function renderEntries (state, dispatch) {
@@ -50,7 +66,7 @@ function entryHeader(entry, state, dispatch) {
   var timeDateEntry = entry.entry_created_at // In prep for date/time reformatting
   return yo`
     <div class='image-header'>
-        <h2 class="user-name" onclick=${() => goToUser(state, dispatch, entry.user_id)}>${entry.username}</h2>
+        <h2 class="user-name" onclick=${() => goToUser(state, dispatch, entry.user_id)}>${entry.username}, flukes: ${entry.flukes}</h2>
         <h2>Added at: ${timeDateEntry} </h2>
     </div>
   `

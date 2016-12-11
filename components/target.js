@@ -6,7 +6,7 @@ const url = require('./requestUrl')
 
 function target (state, dispatch) {
   return yo `
-  <div class=homediv>
+  <div class='homediv'>
     ${header(state, dispatch)}
     <p>hello I am other</p>
     ${renderEntries(state, dispatch)}
