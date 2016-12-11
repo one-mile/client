@@ -17,8 +17,9 @@ function renderEntries (state, dispatch, entries) {
 function renderEntry(entry, state, dispatch) {
   return yo`
   <div class='entry'>
-    ${entryHeader(entry, state, dispatch)}
-      <img onclick=${() => fluke(entry.entry_id, state.user.user_id, dispatch)} src=${entry.image_url}></img>
+      ${entryHeader(entry, state, dispatch)}
+        <img class=${state.myFlukes.includes(entry.entry_id) ? 'flukedByMe' : 'notFlukedByMe'}
+        onclick=${() => fluke(entry.entry_id, state.user.user_id, dispatch)} src=${entry.image_url}></img>
   </div>
   `
 }
@@ -49,7 +50,7 @@ function entryHeader(entry, state, dispatch) {
 function goToUser(state, dispatch, id) {
   dispatch({type: "TOGGLE_LOADING"})
   request
-    .get(`${url}entries/${id}`)
+    .get(`${url}entries/user/${id}`)
     .end((err, res) => {
       if (err) {
         dispatch({type: "TOGGLE_LOADING"})

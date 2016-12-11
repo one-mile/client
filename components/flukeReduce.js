@@ -10,7 +10,13 @@ function flukeReduce(entries, payload) {
 }
 
 function flukeReducer (newState, payload) {
-  console.log("newState", newState);
+  console.log("newState", newState)
+  if (payload.action === 'fluke') {
+    newState.myFlukes.push(payload.entry_id)
+  } else if (payload.action === 'defluke') {
+    var idx = newState.myFlukes.indexOf(payload.entry_id)
+    newState.myFlukes.splice(idx, 1)
+  }
   flukeReduce(newState.entries, payload)
   flukeReduce(newState.myEntries, payload)
   flukeReduce(newState.targetEntries, payload)

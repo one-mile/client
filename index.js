@@ -21,7 +21,8 @@ var initialState = {
   isLoading: false,
   entries: [],
   myEntries: [],
-  targetEntries: []
+  targetEntries: [],
+  myFlukes: []
  }
 
 var store = redux.createStore(reducer, initialState)
@@ -46,6 +47,7 @@ function render (state, dispatch) {
     default:
       return App(state, dispatch, login)
   }
+
 }
 
 store.dispatch({type: 'INIT'})
