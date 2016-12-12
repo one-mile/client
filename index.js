@@ -15,17 +15,6 @@ var request = require('superagent')
 var app = document.createElement('div')
 document.querySelector('main').appendChild(app)
 
-document.getElementById("upload_widget_opener").addEventListener("click", function () {
-      cloudinary.openUploadWidget({ cloud_name: 'toothandpail', upload_preset: 'fasiveib' },
-        function (error, result) {
-          request
-            .post('http://one-shot-api.herokuapp.com/api/v1/entries/new')
-            .type('application/json')
-            .send({ "user_id": state.user.user_id, "image_url": result[0].secure_url })
-          console.log(error, state.user.user_id, result[0].secure_url)
-        })
-    }, false)
-
 var initialState = {
   title: 'flooki',
   view: 'login',
