@@ -15,6 +15,3 @@ function user (state, dispatch) {
 }
 
 module.exports = user
-
-
-// ${userPageSyntax(state.myEntries.length)}
