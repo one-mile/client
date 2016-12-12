@@ -41,8 +41,8 @@ module.exports = (state, action) => {
       newState.authError = action.payload
       return newState
     case 'ADD_NEW_PHOTO':
-      // newState.entries.push() // in prog
       console.log("newState", newState)
+      // newState.entries.unshift() // in prog
       return newState
     default:
       return newState

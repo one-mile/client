@@ -21,7 +21,6 @@
     "clone": "^2.1.0",
     "cloudinary": "^1.4.6",
     "cloudinary-core": "^2.1.7",
-    "coffeeify": "^2.1.0",
     "cors": "^2.8.1",
     "deep-freeze": "0.0.1",
     "moment": "^2.17.1",
