@@ -10,6 +10,8 @@ var user = require('./components/user')
 var signup = require('./components/signup')
 var App = require('./components/app')
 
+var request = require('superagent')
+
 var app = document.createElement('div')
 document.querySelector('main').appendChild(app)
 

@@ -1,36 +1,23 @@
 var yo = require('yo-yo')
+const request = require('superagent')
 
-function accessCamera (state) {
-  var takePhoto = document.getElementById('camera')
-  var displayPhoto = document.getElementById('display')
-  if (takePhoto && displayPhoto) {
-    takePhoto.onchange = function (e) {
-      var files = e.target.files, file
-      if (files && files.length > 0) {
-        file = files[0] }
-          else {
-            var URL = window.URL || window.webkitURL
-            var imgURL = URL.createObject
-            displayPhoto.src = imgURL
-            displayPhoto.onload = function() {
-              URL.revokeObjectURL(imgURL) //releases existing object URL created above - call this when object URL is no longer needed.
+//
+function accessCamera (state, dispatch) {
+  console.log("open widget");
+        cloudinary.openUploadWidget({ cloud_name: 'toothandpail', upload_preset: 'fasiveib' },
+          function (error, result) {
+            if (result) {
+              console.log({taken});
+              request
+                .post('http://one-shot-api.herokuapp.com/api/v1/entries/new')
+                .type('application/json')
+                .send({ "user_id": state.user.user_id, "image_url": result[0].secure_url })
+                .end(function(error, response){
+                  //dispatch goes here
+                })
             }
-          }
-        var fileReader = new FileReader()
-        fileReader.onload = function(e) {
-          displayPhoto.src = e.target.result
-        }
-      fileReader.readAsDataURL(file) //reads contents of file - result attribute holds data as a URL (base64)
-      }
-    }
-    return yo `
-    <div>
-      <div id='hideInput'><input type="file" name="file" accept="image/*" id="camera" capture="camera"></div>
-      <button id='capture'>flooky</button>
-      <img src='about:blank' id='display'>
-      <canvas id='snapshot' width=300 height=250></canvas>
-    </div>
-    `
+
+      }, false)
   }
 
 module.exports = accessCamera
