@@ -1,19 +1,8 @@
-# one shot
+Client side for Flooki (originally One Shot).
 
-i am a yopro
+#### Setup information:
+* Clone down repo; install node modules with `npm install`
+* Start server with `npm start`
+* Live reloading app at `http://localhost:9966/`
 
-### install
-
-```
-git clone https://github.com/mel-booth/one shot
-cd one shot
-npm install
-```
-
-## development
-
-```
-npm start
-```
-
-live reloading app at `http://localhost:9966/`
+The API is fully documented [here](https://github.com/one-mile/server/blob/master/documentation.md).
