@@ -8,7 +8,7 @@
       "build": "browserify src -o bundle.js",
       "test": "browserify test/index.js | node | tap-spec",
       "dist": "mkdir -p dist && bash -c 'cp *.{js,html,css} dist'",
-      "icons": "bash -c 'cp -r icons dist'",
+      "icons": "bash -c 'cp -rf icons dist'",
       "push": "gh-pages -d dist",
       "deploy": "npm run build && npm run dist && npm run icons && npm run push"
     },
