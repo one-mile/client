@@ -29,7 +29,6 @@ function renderEntry(entry, state, dispatch) {
 
 
 function entryHeader(entry, state, dispatch) {
-  // HH:mma, MMM Do
   var formattedDate = moment(entry.entry_created_at).format(' HH:mma, Do MMM')
   return yo`
     <div>

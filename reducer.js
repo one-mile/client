@@ -5,8 +5,6 @@ module.exports = (state, action) => {
   var newState = require('clone')(state)
   const {payload, type} = action
   switch (type) {
-    case 'INIT':
-      return newState
     case 'TOGGLE_LOADING':
       newState.isLoading = !newState.isLoading
       return newState
@@ -60,7 +58,23 @@ module.exports = (state, action) => {
       }
       newState.entryComments.unshift(commentObj)
       return newState
+    case 'ADD_NEW_PHOTO':
+      var entry = constructEntry(payload, newState.user.username)
+      newState.entries.unshift(entry)
+      newState.myEntries.unshift(entry)
+      return newState
     default:
       return newState
+  }
+}
+
+function constructEntry({entry_id, image_url}, username) {
+  return {
+    entry_id,
+    image_url,
+    commentCount: 0,
+    entry_created_at: null,
+    flukes: 0,
+    username
   }
 }
