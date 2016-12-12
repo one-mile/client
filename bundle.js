@@ -10798,408 +10798,372 @@ module.exports = [
 ]
 
 },{}],45:[function(require,module,exports){
-var yo = require('yo-yo')
-const header = require ('./header').header
-const footer = require ('./header').footer
+var yo = require('yo-yo');
+const header = require('./header').header;
+const footer = require('./header').footer;
 
-function App(state, dispatch, child){
+function App(state, dispatch, child) {
   return yo`
     <div id="app">
-      ${header(state, dispatch)}
-      ${child(state, dispatch)}
-      ${footer(state, dispatch)}
+      ${ header(state, dispatch) }
+      ${ child(state, dispatch) }
+      ${ footer(state, dispatch) }
     </div>
-  `
+  `;
 }
 
-module.exports = App
+module.exports = App;
 
 },{"./header":49,"yo-yo":43}],46:[function(require,module,exports){
-var yo = require('yo-yo')
-const request = require('superagent')
-const url = require('./requestUrl')
-
+var yo = require('yo-yo');
+const request = require('superagent');
+const url = require('./requestUrl');
 
 //
-function accessCamera (state, dispatch) {
-  if(state.user.shotsRemaining > 0) {
-    cloudinary.openUploadWidget({ cloud_name: 'toothandpail', upload_preset: 'fasiveib' },
-      function (err, result) {
-        if (result) {
-          request
-            .post(`${url}entries/new`)
-            .type('application/json')
-            .send({user_id: state.user.user_id, image_url: result[0].secure_url })
-            .end((err, response) => {
-              if(err) console.log(err)
-              var newPhoto = {}
-              dispatch({type: 'ADD_NEW_PHOTO', payload: {"entry_id": response.body.entry_id, "image_url": result[0].secure_url}})
-            })
-        } else if (err) console.log(err);
-    }, false)
-  } else alert("You have no shots left for today")
+function accessCamera(state, dispatch) {
+  if (state.user.shotsRemaining > 0) {
+    cloudinary.openUploadWidget({ cloud_name: 'toothandpail', upload_preset: 'fasiveib' }, function (err, result) {
+      if (result) {
+        request.post(`${ url }entries/new`).type('application/json').send({ user_id: state.user.user_id, image_url: result[0].secure_url }).end((err, response) => {
+          if (err) console.log(err);
+          var newPhoto = {};
+          dispatch({ type: 'ADD_NEW_PHOTO', payload: { "entry_id": response.body.entry_id, "image_url": result[0].secure_url } });
+        });
+      } else if (err) console.log(err);
+    }, false);
+  } else alert("You have no shots left for today");
 }
 
-module.exports = accessCamera
+module.exports = accessCamera;
 
 // cloud_name: 'toothandpail', upload_preset: 'fasiveib'
 // cloud_name: 'dr2qeam2p', upload_preset: 'iyjqsx0w'
 
 },{"./requestUrl":53,"superagent":34,"yo-yo":43}],47:[function(require,module,exports){
-const request = require('superagent')
-const url = require('./requestUrl')
-const yo = require('yo-yo')
-const moment = require('moment')
+const request = require('superagent');
+const url = require('./requestUrl');
+const yo = require('yo-yo');
+const moment = require('moment');
 
 function renderComments(entry_id, state, dispatch) {
-  var comments = state.entryComments || []
+  var comments = state.entryComments || [];
   return yo`
     <form>
       <input id="commentField" type="text" placeholder="post your comment here"/>
-      <button id="commentButton" onclick=${postComment} type="submit">Post Comment</button>
+      <button id="commentButton" onclick=${ postComment } type="submit">Post Comment</button>
       <div class="comments">
-        ${comments.map((comment) => renderComment(comment))}
+        ${ comments.map(comment => renderComment(comment)) }
       </div>
     </form>
-  `
+  `;
   function postComment(e) {
-    e.preventDefault()
-    var comment = document.getElementById('commentField').value
+    e.preventDefault();
+    var comment = document.getElementById('commentField').value;
     var obj = {
       entry_id,
       user_id: state.user.user_id,
       comment
-    }
-    request
-      .post(`${url}entries/comments/new`)
-      .send(obj)
-      .end((err, res) => {
-        if (err) console.log(err);
-        else dispatch({type: "POST_COMMENT", payload: {comment, entry_id}})
-      })
+    };
+    request.post(`${ url }entries/comments/new`).send(obj).end((err, res) => {
+      if (err) console.log(err);else dispatch({ type: "POST_COMMENT", payload: { comment, entry_id } });
+    });
   }
 }
 
 function renderComment(comment, dispatch) {
-  var formattedDate = moment(comment.comment_created_at).format('HH:mma, MMM Do')
+  var formattedDate = moment(comment.comment_created_at).format('HH:mma, MMM Do');
   return yo`
     <div class="comment">
-      <h3>${comment.username}</h3>
-      <p>${comment.comment}</p>
-      <p>${formattedDate}</p>
+      <h3>${ comment.username }</h3>
+      <p>${ comment.comment }</p>
+      <p>${ formattedDate }</p>
     </div>
-  `
+  `;
 }
 
 function hideComments(dispatch) {
-  dispatch({type: "HIDE_COMMENTS"})
+  dispatch({ type: "HIDE_COMMENTS" });
 }
 
 function showComments(entry, state, dispatch) {
-  dispatch({type: "SHOW_COMMENTS", payload: entry.entry_id})
-  request
-    .get(`${url}entries/comments/${entry.entry_id}`)
-    .end((err, res) => {
-      dispatch({type: 'RECIEVE_COMMENTS', payload: res.body})
-    })
+  dispatch({ type: "SHOW_COMMENTS", payload: entry.entry_id });
+  request.get(`${ url }entries/comments/${ entry.entry_id }`).end((err, res) => {
+    dispatch({ type: 'RECIEVE_COMMENTS', payload: res.body });
+  });
 }
 
 module.exports = {
   renderComments,
   hideComments,
   showComments
-}
+};
 
 },{"./requestUrl":53,"moment":13,"superagent":34,"yo-yo":43}],48:[function(require,module,exports){
 function flukeReduce(entries, payload) {
-  console.log({entries});
+  console.log({ entries });
   if (payload.action === 'fluke') {
-    var flukedEntry = entries.find( (entry) => entry.entry_id === payload.entry_id)
-    if (flukedEntry) flukedEntry.flukes++
+    var flukedEntry = entries.find(entry => entry.entry_id === payload.entry_id);
+    if (flukedEntry) flukedEntry.flukes++;
   } else if (payload.action === 'defluke') {
-    var deFlukedEntry = entries.find( (entry) => entry.entry_id === payload.entry_id)
-    if (deFlukedEntry) deFlukedEntry.flukes--
+    var deFlukedEntry = entries.find(entry => entry.entry_id === payload.entry_id);
+    if (deFlukedEntry) deFlukedEntry.flukes--;
   }
 }
 
-function flukeReducer (newState, payload) {
-  console.log("newState", newState)
+function flukeReducer(newState, payload) {
+  console.log("newState", newState);
   if (payload.action === 'fluke') {
-    newState.myFlukes.push(payload.entry_id)
+    newState.myFlukes.push(payload.entry_id);
   } else if (payload.action === 'defluke') {
-    var idx = newState.myFlukes.indexOf(payload.entry_id)
-    newState.myFlukes.splice(idx, 1)
+    var idx = newState.myFlukes.indexOf(payload.entry_id);
+    newState.myFlukes.splice(idx, 1);
   }
-  flukeReduce(newState.entries, payload)
-  flukeReduce(newState.myEntries, payload)
-  flukeReduce(newState.targetEntries, payload)
+  flukeReduce(newState.entries, payload);
+  flukeReduce(newState.myEntries, payload);
+  flukeReduce(newState.targetEntries, payload);
 }
 
-module.exports = flukeReducer
+module.exports = flukeReducer;
 
 },{}],49:[function(require,module,exports){
-var yo = require('yo-yo')
-const accessCamera = require ('./camera')
+var yo = require('yo-yo');
+const accessCamera = require('./camera');
 
-function header (state, dispatch) {
-  var headerName
+function header(state, dispatch) {
+  var headerName;
   if (state.view === 'me') {
-    headerName = state.user.username
+    headerName = state.user.username;
   } else if (state.view === 'target') {
-    headerName = state.targetEntries[0].username
+    headerName = state.targetEntries[0].username;
   }
-  return yo `
+  return yo`
     <div class="pageHeader">
       <h1>f<span class='lookFlooki'>look</span>i</h1>
-      ${state.user ? shotsRemaining(state) : ''}
-      <h4 class='pageUserName'>${headerName}</h4>
+      ${ state.user ? shotsRemaining(state) : '' }
+      <h4 class='pageUserName'>${ headerName }</h4>
     </div>
-  `
+  `;
 }
 
 function goHome(dispatch) {
-  dispatch({type: "GO_TO_HOME"})
+  dispatch({ type: "GO_TO_HOME" });
 }
 
-function footer (state, dispatch) {
+function footer(state, dispatch) {
   if (state.user) {
-    return yo `
+    return yo`
     <div class="pageFooter">
-      <i class='ion-ios-home-outline' id='homeButton' onclick=${() => goHome(dispatch)}></i>
-      <i class='ion-ios-circle-outline' id='cameraButton' onclick=${() => accessCamera(state, dispatch)} id="upload_widget_opener"></i>
+      <i class='ion-ios-home-outline' id='homeButton' onclick=${ () => goHome(dispatch) }></i>
+      <i class='ion-ios-circle-outline' id='cameraButton' onclick=${ () => accessCamera(state, dispatch) } id="upload_widget_opener"></i>
       <i class='ion-ios-person-outline' id='profileButton'></i>
     </div>
-    `
+    `;
   }
 }
 
 function shotsRemaining(state) {
-  return yo `
+  return yo`
     <h1 class='shots-remaining'>
-      ${shotsView(state.user.shotsRemaining)}
+      ${ shotsView(state.user.shotsRemaining) }
     </h1>
-  `
+  `;
 }
 
 function shotsView(shotsRemaining) {
-  var shotsView = []
+  var shotsView = [];
   for (var i = 1; i <= 4; i++) {
-     shotsView.push(yo`
-       <div class=${i <= shotsRemaining ? 'remaining' : 'taken'}></div>
-       `)
+    shotsView.push(yo`
+       <div class=${ i <= shotsRemaining ? 'remaining' : 'taken' }></div>
+       `);
   }
-  return shotsView
+  return shotsView;
 }
 
 module.exports = {
   header,
   footer
-}
+};
 
 },{"./camera":46,"yo-yo":43}],50:[function(require,module,exports){
-const yo = require('yo-yo')
-const request = require('superagent')
-const onload = require('on-load')
+const yo = require('yo-yo');
+const request = require('superagent');
+const onload = require('on-load');
 
-const header = require ('./header').header
-const footer = require ('./header').footer
-const url = require('./requestUrl')
-const renderEntries = require('./renderEntries')
+const header = require('./header').header;
+const footer = require('./header').footer;
+const url = require('./requestUrl');
+const renderEntries = require('./renderEntries');
 
-function home (state, dispatch) {
-  return yo `
+function home(state, dispatch) {
+  return yo`
   <div class="homediv">
-    ${state.isLoading ? yo`<p>loading</p>` : renderEntries(state, dispatch, state.entries)}
-    ${getEntries(state, dispatch)}
-    <button onclick=${()=>{getEntries(state, dispatch, true)}}>click me man</button>
+    ${ state.isLoading ? yo`<p>loading</p>` : renderEntries(state, dispatch, state.entries) }
+    ${ getEntries(state, dispatch) }
+    <button onclick=${ () => {
+    getEntries(state, dispatch, true);
+  } }>click me man</button>
   </div>
-  `
+  `;
 }
 
-function getEntries (state, dispatch, bool) {
+function getEntries(state, dispatch, bool) {
   if (state.entries.length === 0 && !state.isLoading || bool) {
-    dispatch({type: "TOGGLE_LOADING"})
-    request
-      .get(url + 'entries/' + state.user.user_id)
-      .end( (error, res) => {
+    dispatch({ type: "TOGGLE_LOADING" });
+    request.get(url + 'entries/' + state.user.user_id).end((error, res) => {
 
-        if (error) console.log(error);
-        else {
-          dispatch({type: 'RECEIVE_ENTRIES', payload: res.body})
-          dispatch({type: "TOGGLE_LOADING"})
-        }
-      })
+      if (error) console.log(error);else {
+        dispatch({ type: 'RECEIVE_ENTRIES', payload: res.body });
+        dispatch({ type: "TOGGLE_LOADING" });
+      }
+    });
   }
 }
 
-module.exports = home
+module.exports = home;
 
 },{"./header":49,"./renderEntries":52,"./requestUrl":53,"on-load":15,"superagent":34,"yo-yo":43}],51:[function(require,module,exports){
-const yo = require('yo-yo')
-const request = require('superagent')
-const header = require ('./header').header
-const footer = require ('./header').footer
+const yo = require('yo-yo');
+const request = require('superagent');
+const header = require('./header').header;
+const footer = require('./header').footer;
 
-const url = require('./requestUrl')
+const url = require('./requestUrl');
 
-module.exports = login
+module.exports = login;
 
-function login (state, dispatch) {
-  function onSubmit (e) {
-    e.preventDefault()
-    var username = document.getElementById('username').value
-    var password = document.getElementById('password').value
-    dispatch({type: "TOGGLE_LOADING"})
-    request
-      .post(url + 'users/login')
-      .send({username, password})
-      .end((error, response) => {
-        if (error) {
-          console.log(error, 'Error goes here')
-        } else {
-          dispatch({type: 'RECEIVE_USER', payload: response.body.user})
-          dispatch({type: "TOGGLE_LOADING"})
-        }
-      })
+function login(state, dispatch) {
+  function onSubmit(e) {
+    e.preventDefault();
+    var username = document.getElementById('username').value;
+    var password = document.getElementById('password').value;
+    dispatch({ type: "TOGGLE_LOADING" });
+    request.post(url + 'users/login').send({ username, password }).end((error, response) => {
+      if (error) {
+        console.log(error, 'Error goes here');
+      } else {
+        dispatch({ type: 'RECEIVE_USER', payload: response.body.user });
+        dispatch({ type: "TOGGLE_LOADING" });
+      }
+    });
   }
 
   return yo`
     <div>
-    ${state.isLoading ? yo`<h3 class="loading">Loading...</h3>`
-      : yo`<form class="login">
+    ${ state.isLoading ? yo`<h3 class="loading">Loading...</h3>` : yo`<form class="login">
       <h3>Login</h3>
       <input id='username' type='text' placeholder='username'/>
       <input id='password' type='password' placeholder='password'/>
-      <button onclick=${onSubmit} class='loginBtn' type='submit'>Log In</button>
-      </form>`}
-      <button onclick=${ () => dispatch({type: 'GO_TO_SIGNUP'})} class='signupBtn' type='submit'>Sign Up</button>
+      <button onclick=${ onSubmit } class='loginBtn' type='submit'>Log In</button>
+      </form>` }
+      <button onclick=${ () => dispatch({ type: 'GO_TO_SIGNUP' }) } class='signupBtn' type='submit'>Sign Up</button>
     </div>
-  `
+  `;
 }
 
 },{"./header":49,"./requestUrl":53,"superagent":34,"yo-yo":43}],52:[function(require,module,exports){
-const yo = require('yo-yo')
-const request = require('superagent')
-const moment = require('moment')
-const url = require('./requestUrl')
-const comments = require('./comments')
+const yo = require('yo-yo');
+const request = require('superagent');
+const moment = require('moment');
+const url = require('./requestUrl');
+const comments = require('./comments');
 
-
-function renderEntries (state, dispatch, entries) {
-  return yo `
+function renderEntries(state, dispatch, entries) {
+  return yo`
     <div class='entries'>
-      ${entries.map( (entry) => {
-        return renderEntry(entry, state, dispatch)
-      } )}
+      ${ entries.map(entry => {
+    return renderEntry(entry, state, dispatch);
+  }) }
     </div>
-  `
+  `;
 }
 
 function renderEntry(entry, state, dispatch) {
   return yo`
   <div class='entry'>
-      ${entryHeader(entry, state, dispatch)}
-        <img class=${state.myFlukes.includes(entry.entry_id) ? 'flukedByMe' : 'notFlukedByMe'}
-        onclick=${() => fluke(entry.entry_id, state.user.user_id, dispatch)} src=${entry.image_url}></img>
-      ${entryFooter(entry, state, dispatch)}
+      ${ entryHeader(entry, state, dispatch) }
+        <img class=${ state.myFlukes.includes(entry.entry_id) ? 'flukedByMe' : 'notFlukedByMe' }
+        onclick=${ () => fluke(entry.entry_id, state.user.user_id, dispatch) } src=${ entry.image_url }></img>
+      ${ entryFooter(entry, state, dispatch) }
   </div>
-  `
+  `;
 }
 
-
-
 function entryHeader(entry, state, dispatch) {
-  var formattedDate = moment(entry.entry_created_at).format(' HH:mma, Do MMM')
+  var formattedDate = moment(entry.entry_created_at).format(' HH:mma, Do MMM');
   return yo`
     <div>
-        <h3 class='entry-info' onclick=${() => goToUser(state, dispatch, entry.user_id)}>
-        <span class='user-name'>${entry.username}</span> ${formattedDate}</h3>
+        <h3 class='entry-info' onclick=${ () => goToUser(state, dispatch, entry.user_id) }>
+        <span class='user-name'>${ entry.username }</span> ${ formattedDate }</h3>
     </div>
-  `
+  `;
 }
 
 function entryFooter(entry, state, dispatch) {
   return yo`
     <div class='image-footer'>
-      ${entry.flukes > 0
-        ? yo`<h3 class="flukeCount">${entry.flukes}
-        ${entry.flukes != 1  ? "flukes" : "fluke"}
-        </h3>`
-        : ""}
-      ${entry.comment_count > 0
-        ? yo`<h3 class="commentCount" onclick=${() => comments.showComments(entry, state, dispatch)}>
-        ${entry.comment_count}
-        ${entry.comment_count != 1
-          ? "comments"
-          :"comment"}</h3>`
-        : yo`
-        <h3 class="commentCount" onclick=${() => comments.showComments(entry, state, dispatch)}>
+      ${ entry.flukes > 0 ? yo`<h3 class="flukeCount">${ entry.flukes }
+        ${ entry.flukes != 1 ? "flukes" : "fluke" }
+        </h3>` : "" }
+      ${ entry.comment_count > 0 ? yo`<h3 class="commentCount" onclick=${ () => comments.showComments(entry, state, dispatch) }>
+        ${ entry.comment_count }
+        ${ entry.comment_count != 1 ? "comments" : "comment" }</h3>` : yo`
+        <h3 class="commentCount" onclick=${ () => comments.showComments(entry, state, dispatch) }>
           Add Comment
         </h3>
-        `}
-        ${state.entryForComments != entry.entry_id
-          ? ""
-          :
-          yo`
+        ` }
+        ${ state.entryForComments != entry.entry_id ? "" : yo`
           <div class="comments">
-          <h3 class="commentsShow" onclick=${() => comments.hideComments(dispatch)}>Hide Comments</h3>
-          ${comments.renderComments(entry.entry_id, state, dispatch)}
+          <h3 class="commentsShow" onclick=${ () => comments.hideComments(dispatch) }>Hide Comments</h3>
+          ${ comments.renderComments(entry.entry_id, state, dispatch) }
           </div>
-          `
-        }
+          ` }
     </div>
-  `
+  `;
 }
 
 function fluke(entry_id, user_id, dispatch) {
-  request
-  .post(url + 'entries/fluke')
-  .send({entry_id, user_id})
-  .end((err, res) => {
+  request.post(url + 'entries/fluke').send({ entry_id, user_id }).end((err, res) => {
     if (res.body.success) {
-      dispatch({type: 'TOGGLE_FLUKE', payload: res.body})
+      dispatch({ type: 'TOGGLE_FLUKE', payload: res.body });
     } else {
-      console.log("ERROR")
+      console.log("ERROR");
     }
-  })
+  });
 }
 
 function goToUser(state, dispatch, id) {
-  dispatch({type: "TOGGLE_LOADING"})
-  request
-    .get(`${url}entries/user/${id}`)
-    .end((err, res) => {
-      if (err) {
-        dispatch({type: "TOGGLE_LOADING"})
-      }
-      else {
-        var dType = "GET_TARGET_ENTRIES"
-        if (id == state.user.user_id) dType = "GET_MY_ENTRIES"
-        dispatch({type: dType, payload: res.body})
-        dispatch({type: "TOGGLE_LOADING"})
-      }
-    })
+  dispatch({ type: "TOGGLE_LOADING" });
+  request.get(`${ url }entries/user/${ id }`).end((err, res) => {
+    if (err) {
+      dispatch({ type: "TOGGLE_LOADING" });
+    } else {
+      var dType = "GET_TARGET_ENTRIES";
+      if (id == state.user.user_id) dType = "GET_MY_ENTRIES";
+      dispatch({ type: dType, payload: res.body });
+      dispatch({ type: "TOGGLE_LOADING" });
+    }
+  });
 }
 
-module.exports = renderEntries
+module.exports = renderEntries;
 
 },{"./comments":47,"./requestUrl":53,"moment":13,"superagent":34,"yo-yo":43}],53:[function(require,module,exports){
-var heroku = 'http://one-shot-api.herokuapp.com/api/v1/'
-var local = 'http://localhost:3000/api/v1/'
-var url = local
+var heroku = 'http://one-shot-api.herokuapp.com/api/v1/';
+var local = 'http://localhost:3000/api/v1/';
+var url = local;
 
-module.exports = url
+module.exports = url;
 
 },{}],54:[function(require,module,exports){
-const yo = require('yo-yo')
-const request = require('superagent')
+const yo = require('yo-yo');
+const request = require('superagent');
 
-var header = require ('./header').header
-const url = require('./requestUrl')
+var header = require('./header').header;
+const url = require('./requestUrl');
 
-module.exports = signup
+module.exports = signup;
 
-function signup (state, dispatch) {
+function signup(state, dispatch) {
   return yo`
     <div class='homediv'>
       <h1>Sign Up</h1>
@@ -11208,173 +11172,167 @@ function signup (state, dispatch) {
         <input id='password' type='text' placeholder='Choose password'/>
         <input id='rpt-password' type='text' placeholder='Confirm password'/>
         <input id='email' type='text' placeholder='Enter email'/>
-        ${state.authError ? yo`<h3>${state.authError}</h3>` : ""}
-        <button onclick=${handleSignup} class='signupBtn' type='submit'>Create Account</button>
-        <button class='loginBtn' onclick=${() => dispatch({type: "GO_TO_LOGIN"})}>Back to Login</button>
+        ${ state.authError ? yo`<h3>${ state.authError }</h3>` : "" }
+        <button onclick=${ handleSignup } class='signupBtn' type='submit'>Create Account</button>
+        <button class='loginBtn' onclick=${ () => dispatch({ type: "GO_TO_LOGIN" }) }>Back to Login</button>
       </form>
     </div>
-  `
+  `;
   function handleSignup(e) {
     // dispatch({type: "TOGGLE_LOADING"})
-    e.preventDefault()
-    var username = document.getElementById('username').value
-    var password = document.getElementById('password').value
-    var rptPassword = document.getElementById('rpt-password').value
-    var email = document.getElementById('email').value
-    if ( !(username && password && rptPassword && email)) {
-      dispatch({type: "AUTH_ERROR", payload: "Please complete all fields"})
+    e.preventDefault();
+    var username = document.getElementById('username').value;
+    var password = document.getElementById('password').value;
+    var rptPassword = document.getElementById('rpt-password').value;
+    var email = document.getElementById('email').value;
+    if (!(username && password && rptPassword && email)) {
+      dispatch({ type: "AUTH_ERROR", payload: "Please complete all fields" });
     } else if (password !== rptPassword) {
-      dispatch({type: "AUTH_ERROR", payload: "Passwords do not match"})
-    } else if (!email.includes('.') && !email.includes('@') ) {
-      dispatch({type: "AUTH_ERROR", payload: "Please enter a valid email address"})
+      dispatch({ type: "AUTH_ERROR", payload: "Passwords do not match" });
+    } else if (!email.includes('.') && !email.includes('@')) {
+      dispatch({ type: "AUTH_ERROR", payload: "Please enter a valid email address" });
     } else {
-        dispatch({type: "TOGGLE_LOADING"})
-        request
-          .post(url + 'users/signup')
-          .send({username, password, email})
-          .end( (err, response) => {
-            if (response.body.user_id === 0) {
-              dispatch({type: "AUTH_ERROR", payload: "Username already taken"})
-              return
-            }
-            request
-              .post(url + 'users/login')
-              .send({username, password})
-              .end((error, response) => {
-                if (error) {
-                  console.log(error, 'Error goes here')
-                } else {
-                  dispatch({type: 'RECEIVE_USER', payload: response.body.user})
-                  dispatch({type: "TOGGLE_LOADING"})
-                }
-              })
-          })
+      dispatch({ type: "TOGGLE_LOADING" });
+      request.post(url + 'users/signup').send({ username, password, email }).end((err, response) => {
+        if (response.body.user_id === 0) {
+          dispatch({ type: "AUTH_ERROR", payload: "Username already taken" });
+          return;
+        }
+        request.post(url + 'users/login').send({ username, password }).end((error, response) => {
+          if (error) {
+            console.log(error, 'Error goes here');
+          } else {
+            dispatch({ type: 'RECEIVE_USER', payload: response.body.user });
+            dispatch({ type: "TOGGLE_LOADING" });
+          }
+        });
+      });
     }
   }
 }
 
 },{"./header":49,"./requestUrl":53,"superagent":34,"yo-yo":43}],55:[function(require,module,exports){
-function userPageSyntax (count) {
+function userPageSyntax(count) {
   if (count === 1) {
-    return 'entry'
+    return 'entry';
   } else {
-    return 'entries'
+    return 'entries';
   }
 }
 
-module.exports = userPageSyntax
+module.exports = userPageSyntax;
 
 },{}],56:[function(require,module,exports){
-var yo = require('yo-yo')
-const header = require ('./header').header
-const footer = require ('./header').footer
-const renderEntries = require('./renderEntries')
-const url = require('./requestUrl')
-const userPageSyntax = require('./syntax')
+var yo = require('yo-yo');
+const header = require('./header').header;
+const footer = require('./header').footer;
+const renderEntries = require('./renderEntries');
+const url = require('./requestUrl');
+const userPageSyntax = require('./syntax');
 
-function target (state, dispatch) {
-  return yo `
+function target(state, dispatch) {
+  return yo`
   <div class='homediv'>
-    <p>${state.targetEntries[0].username} has made ${state.targetEntries.length} ${userPageSyntax(state.targetEntries.length)}.</p>
-    ${renderEntries(state, dispatch, state.targetEntries)}
+    <p>${ state.targetEntries[0].username } has made ${ state.targetEntries.length } ${ userPageSyntax(state.targetEntries.length) }.</p>
+    ${ renderEntries(state, dispatch, state.targetEntries) }
   </div>
-  `
+  `;
 }
 
-module.exports = target
+module.exports = target;
 
 },{"./header":49,"./renderEntries":52,"./requestUrl":53,"./syntax":55,"yo-yo":43}],57:[function(require,module,exports){
-var yo = require('yo-yo')
-const header = require ('./header').header
-const footer = require ('./header').footer
-const renderEntries = require('./renderEntries')
-const userPageSyntax = require('./syntax')
-const url = require('./requestUrl')
+var yo = require('yo-yo');
+const header = require('./header').header;
+const footer = require('./header').footer;
+const renderEntries = require('./renderEntries');
+const userPageSyntax = require('./syntax');
+const url = require('./requestUrl');
 
-function user (state, dispatch) {
-  return yo `
+function user(state, dispatch) {
+  return yo`
   <div class="homediv">
-    <p>${state.user.username} has made ${state.myEntries.length} ${userPageSyntax(state.myEntries.length)}.</p>
-    ${renderEntries(state, dispatch, state.myEntries)}
+    <p>${ state.user.username } has made ${ state.myEntries.length } ${ userPageSyntax(state.myEntries.length) }.</p>
+    ${ renderEntries(state, dispatch, state.myEntries) }
   </div>
-  `
+  `;
 }
 
-module.exports = user
+module.exports = user;
 
 },{"./header":49,"./renderEntries":52,"./requestUrl":53,"./syntax":55,"yo-yo":43}],58:[function(require,module,exports){
-const clone = require('clone')
-const flukeReducer = require('./components/flukeReduce')
+const clone = require('clone');
+const flukeReducer = require('./components/flukeReduce');
 
 module.exports = (state, action) => {
-  var newState = require('clone')(state)
-  const {payload, type} = action
+  var newState = require('clone')(state);
+  const { payload, type } = action;
   switch (type) {
     case 'TOGGLE_LOADING':
-      newState.isLoading = !newState.isLoading
-      return newState
+      newState.isLoading = !newState.isLoading;
+      return newState;
     case 'RECEIVE_USER':
-      newState.user = payload
-      newState.view = 'home'
-      return newState
+      newState.user = payload;
+      newState.view = 'home';
+      return newState;
     case 'RECEIVE_ENTRIES':
-      newState.entries = payload.entries
-      newState.myFlukes = payload.myFlukes
-      return newState
+      newState.entries = payload.entries;
+      newState.myFlukes = payload.myFlukes;
+      return newState;
     case 'GET_TARGET_ENTRIES':
-      newState.targetEntries = payload.user_entries
-      newState.view = 'target'
-      return newState
+      newState.targetEntries = payload.user_entries;
+      newState.view = 'target';
+      return newState;
     case 'GET_MY_ENTRIES':
-      newState.myEntries = payload.user_entries
-      newState.view = 'me'
-      return newState
+      newState.myEntries = payload.user_entries;
+      newState.view = 'me';
+      return newState;
     case 'GO_TO_HOME':
       newState.isLoading = false;
-      newState.view = 'home'
-      return newState
+      newState.view = 'home';
+      return newState;
     case 'GO_TO_LOGIN':
-      newState.view = 'login'
-      return newState
+      newState.view = 'login';
+      return newState;
     case 'GO_TO_SIGNUP':
-      newState.view = 'signup'
-      return newState
+      newState.view = 'signup';
+      return newState;
     case 'TOGGLE_FLUKE':
-      flukeReducer(newState, payload)
-      return newState
+      flukeReducer(newState, payload);
+      return newState;
     case 'AUTH_ERROR':
-      newState.authError = payload
-      return newState
+      newState.authError = payload;
+      return newState;
     case 'SHOW_COMMENTS':
-      newState.entryForComments = payload
-      newState.entryComments = null
-      return newState
+      newState.entryForComments = payload;
+      newState.entryComments = null;
+      return newState;
     case 'RECIEVE_COMMENTS':
-      newState.entryComments = payload.entry_comments
-      return newState
+      newState.entryComments = payload.entry_comments;
+      return newState;
     case 'HIDE_COMMENTS':
-      newState.entryForComments = null
-      newState.entryComments = []
-      return newState
+      newState.entryForComments = null;
+      newState.entryComments = [];
+      return newState;
     case 'POST_COMMENT':
       var commentObj = {
         comment: payload.comment,
         username: newState.user.username
-      }
-      incrementCommentCounts (payload.entry_id, newState)
-      newState.entryComments.unshift(commentObj)
-      return newState
+      };
+      incrementCommentCounts(payload.entry_id, newState);
+      newState.entryComments.unshift(commentObj);
+      return newState;
     case 'ADD_NEW_PHOTO':
-      var entry = constructEntry(payload, newState.user.username)
-      newState.entries.unshift(entry)
-      newState.myEntries.unshift(entry)
-      return newState
+      var entry = constructEntry(payload, newState.user.username);
+      newState.entries.unshift(entry);
+      newState.myEntries.unshift(entry);
+      return newState;
     default:
-      return newState
+      return newState;
   }
-}
+};
 
-function constructEntry({entry_id, image_url}, username) {
+function constructEntry({ entry_id, image_url }, username) {
   return {
     entry_id,
     image_url,
@@ -11382,42 +11340,42 @@ function constructEntry({entry_id, image_url}, username) {
     entry_created_at: null,
     flukes: 0,
     username
-  }
+  };
 }
 
-function incrementCommentCounts (entry_id, state) {
-  incrementCommentCount(entry_id, state.entries)
-  incrementCommentCount(entry_id, state.myEntries)
-  incrementCommentCount(entry_id, state.targetEntries)
+function incrementCommentCounts(entry_id, state) {
+  incrementCommentCount(entry_id, state.entries);
+  incrementCommentCount(entry_id, state.myEntries);
+  incrementCommentCount(entry_id, state.targetEntries);
 }
 
-function incrementCommentCount (entry_id, entries) {
-  var i = null
+function incrementCommentCount(entry_id, entries) {
+  var i = null;
   entries.forEach((entry, index) => {
-    if(entry.entry_id == entry_id) i = index
-  })
+    if (entry.entry_id == entry_id) i = index;
+  });
   if (i != null) {
-    entries[i].comment_count++
+    entries[i].comment_count++;
   }
 }
 
 },{"./components/flukeReduce":48,"clone":5}],59:[function(require,module,exports){
-var redux = require('redux')
-var morphdom = require('morphdom')
+var redux = require('redux');
+var morphdom = require('morphdom');
 
-var reducer = require('./reducer')
-var header = require('./components/header')
-var login = require('./components/login')
-var home = require('./components/home')
-var target = require('./components/target')
-var user = require('./components/user')
-var signup = require('./components/signup')
-var App = require('./components/app')
+var reducer = require('./reducer');
+var header = require('./components/header');
+var login = require('./components/login');
+var home = require('./components/home');
+var target = require('./components/target');
+var user = require('./components/user');
+var signup = require('./components/signup');
+var App = require('./components/app');
 
-var request = require('superagent')
+var request = require('superagent');
 
-var app = document.createElement('div')
-document.querySelector('main').appendChild(app)
+var app = document.createElement('div');
+document.querySelector('main').appendChild(app);
 
 var initialState = {
   title: 'flooki',
@@ -11430,34 +11388,33 @@ var initialState = {
   targetEntries: [],
   myFlukes: [],
   entryForComments: null,
-  entryComments : []
- }
+  entryComments: []
+};
 
-var store = redux.createStore(reducer, initialState)
-const {getState, dispatch, subscribe} = store
+var store = redux.createStore(reducer, initialState);
+const { getState, dispatch, subscribe } = store;
 subscribe(() => {
-  var view = render(getState(), dispatch)
-  morphdom(app, view)
-})
+  var view = render(getState(), dispatch);
+  morphdom(app, view);
+});
 
-function render (state, dispatch) {
-  switch(state.view) {
+function render(state, dispatch) {
+  switch (state.view) {
     case 'login':
-      return App(state, dispatch, login)
+      return App(state, dispatch, login);
     case 'signup':
-      return App(state, dispatch, signup)
+      return App(state, dispatch, signup);
     case 'home':
-      return App(state, dispatch, home)
+      return App(state, dispatch, home);
     case 'target':
-      return App(state, dispatch, target)
+      return App(state, dispatch, target);
     case 'me':
-      return App(state, dispatch, user)
+      return App(state, dispatch, user);
     default:
-      return App(state, dispatch, login)
+      return App(state, dispatch, login);
   }
-
 }
 
-store.dispatch({type: 'INIT'})
+store.dispatch({ type: 'INIT' });
 
 },{"./components/app":45,"./components/header":49,"./components/home":50,"./components/login":51,"./components/signup":54,"./components/target":56,"./components/user":57,"./reducer":58,"morphdom":14,"redux":22,"superagent":34}]},{},[59]);
