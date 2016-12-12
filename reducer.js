@@ -41,14 +41,22 @@ module.exports = (state, action) => {
       newState.authError = action.payload
       return newState
     case 'ADD_NEW_PHOTO':
-      console.log("newState", newState)
-      // newState.entries.unshift() // in prog
+      var entry = constructEntry(action.payload)
+      newState.entries.unshift(entry)
+      newState.myEntries.unshift(entry)
       return newState
     default:
       return newState
   }
 }
 
-// newState.entries = action.payload.entries
-// newState.myFlukes = action.payload.myFlukes
-// return newState
+function constructEntry({entry_id, image_url}, state) {
+  return {
+    entry_id,
+    image_url,
+    commentCount: 0,
+    entry_created_at: null,
+    flukes: 0,
+    username: state.user.username
+  }
+}
