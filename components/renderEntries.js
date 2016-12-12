@@ -20,7 +20,7 @@ function renderEntry(entry, state, dispatch) {
       ${entryHeader(entry, state, dispatch)}
         <img class=${state.myFlukes.includes(entry.entry_id) ? 'flukedByMe' : 'notFlukedByMe'}
         onclick=${() => fluke(entry.entry_id, state.user.user_id, dispatch)} src=${entry.image_url}></img>
-      ${entryFooter(entry)}
+      ${entryFooter(entry, state, dispatch)}
   </div>
   `
 }
@@ -28,7 +28,6 @@ function renderEntry(entry, state, dispatch) {
 
 
 function entryHeader(entry, state, dispatch) {
-  console.log({entry});
   var formattedDate = moment(entry.entry_created_at).format('HH:mma, MMM Do')
   return yo`
     <div class='image-header'>
@@ -37,7 +36,7 @@ function entryHeader(entry, state, dispatch) {
   `
 }
 
-function entryFooter(entry) {
+function entryFooter(entry, state, dispatch) {
   return yo`
     <div class='image-footer'>
       ${entry.flukes > 0
@@ -46,13 +45,42 @@ function entryFooter(entry) {
         </h3>`
         : ""}
       ${entry.comment_count > 0
-        ? yo`<h3 class="commentCount">${entry.comment_count} comments</h3>`
+        ? yo`<h3 class="commentCount">${entry.comment_count} ${entry.comment_count != 1
+          ? "comments"
+          :"comment"}</h3>`
         : ''}
+        ${state.entryForComments != entry.entry_id
+          ? yo`<h4 class="commentsShow" onclick=${() => showComments(entry, state, dispatch)}>View / add comment</h4>`
+          :
+          yo`
+          <div class="comments">
+          ${renderComments(entry.entry_id, state, dispatch)}
+          <h4 class="commentsShow" onclick=${() => hideComments(dispatch)}>Hide Comments</h4>
+          </div>
+          `
+        }
     </div>
   `
 }
 
+function renderComments(entry_id, state, dispatch) {
+  console.log("memes");
+}
 
+function hideComments(dispatch) {
+  dispatch({type: "HIDE_COMMENTS"})
+}
+
+function showComments(entry, state, dispatch) {
+  console.log("show comments");
+  dispatch({type: "SHOW_COMMENTS", payload: entry.entry_id})
+  request
+    .get(`${url}entries/comments/${entry.entry_id}`)
+    .end((err, res) => {
+      console.log({res});
+      dispatch({type: 'RECIEVE_COMMENTS', payload: res.body})
+    })
+}
 
 function fluke(entry_id, user_id, dispatch) {
   request
