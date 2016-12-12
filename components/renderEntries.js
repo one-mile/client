@@ -2,6 +2,7 @@ const yo = require('yo-yo')
 const request = require('superagent')
 const moment = require('moment')
 const url = require('./requestUrl')
+const comments = require('./comments')
 
 
 function renderEntries (state, dispatch, entries) {
@@ -28,10 +29,12 @@ function renderEntry(entry, state, dispatch) {
 
 
 function entryHeader(entry, state, dispatch) {
-  var formattedDate = moment(entry.entry_created_at).format('HH:mma, MMM Do')
+  // HH:mma, MMM Do
+  var formattedDate = moment(entry.entry_created_at).format(' HH:mma, Do MMM')
   return yo`
-    <div class='image-header'>
-        <h3 class='entry-info' onclick=${() => goToUser(state, dispatch, entry.user_id)}>posted by <span class='user-name'>${entry.username}</span> at ${formattedDate}</h3>
+    <div>
+        <h3 class='entry-info' onclick=${() => goToUser(state, dispatch, entry.user_id)}>
+        <span class='user-name'>${entry.username}</span> ${formattedDate}</h3>
     </div>
   `
 }
@@ -45,41 +48,28 @@ function entryFooter(entry, state, dispatch) {
         </h3>`
         : ""}
       ${entry.comment_count > 0
-        ? yo`<h3 class="commentCount">${entry.comment_count} ${entry.comment_count != 1
+        ? yo`<h3 class="commentCount" onclick=${() => comments.showComments(entry, state, dispatch)}>
+        ${entry.comment_count}
+        ${entry.comment_count != 1
           ? "comments"
           :"comment"}</h3>`
-        : ''}
+        : yo`
+        <h3 class="commentCount" onclick=${() => comments.showComments(entry, state, dispatch)}>
+          Add Comment
+        </h3>
+        `}
         ${state.entryForComments != entry.entry_id
-          ? yo`<h4 class="commentsShow" onclick=${() => showComments(entry, state, dispatch)}>View / add comment</h4>`
+          ? ""
           :
           yo`
           <div class="comments">
-          ${renderComments(entry.entry_id, state, dispatch)}
-          <h4 class="commentsShow" onclick=${() => hideComments(dispatch)}>Hide Comments</h4>
+          <h3 class="commentsShow" onclick=${() => comments.hideComments(dispatch)}>Hide Comments</h3>
+          ${comments.renderComments(entry.entry_id, state, dispatch)}
           </div>
           `
         }
     </div>
   `
-}
-
-function renderComments(entry_id, state, dispatch) {
-  console.log("memes");
-}
-
-function hideComments(dispatch) {
-  dispatch({type: "HIDE_COMMENTS"})
-}
-
-function showComments(entry, state, dispatch) {
-  console.log("show comments");
-  dispatch({type: "SHOW_COMMENTS", payload: entry.entry_id})
-  request
-    .get(`${url}entries/comments/${entry.entry_id}`)
-    .end((err, res) => {
-      console.log({res});
-      dispatch({type: 'RECIEVE_COMMENTS', payload: res.body})
-    })
 }
 
 function fluke(entry_id, user_id, dispatch) {

@@ -53,6 +53,13 @@ module.exports = (state, action) => {
       newState.entryForComments = []
       newState.entryComments = null
       return newState
+    case 'POST_COMMENT':
+      var commentObj = {
+        comment: payload,
+        username: newState.user.username
+      }
+      newState.entryComments.unshift(commentObj)
+      return newState
     default:
       return newState
   }
