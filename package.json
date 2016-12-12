@@ -7,7 +7,7 @@
     "start": "budo src -d --serve bundle.js --live",
     "build": "browserify src -o build/bundle.js",
     "clean": "rm -rf build/*",
-    "dist": "bash -c 'cp *.{html,css} build'",
+    "dist": "bash -c 'cp *.{html,css,js} build'",
     "test": "browserify test/index.js | node | tap-spec",
     "push": "gh-pages -d build",
     "deploy": "npm run clean && npm run build && npm run dist && npm run push"
