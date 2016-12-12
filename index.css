@@ -1,4 +1,4 @@
-/*body {
+body {
   padding: 0;
   margin: 0;
 }
@@ -60,18 +60,21 @@ input {
 }
 
 .pageHeader {
-
   height: 10%;
   top:0;
   position: fixed;
 }
 
 .pageHeader h1 {
-  text-align: center;
+  color: white;
   display: inline-block;
+  font-family: 'Josefin Slab', serif;
+  font-size: 36px;
+  text-align: center;
+  opacity: 0.6;
 }
 
-.pageHeader, .pageFooter, .image-header {
+.pageHeader, .pageFooter, .image-header { /* .pageFooter, */
   width: 100%;
   background-color: #940004a;
   background: rgba(248,80,50,1);
@@ -100,14 +103,17 @@ input {
 #hideInput {
   width: 0;
   height: 0;
+}
 
 /*This makes the file input button less ugly*/
+
 .captureBtn {
   position: relative;
   overflow: hidden;
   float: left;
   clear: left;
 }
+
 .captureBtn input[type="file"] {
   display: block;
   position: absolute;
@@ -117,7 +123,7 @@ input {
   font-size: 100px;
   filter: alpha(opacity=0);
   cursor: pointer;
-}*/
+}
 
 .remaining, .taken {
   border-radius: 50%;
@@ -142,4 +148,9 @@ input {
 
 .notFlukedByMe {
   box-shadow: 10px 10px 5px grey;
-}*/
+}
+
+i {
+  font-size: 48px;
+  color: white;
+}
