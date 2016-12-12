@@ -4,14 +4,17 @@
   "description": "Flooki (formerly one-shot)",
   "main": "index.js",
   "scripts": {
-    "start": "budo src -d --serve bundle.js --live",
-    "build": "browserify src -o build/bundle.js",
-    "clean": "rm -rf build/*",
-    "dist": "bash -c 'cp *.{html,css,js} build'",
-    "test": "browserify test/index.js | node | tap-spec",
-    "push": "gh-pages -d build",
-    "deploy": "npm run clean && npm run build && npm run dist && npm run push"
-  },
+      "start": "budo src -d --serve bundle.js --live",
+      "build": "browserify src -o bundle.js",
+      "test": "browserify test/index.js | node | tap-spec",
+      "dist": "mkdir -p dist && bash -c 'cp *.{js,html,css} dist'",
+      "icons": "bash -c 'cp -r icons dist'",
+      "push": "gh-pages -d dist",
+      "deploy": "npm run build && npm run dist && npm run icons && npm run push"
+    },
+    "browserify": {
+      "transform": ["babelify"]
+    },
   "repository": {
     "type": "git",
     "url": "https://github.com/one-mile/client"
@@ -23,6 +26,9 @@
   },
   "homepage": "https://github.com/one-mile/client",
   "dependencies": {
+    "babelify": "^7.2.0",
+    "babel-preset-es2015": "^6.5.0",
+    "babel-preset-react": "^6.5.0",
     "browserify": "^13.1.1",
     "budo": "^9.2.2",
     "clone": "^2.1.0",
