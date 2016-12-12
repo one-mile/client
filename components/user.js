@@ -6,9 +6,10 @@ const renderEntries = require('./renderEntries')
 const url = require('./requestUrl')
 
 function user (state, dispatch) {
+  // console.log({state})
   return yo `
   <div class="homediv">
-    <p>hello I am me</p>
+    <p>User page for ${state.user.username}, who has made ${state.myEntries.length} posts.</p>
     ${renderEntries(state, dispatch, state.myEntries)}
   </div>
   `

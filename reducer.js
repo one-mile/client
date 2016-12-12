@@ -19,6 +19,7 @@ module.exports = (state, action) => {
       newState.myFlukes = action.payload.myFlukes
       return newState
     case 'GET_TARGET_ENTRIES':
+      console.log("action.payload", action.payload);
       newState.targetEntries = action.payload.user_entries
       newState.view = 'target'
       return newState
