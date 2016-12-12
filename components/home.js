@@ -2,7 +2,6 @@ const yo = require('yo-yo')
 const request = require('superagent')
 const onload = require('on-load')
 
-const accessCamera = require ('./camera')
 const header = require ('./header').header
 const footer = require ('./header').footer
 const url = require('./requestUrl')

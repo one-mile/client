@@ -45,14 +45,86 @@ input {
 }
 
 .login, .homediv {
-  margin-top: 15vh;
+  margin-top: 15vh;/*This makes the file input button less ugly*/
+112
+​
+113
+.captureBtn {
+114
+  position: relative;
+115
+  overflow: hidden;
+116
+  float: left;
+117
+  clear: left;
+118
+}
+119
+​
+120
+.captureBtn input[type="file"] {
+121
+  display: block;
+122
+  position: absolute;
+123
+  top: 0;
+124
+  right: 0;
+125
+  opacity: 0;
+126
+  font-size: 100px;
+127
+  filter: alpha(opacity=0);
+128
+  cursor: pointer;
+129
+}
   margin-bottom: 15vh;
 }
 
 .entries h3 {
   text-align: center;
 }
-
+/*This makes the file input button less ugly*/
+112
+​
+113
+.captureBtn {
+114
+  position: relative;
+115
+  overflow: hidden;
+116
+  float: left;
+117
+  clear: left;
+118
+}
+119
+​
+120
+.captureBtn input[type="file"] {
+121
+  display: block;
+122
+  position: absolute;
+123
+  top: 0;
+124
+  right: 0;
+125
+  opacity: 0;
+126
+  font-size: 100px;
+127
+  filter: alpha(opacity=0);
+128
+  cursor: pointer;
+129
+}
 .pageFooter {
   height: 8%;
   bottom:0;
@@ -60,23 +132,27 @@ input {
 }
 
 .pageHeader {
-
   height: 10%;
   top:0;
   position: fixed;
 }
 
+
 .pageHeader h1 {
-  text-align: center;
+  color: white;
   display: inline-block;
+  font-family: 'Josefin Slab', serif;
+  font-size: 36px;
+  text-align: center;
+  opacity: 0.6;
 }
 
-.pageHeader, .pageFooter, .image-header {
+.pageHeader, .pageFooter, .image-header { /* .pageFooter, */
   width: 100%;
   background-color: #940004a;
   background: rgba(248,80,50,1);
   background: -moz-linear-gradient(left, rgba(248,80,50,1) 0%, rgba(80,68,74,1) 0%, rgba(148,0,74,1) 100%);
-  background: -webkit-gradient(left top, right top, color-stop(0%, rgba(248,80,50,1)), color-stop(0%, rgba(80,68,74,1)), color-stop(100%, rgba(148,0,74,1)));
+  background: -webkit-gradient(left top, right top, color-stop(0%, rgba(248,80,50,1)), color>>>>>>> master-stop(0%, rgba(80,68,74,1)), color-stop(100%, rgba(148,0,74,1)));
   background: -webkit-linear-gradient(left, rgba(248,80,50,1) 0%, rgba(80,68,74,1) 0%, rgba(148,0,74,1) 100%);
   background: -o-linear-gradient(left, rgba(248,80,50,1) 0%, rgba(80,68,74,1) 0%, rgba(148,0,74,1) 100%);
   background: -ms-linear-gradient(left, rgba(248,80,50,1) 0%, rgba(80,68,74,1) 0%, rgba(148,0,74,1) 100%);
@@ -100,7 +176,30 @@ input {
 #hideInput {
   width: 0;
   height: 0;
+
 }
+
+
+/*This makes the file input button less ugly*/
+
+.captureBtn {
+  position: relative;
+  overflow: hidden;
+  float: left;
+  clear: left;
+}
+
+.captureBtn input[type="file"] {
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  opacity: 0;
+  font-size: 100px;
+  filter: alpha(opacity=0);
+  cursor: pointer;
+}
+
 
 .remaining, .taken {
   border-radius: 50%;
@@ -126,3 +225,9 @@ input {
 .notFlukedByMe {
   box-shadow: 10px 10px 5px grey;
 }
+
+i {
+  font-size: 48px;
+  color: white;
+}
+

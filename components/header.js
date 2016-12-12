@@ -2,15 +2,20 @@ var yo = require('yo-yo')
 const accessCamera = require ('./camera')
 
 function header (state, dispatch) {
+  var headerName
+  if (state.view === 'me') {
+    headerName = state.user.username
+  } else if (state.view === 'target') {
+    headerName = state.targetEntries[0].username
+  }
   return yo `
     <div class="pageHeader">
-      <h1>${state.title}</h1>
+      <h1>f<span class='lookFlooki'>look</span>i</h1>
       ${state.user ? shotsRemaining(state) : ''}
+      <h4 class='pageUserName'>${headerName}</h4>
     </div>
   `
 }
-
-// ${refresh ? yo`<h1 onclick=${() => refresh(state, dispatch, true)}>Refresh</h1>` : ""}
 
 function goHome(dispatch) {
   dispatch({type: "GO_TO_HOME"})
@@ -20,21 +25,15 @@ function footer (state, dispatch) {
   if (state.user) {
     return yo `
     <div class="pageFooter">
-    <h1 class="homeButton" onclick=${() => goHome(dispatch)}>Go Home</h1>
-    <div onclick=${() => accessCamera(state, dispatch)} id="upload_widget_opener"> FLOOKI </div>
+      <i class='ion-ios-home-outline' id='homeButton' onclick=${() => goHome(dispatch)}></i>
+      <i class='ion-ios-circle-outline' id='cameraButton' onclick=${() => accessCamera(state, dispatch)} id="upload_widget_opener"></i>
+      <i class='ion-ios-person-outline' id='profileButton'></i>
     </div>
     `
   }
 }
 
-// function refreshBar (state, dispatch) {
-//   return yo`
-//
-//   `
-// }
-
 function shotsRemaining(state) {
-  // var shotsRemaining = 2
   return yo `
     <h1 class='shots-remaining'>
       ${shotsView(state.user.shotsRemaining)}
