@@ -11150,7 +11150,7 @@ module.exports = renderEntries;
 },{"./comments":47,"./requestUrl":53,"moment":13,"superagent":34,"yo-yo":43}],53:[function(require,module,exports){
 var heroku = 'http://one-shot-api.herokuapp.com/api/v1/';
 var local = 'http://localhost:3000/api/v1/';
-var url = local;
+var url = heroku;
 
 module.exports = url;
 
