@@ -27,7 +27,7 @@ function renderComments(entry_id, state, dispatch) {
       .send(obj)
       .end((err, res) => {
         if (err) console.log(err);
-        else dispatch({type: "POST_COMMENT", payload: comment})
+        else dispatch({type: "POST_COMMENT", payload: {comment, entry_id}})
       })
   }
 }

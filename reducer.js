@@ -48,14 +48,15 @@ module.exports = (state, action) => {
       newState.entryComments = payload.entry_comments
       return newState
     case 'HIDE_COMMENTS':
-      newState.entryForComments = []
-      newState.entryComments = null
+      newState.entryForComments = null
+      newState.entryComments = []
       return newState
     case 'POST_COMMENT':
       var commentObj = {
-        comment: payload,
+        comment: payload.comment,
         username: newState.user.username
       }
+      incrementCommentCounts (payload.entry_id, newState)
       newState.entryComments.unshift(commentObj)
       return newState
     case 'ADD_NEW_PHOTO':
@@ -76,5 +77,23 @@ function constructEntry({entry_id, image_url}, username) {
     entry_created_at: null,
     flukes: 0,
     username
+  }
+}
+
+function incrementCommentCounts (entry_id, state) {
+  incrementCommentCount(entry_id, state.entries)
+  incrementCommentCount(entry_id, state.myEntries)
+  incrementCommentCount(entry_id, state.targetEntries)
+}
+
+function incrementCommentCount (entry_id, entries) {
+  var i = null
+  entries.forEach((entry, index) => {
+    console.log(entry.entry_id);
+    if(entry.entry_id == entry_id) i = index
+
+  })
+  if (i != null) {
+    entries[i].comment_count++
   }
 }
