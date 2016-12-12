@@ -24,7 +24,9 @@ var initialState = {
   entries: [],
   myEntries: [],
   targetEntries: [],
-  myFlukes: []
+  myFlukes: [],
+  entryForComments: null,
+  entryComments : []
  }
 
 var store = redux.createStore(reducer, initialState)
