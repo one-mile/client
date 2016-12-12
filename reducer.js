@@ -5,8 +5,6 @@ module.exports = (state, action) => {
   var newState = require('clone')(state)
 
   switch (action.type) {
-    case 'INIT':
-      return newState
     case 'TOGGLE_LOADING':
       newState.isLoading = !newState.isLoading
       return newState
@@ -42,7 +40,15 @@ module.exports = (state, action) => {
     case 'AUTH_ERROR':
       newState.authError = action.payload
       return newState
+    case 'ADD_NEW_PHOTO':
+      // newState.entries.push() // in prog
+      console.log("newState", newState)
+      return newState
     default:
       return newState
   }
 }
+
+// newState.entries = action.payload.entries
+// newState.myFlukes = action.payload.myFlukes
+// return newState

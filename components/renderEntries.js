@@ -28,7 +28,7 @@ function renderEntry(entry, state, dispatch) {
 
 
 function entryHeader(entry, state, dispatch) {
-  console.log({entry});
+  // console.log({entry});
   var formattedDate = moment(entry.entry_created_at).format('HH:mma, MMM Do')
   return yo`
     <div class='image-header'>
