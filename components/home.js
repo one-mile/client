@@ -11,7 +11,6 @@ const renderEntries = require('./renderEntries')
 function home (state, dispatch) {
   return yo `
   <div class="homediv">
-    ${accessCamera(state)}
     ${state.isLoading ? yo`<p>loading</p>` : renderEntries(state, dispatch, state.entries)}
     ${getEntries(state, dispatch)}
     <button onclick=${()=>{getEntries(state, dispatch, true)}}>click me man</button>

@@ -1,4 +1,5 @@
 var yo = require('yo-yo')
+const accessCamera = require ('./camera')
 
 function header (state, dispatch) {
   return yo `
@@ -20,6 +21,7 @@ function footer (state, dispatch) {
     return yo `
     <div class="pageFooter">
     <h1 class="homeButton" onclick=${() => goHome(dispatch)}>Go Home</h1>
+    <div onclick=${() => accessCamera(state, dispatch)} id="upload_widget_opener"> FLOOKI </div>
     </div>
     `
   }
