@@ -38,11 +38,13 @@ function fluke(entry_id, user_id, dispatch) {
 }
 
 function entryHeader(entry, state, dispatch) {
+  console.log({entry});
   var formattedDate = moment(entry.entry_created_at).format('HH:mma, MMM Do')
   return yo`
     <div class='image-header'>
         <h3 class='entry-info' onclick=${() => goToUser(state, dispatch, entry.user_id)}>posted by <span class='user-name'>${entry.username}</span> at ${formattedDate}</h3>
         <h3>flukes: ${entry.flukes}</h3>
+        <h4>comments: ${entry.comment_count}</h4>
     </div>
   `
 }

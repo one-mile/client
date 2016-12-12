@@ -32,7 +32,7 @@ function signup (state, dispatch) {
       dispatch({type: "AUTH_ERROR", payload: "Please complete all fields"})
     } else if (password !== rptPassword) {
       dispatch({type: "AUTH_ERROR", payload: "Passwords do not match"})
-    } else if (!password.includes('.') && !password.includes('@') ) {
+    } else if (!email.includes('.') && !email.includes('@') ) {
       dispatch({type: "AUTH_ERROR", payload: "Please enter a valid email address"})
     } else {
         dispatch({type: "TOGGLE_LOADING"})
