@@ -4,7 +4,7 @@
   "description": "Flooki (formerly one-shot)",
   "main": "index.js",
   "scripts": {
-    "start": "budo . -d --serve bundle.js --live",
+    "start": "budo src -d --serve bundle.js --live",
     "build": "browserify src -o build/bundle.js",
     "clean": "rm -rf build/*",
     "dist": "bash -c 'cp *.{html,css} build'",
