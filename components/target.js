@@ -3,12 +3,12 @@ const header = require ('./header').header
 const footer = require ('./header').footer
 const renderEntries = require('./renderEntries')
 const url = require('./requestUrl')
+const userPageSyntax = require('./syntax')
 
 function target (state, dispatch) {
-  console.log({state})
   return yo `
   <div class='homediv'>
-    <p>User page for user with ID of ${state.targetEntries[0].user_id}, who has made ${state.targetEntries.length} posts.</p>
+    <p>${state.targetEntries[0].username} has made ${state.targetEntries.length} ${userPageSyntax(state.targetEntries.length)}.</p>
     ${renderEntries(state, dispatch, state.targetEntries)}
   </div>
   `
