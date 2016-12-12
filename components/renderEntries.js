@@ -20,6 +20,7 @@ function renderEntry(entry, state, dispatch) {
       ${entryHeader(entry, state, dispatch)}
         <img class=${state.myFlukes.includes(entry.entry_id) ? 'flukedByMe' : 'notFlukedByMe'}
         onclick=${() => fluke(entry.entry_id, state.user.user_id, dispatch)} src=${entry.image_url}></img>
+      ${entryFooter(entry)}
   </div>
   `
 }
@@ -41,8 +42,16 @@ function entryHeader(entry, state, dispatch) {
   var formattedDate = moment(entry.entry_created_at).format('HH:mma, MMM Do')
   return yo`
     <div class='image-header'>
-        <h3 class='entry-info' onclick=${() => goToUser(state, dispatch, entry.user_id)}>posted by <span class='user-name'>${entry.username}</span> at ${formattedDate}</h3>
-        <h3>flukes: ${entry.flukes}</h3>
+        <h3 class='entry-info' onclick=${() => goToUser(state, dispatch, entry.user_id)}>posted by <span class='user-name'>${entry.username}</span>
+    </div>
+  `
+}
+
+function entryFooter(entry) {
+  return yo`
+    <div>
+      ${formattedDate}</h3>
+      <h3>flukes: ${entry.flukes}</h3>
     </div>
   `
 }
