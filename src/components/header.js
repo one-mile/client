@@ -11,8 +11,10 @@ function header (state, dispatch) {
   return yo `
     <div class="pageHeader">
       <h1>f<span class='lookFlooki'>look</span>i</h1>
+      <hr>
       ${state.user ? shotsRemaining(state) : ''}
       <h4 class='pageUserName'>${headerName}</h4>
+      x
     </div>
   `
 }
@@ -26,7 +28,7 @@ function footer (state, dispatch) {
     return yo `
     <div class="pageFooter">
       <i class='ion-ios-home-outline' id='homeButton' onclick=${() => goHome(dispatch)}></i>
-      <i class='ion-ios-circle-outline' id='cameraButton' onclick=${() => accessCamera(state, dispatch)} id="upload_widget_opener"></i>
+      <i class='ion-ios-circle-outline' onclick=${() => accessCamera(state, dispatch)} id="upload_widget_opener"></i>
       <i class='ion-ios-person-outline' id='profileButton'></i>
     </div>
     `

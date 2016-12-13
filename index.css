@@ -64,14 +64,13 @@ input {
   position: fixed;
 }
 
-
 .pageHeader h1 {
   color: white;
   display: inline-block;
   font-family: 'Josefin Slab', serif;
   font-size: 36px;
   text-align: center;
-  opacity: 0.6;
+  opacity: 0.8;
 }
 
 .pageHeader, .pageFooter, .image-header { /* .pageFooter, */
@@ -131,6 +130,19 @@ input {
   box-shadow: 10px 10px 5px grey;
 }
 
+#homeButton {
+  text-align: left;
+}
+
+
+#cameraButton {
+  text-align: center;
+}
+
+
+#profileButton {
+  text-align: right;
+}
 i {
   font-size: 48px;
   color: white;
