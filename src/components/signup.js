@@ -8,16 +8,16 @@ module.exports = signup
 
 function signup (state, dispatch) {
   return yo`
-    <div class='homediv'>
-      <h1>Sign Up</h1>
+    <div class='signup'>
       <form class='signup'>
-        <input id='username' type='text' placeholder='Choose username'/>
-        <input id='password' type='password' placeholder='Choose password'/>
-        <input id='rpt-password' type='password' placeholder='Confirm password'/>
-        <input id='email' type='text' placeholder='Enter email'/>
+        <input id='username' type='text' placeholder='choose username'/>
+        <input id='password' type='password' placeholder='choose password'/>
+        <input id='rpt-password' type='password' placeholder='confirm password'/>
+        <input id='email' type='text' placeholder='enter email'/>
         ${state.authError ? yo`<h3>${state.authError}</h3>` : ""}
-        <button onclick=${handleSignup} class='signupBtn' type='submit'>Create Account</button>
-        <button class='loginBtn' onclick=${() => dispatch({type: "GO_TO_LOGIN"})}>Back to Login</button>
+        <button onclick=${handleSignup} class='createBtn' type='submit'>Create Account</button>
+        <br>
+        <button class='backBtn' onclick=${() => dispatch({type: "GO_TO_LOGIN"})}>Back to Login</button>
       </form>
     </div>
   `

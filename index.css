@@ -1,10 +1,15 @@
+main {
+  font-family: 'Raleway', sans-serif;
+  font-size: .7em;
+  }
+
 body {
   padding: 0;
   margin: 0;
 }
 
 h1 {
-  text-align: center;
+  text-align: cenfont-family: 'Raleway', sans-serif;ter;
 }
 
 img {
@@ -25,14 +30,14 @@ input {
   box-sizing: border-box;
 }
 
-div .login {
+div .login, .signup {
   text-align: center;
   margin-top: 50%;
 }
 
-#username, #password {
+#username, #password, #rpt-password, #email {
   font-family: 'Raleway', sans-serif;
-  font-size: 25px;
+  font-size: 20px;
   box-sizing: border-box;
   margin: 1%;
   border: solid #94004a 1px;
@@ -41,7 +46,7 @@ div .login {
 
 }
 
-.loginBtn {
+.loginBtn, .createBtn {
   font-family: 'Raleway', sans-serif;
   width:50%;
   padding: 12px 20px;
@@ -51,7 +56,7 @@ div .login {
   background-color: white;
 }
 
-.signupBtn {
+.signupBtn, .backBtn {
   font-family: 'Raleway', sans-serif;
   width:40%;
   margin-top: 54%;
@@ -59,6 +64,10 @@ div .login {
   border: solid #94004a 1px;
   border-radius: 15px;
   background-color: white;
+}
+
+.backBtn {
+  margin-top: 25%;
 }
 
 .entries h3 {
@@ -163,4 +172,22 @@ i {
 
 input:-webkit-autofill {
     -webkit-box-shadow: 0 0 0px 1000px white inset;
+}
+
+::-webkit-input-placeholder {
+   color: #bca8af;
+   font-size: 20px;
+   font-family: 'Rajdhani', sans-serif;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+   color: #bca8af;
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+   color: #bca8af;
+}
+
+:-ms-input-placeholder {
+   color: #bca8af;
 }
