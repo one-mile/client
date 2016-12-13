@@ -13,7 +13,8 @@ function header (state, dispatch, refresh) {
       ${refresh != null
         ? yo`<h1 onclick=${() => refresh(state, dispatch, true)}>f<span class='lookFlooki'>look</span>i
         </h1>`
-        : ""
+        : yo`<h1>f<span class='lookFlooki'>look</span>i
+        </h1>`
       }
       ${state.user ? shotsRemaining(state) : ''}
       ${headerName
