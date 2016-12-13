@@ -51,6 +51,9 @@ function shotsView(shotsRemaining) {
   return shotsView
 }
 
+// var btnText = document.querySelector('select_file')
+// if (btnText) btnText.innerHTML = 'test'
+
 module.exports = {
   header,
   footer

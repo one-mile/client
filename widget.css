@@ -1,8 +1,18 @@
  /*Mobile-first*/
 
-#cloudinary-widget {
-  max-width: 100%;
-  min-width: 100%;
+/*#cloudinary-widget {
+  max-width: 80%;
+  min-width: 80%;
+}*/
+
+
+
+.upload_button_holder input[type=file]{ // doesn't work
+  color: purple;
+  background-color: red;
 }
 
-/*Desktop*/
+.button .capture_camera { // doesn't work
+  color: purple;
+  background-color: red;
+}
