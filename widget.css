@@ -1,11 +1,18 @@
  /*Mobile-first*/
 
-#cloudinary-widget {
-  max-width: 100%;
-  min-width: 100%;
+/*#cloudinary-widget {
+  max-width: 80%;
+  min-width: 80%;
+}*/
+
+
+
+.upload_button_holder input[type=file]{ // doesn't work
+  color: purple;
+  background-color: red;
 }
 
-/*Desktop*/
-
-
-/*#cloudinary-widget > div.panel.local.active > div > div > div > a.button.select_file.select_single*/
+.button .capture_camera { // doesn't work
+  color: purple;
+  background-color: red;
+}
