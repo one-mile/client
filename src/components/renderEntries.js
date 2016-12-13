@@ -39,6 +39,10 @@ function entryHeader(entry, state, dispatch) {
 }
 
 function entryFooter(entry, state, dispatch) {
+  console.log('just now')
+  var justNow = moment()
+  console.log(justNow)
+  console.log(justNow._d);
   return yo`
     <div class='image-footer'>
       ${entry.flukes > 0
