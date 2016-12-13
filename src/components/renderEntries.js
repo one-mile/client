@@ -36,7 +36,10 @@ function entryHeader(entry, state, dispatch) {
   var formattedDate = moment(entry.entry_created_at).format(' HH:mma, Do MMM')
   return yo`
     <div>
-        <h3 class='entry-info' onclick=${() => goToUser(state, dispatch, entry.user_id, true)}>
+        <h3 class='entry-info' onclick=${() => {
+          // console.log(entry.entry_id, state.targetId)
+          goToUser(state, dispatch, entry.user_id, true)
+        }}>
         <span class='user-name'>${entry.username}</span> ${formattedDate}</h3>
     </div>
   `

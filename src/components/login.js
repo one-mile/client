@@ -17,6 +17,7 @@ function login (state, dispatch) {
       .post(url + 'users/login')
       .send({username, password})
       .end((error, response) => {
+        console.log({error, response});
         if (error) {
           console.log(error, 'Error goes here')
         } else {

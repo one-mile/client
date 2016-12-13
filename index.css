@@ -66,6 +66,14 @@ div .login, .signup {
   background-color: white;
 }
 
+.following h2 {
+  background-color: green;
+}
+
+.notFollowing h2{
+  background-color: red;
+}
+
 .backBtn {
   margin-top: 25%;
 }
@@ -168,6 +176,11 @@ div .login, .signup {
 i {
   font-size: 48px;
   color: white;
+}
+
+.entries {
+  margin-top: 12vh;
+  margin-bottom: 12vh;
 }
 
 input:-webkit-autofill {

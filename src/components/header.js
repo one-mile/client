@@ -1,7 +1,10 @@
 var yo = require('yo-yo')
 const accessCamera = require ('./camera')
+const request = require('superagent')
+const url = require('./requestUrl')
 
 function header (state, dispatch, refresh) {
+  // console.log("my following", state);
   var headerName
   if (state.view === 'me') {
     headerName = state.user.username
@@ -19,14 +22,39 @@ function header (state, dispatch, refresh) {
       ${headerName
         ?
         state.myFollowing.includes(state.targetId)
-          ? yo`<h1 class="following" onclick=${() => unFollowUser(state.targetId, state.user.id)}">${headerName}</h1>`
-          : yo`<h1 class="notFollowing" onclick=${() => followUser(state.targetId, state.user.id)}">${headerName}</h1>`
+          ? yo`<h2 class="following" onclick=${() => followHandler(state.targetId, state.user.user_id, state, dispatch)}">${headerName}</h2>`
+          : yo`<h2 class="notFollowing" onclick=${() => followHandler(state.targetId, state.user.user_id, state, dispatch)}">${headerName}</h2>`
         : ""
       }
     </div>
   `
+
 }
 
+function followHandler(followed_user_id, following_user_id, state, dispatch) {
+  var endpoint = 'new'
+  console.log("follow handler following", state);
+  if (state.myFollowing.includes(followed_user_id)) {
+    // console.log("I should delete");
+    endpoint = 'delete'
+  }
+  request
+    .post(`${url}entries/follows/${endpoint}`)
+    .send({followed_user_id, following_user_id})
+    .end((err, res) => {
+      if(err) console.log({err});
+      // console.log("user followed by user", followed_user_id, following_user_id);
+      var dtype = "UNFOLLOW_USER"
+      // console.log({res});
+      if(res.text === "success") {
+        if(endpoint === 'new') {
+          dtype = "FOLLOW_USER"
+        }
+        dispatch({type: dtype, payload: followed_user_id})
+      }
+    })
+
+}
 
 
 function goHome(dispatch) {
