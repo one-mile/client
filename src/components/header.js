@@ -1,7 +1,7 @@
 var yo = require('yo-yo')
 const accessCamera = require ('./camera')
 
-function header (state, dispatch) {
+function header (state, dispatch, refresh) {
   var headerName
   if (state.view === 'me') {
     headerName = state.user.username
@@ -10,7 +10,11 @@ function header (state, dispatch) {
   } else headerName = null
   return yo `
     <div class="pageHeader">
-      <h1>f<span class='lookFlooki'>look</span>i</h1>
+      ${refresh != null
+        ? yo`<h1 onclick=${() => refresh(state, dispatch, true)}>f<span class='lookFlooki'>look</span>i
+        </h1>`
+        : ""
+      }
       ${state.user ? shotsRemaining(state) : ''}
       ${headerName
         ?

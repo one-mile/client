@@ -12,6 +12,9 @@ var follows = require('./components/follows')
 var App = require('./components/app')
 
 var followRefresh = require('./components/refreshFunctions/followEntries')
+var homeRefresh = require('./components/refreshFunctions/homeEntries')
+var targetRefresh = require('./components/refreshFunctions/targetEntries')
+var userRefresh = require('./components/refreshFunctions/userEntries')
 
 var request = require('superagent')
 
@@ -49,13 +52,13 @@ function render (state, dispatch) {
     case 'signup':
       return App(state, dispatch, signup)
     case 'home':
-      return App(state, dispatch, home)
+      return App(state, dispatch, home, homeRefresh)
     case 'follows':
-      return App(state, dispatch, follows)
+      return App(state, dispatch, follows, followRefresh)
     case 'target':
-      return App(state, dispatch, target)
+      return App(state, dispatch, target, targetRefresh)
     case 'me':
-      return App(state, dispatch, user)
+      return App(state, dispatch, user, userRefresh)
     default:
       return App(state, dispatch, login)
   }

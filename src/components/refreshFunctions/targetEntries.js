@@ -3,6 +3,7 @@ const url = require('../requestUrl')
 
 function goToTarget(state, dispatch, id, boolean) {
   if (!state.isLoading && state.targetId == null || boolean) {
+    var id = id || state.targetId
     dispatch({type: "TOGGLE_LOADING"})
     request
       .get(`${url}entries/user/${id}`)
