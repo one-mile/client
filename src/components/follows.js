@@ -8,13 +8,10 @@ const followEntries = require('./refreshFunctions/followEntries')
 function follows (state, dispatch) {
   return yo `
   <div class="homediv">
-      "follows"
-      ${state.isLoading ? yo`<p>loading</p>` : renderEntries(state, dispatch, state.followEntries)}
+    ${state.isLoading ? yo`<p>loading</p>` : renderEntries(state, dispatch, state.followEntries)}
     ${followEntries(state, dispatch)}
   </div>
   `
 }
 
 module.exports = follows
-
-// <button onclick=${()=>{followEntries(state, dispatch, true)}}>get follows</button>

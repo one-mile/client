@@ -17,5 +17,3 @@ function user (state, dispatch) {
 }
 
 module.exports = user
-
-// <button onclick=${()=>{goToUser(state, dispatch, true)}}>get follows</button>

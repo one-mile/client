@@ -30,7 +30,7 @@ function login (state, dispatch) {
     <div>
     ${state.isLoading ? yo`<h3 class="loading">Loading...</h3>`
       : yo`<form class="login">
-      <h3>Login</h3>
+      <h3 class="loginTitle">Login</h3>
       <input id='username' type='text' placeholder='username'/>
       <input id='password' type='password' placeholder='password'/>
       <button onclick=${onSubmit} class='loginBtn' type='submit'>Log In</button>

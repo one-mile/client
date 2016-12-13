@@ -12,7 +12,6 @@ function getFollows (state, dispatch, bool) {
           else if (res.body.followed_entries.length == 0) {
             dispatch({type: 'RECIEVE_FOLLOW_ENTRIES', payload: null})
           } else {
-            console.log("follow entries");
             dispatch({type: 'RECIEVE_FOLLOW_ENTRIES', payload: res.body})
           }
         })
