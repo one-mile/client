@@ -3,20 +3,24 @@ main {
   font-size: .7em;
   }
 
+html {
+  /*background-color: blue;*/
+
+}
+
 body {
   padding: 0;
   margin: 0;
 }
 
-h1 {
-  text-align: cenfont-family: 'Raleway', sans-serif;ter;
-}
-
 img {
-  max-width: 90%;
+  position: relative;
+  width: 100%;
   display: block;
-  margin: auto;
-  margin-top: 0px;
+  border-radius: 5px;
+  left: 0
+  top: 0
+
 }
 
 input {
@@ -35,7 +39,7 @@ div .login, .signup {
   margin-top: 50%;
 }
 
-#username, #password, #rpt-password, #email {
+#username, #password, #rpt-password, #email  {
   font-family: 'Raleway', sans-serif;
   font-size: 20px;
   box-sizing: border-box;
@@ -43,7 +47,15 @@ div .login, .signup {
   border: solid #94004a 1px;
   border-radius: 15px;
   width: 70%;
+}
 
+#commentField {
+  font-family: 'Raleway', sans-serif;
+  font-size: 1px;
+  box-sizing: border-box;
+  border: solid #94004a 1px;
+  border-radius: 15px;
+  width: 70%;
 }
 
 .loginBtn, .createBtn {
@@ -70,10 +82,6 @@ div .login, .signup {
   margin-top: 25%;
 }
 
-.entries h3 {
-  text-align: center;
-}
-
 .pageFooter {
   height: 8%;
   bottom:0;
@@ -81,50 +89,58 @@ div .login, .signup {
 }
 
 .pageHeader {
-  height: 10%;
-  top:0;
-  position: fixed;
-}
-
-.pageHeader h1 {
   color: white;
   display: inline-block;
   font-family: 'Josefin Slab', serif;
   font-size: 36px;
   text-align: center;
   opacity: 0.8;
+  z-index: 1;
+  height: 10%;
+  top:0;
+  position: fixed;
 }
 
 .pageHeader, .pageFooter, .image-header { /* .pageFooter, */
   width: 100%;
-  background-color: #940004a;
-  background: rgba(248,80,50,1);
-  background: -moz-linear-gradient(left, rgba(248,80,50,1) 0%, rgba(80,68,74,1) 0%, rgba(148,0,74,1) 100%);
-  background: -webkit-gradient(left top, right top, color-stop(0%, rgba(248,80,50,1)), color>>>>>>> master-stop(0%, rgba(80,68,74,1)), color-stop(100%, rgba(148,0,74,1)));
-  background: -webkit-linear-gradient(left, rgba(248,80,50,1) 0%, rgba(80,68,74,1) 0%, rgba(148,0,74,1) 100%);
-  background: -o-linear-gradient(left, rgba(248,80,50,1) 0%, rgba(80,68,74,1) 0%, rgba(148,0,74,1) 100%);
-  background: -ms-linear-gradient(left, rgba(248,80,50,1) 0%, rgba(80,68,74,1) 0%, rgba(148,0,74,1) 100%);
-  background: linear-gradient(to right, rgba(248,80,50,1) 0%, rgba(80,68,74,1) 0%, rgba(148,0,74,1) 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f85032', endColorstr='#94004a', GradientType=1 );
+  background: rgba(255,255,255,0.4);
+  z-index: 1;
+  position: fixed;
+  /*-webkit-filter: blur(3px);*/
 }
 
+.image-footer {
+
+  text-align: center;
+}
+
+.commentCount, .commentsShow, .flukeCount {
+  color: #554b4b;
+  font-weight: lighter;
+}
+#user-name {
+  text-align: left;
+  display: inline-block;
+  width: 40%;
+}
+
+#entry-date {
+  text-align: right;
+  display: inline-block;
+  width: 40%;
+}
+
+
+
+/*
 .image-header{
   margin-top: 7%;
   margin-bottom: 12%;
-}
-
-.entry-info {
-  font-style: italic;
-}
-
-.user-name {
-  font-style: normal;
-}
+}*/
 
 #hideInput {
   width: 0;
   height: 0;
-
 }
 
 .remaining, .taken {
@@ -144,12 +160,17 @@ div .login, .signup {
   background-color: grey;
 }
 
-.flukedByMe {
-  box-shadow: 0 0 20px 5px purple;
+#f {
+  z-index: 100;
+  left: 4%;
+  top: 20%;
 }
 
-.notFlukedByMe {
-  box-shadow: 10px 10px 5px grey;
+
+div .entry {
+  width: 80%;
+  margin: 0 auto;
+  z-index: 0;
 }
 
 #homeButton {

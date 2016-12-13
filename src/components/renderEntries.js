@@ -25,6 +25,7 @@ function renderEntry(entry, state, dispatch) {
       ${entryHeader(entry, state, dispatch)}
         <img class=${state.myFlukes.includes(entry.entry_id) ? 'flukedByMe' : 'notFlukedByMe'}
         onclick=${() => fluke(entry.entry_id, state.user.user_id, dispatch)} src=${entry.image_url}></img>
+      <h2 id='f'>  ${state.myFlukes.includes(entry.entry_id) ? 'f' : ''}</h2>
       ${entryFooter(entry, state, dispatch)}
   </div>
   `
@@ -37,7 +38,7 @@ function entryHeader(entry, state, dispatch) {
   return yo`
     <div>
         <h3 class='entry-info' onclick=${() => goToUser(state, dispatch, entry.user_id, true)}>
-        <span class='user-name'>${entry.username}</span> ${formattedDate}</h3>
+        <span id='user-name'>${entry.username}</span></h3> <h4 id="entry-date">${formattedDate}</h4>
     </div>
   `
 }
