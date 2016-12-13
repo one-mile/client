@@ -6,7 +6,7 @@ const url = require('./requestUrl')
 //
 function accessCamera (state, dispatch) {
   if(state.user.shotsRemaining > 0) {
-    cloudinary.openUploadWidget({ cloud_name: 'toothandpail', upload_preset: 'fasiveib' },
+    cloudinary.openUploadWidget({ cloud_name: 'toothandpail', upload_preset: 'fasiveib', sources: ['camera'], default_source: 'local', multiple: false },
       function (err, result) {
         if (result) {
           request
