@@ -8,6 +8,7 @@ var home = require('./components/home')
 var target = require('./components/target')
 var user = require('./components/user')
 var signup = require('./components/signup')
+var follows = require('./components/follows')
 var App = require('./components/app')
 
 var request = require('superagent')
@@ -22,6 +23,8 @@ var initialState = {
   authError: null,
   isLoading: false,
   entries: [],
+  followEntries: [],
+  myFollowing: [],
   myEntries: [],
   targetEntries: [],
   myFlukes: [],
@@ -43,7 +46,11 @@ function render (state, dispatch) {
     case 'signup':
       return App(state, dispatch, signup)
     case 'home':
+      console.log("home view");
       return App(state, dispatch, home)
+    case 'follows':
+      console.log("follows view");
+      return App(state, dispatch, follows)
     case 'target':
       return App(state, dispatch, target)
     case 'me':

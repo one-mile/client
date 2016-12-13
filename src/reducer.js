@@ -9,12 +9,27 @@ module.exports = (state, action) => {
       newState.isLoading = !newState.isLoading
       return newState
     case 'RECEIVE_USER':
+      newState.isLoading = false
       newState.user = payload
-      newState.view = 'home'
+      newState.view = 'follows'
       return newState
     case 'RECEIVE_ENTRIES':
+      newState.isLoading = false
       newState.entries = payload.entries
       newState.myFlukes = payload.myFlukes
+      return newState
+    case 'RECIEVE_FOLLOW_ENTRIES':
+      console.log("recieve follows");
+      newState.isLoading = false
+      if (payload != null) {
+        newState.followEntries = payload.followed_entries
+        newState.myFollowing = payload.following_list
+      } else {
+        console.log("null");
+        newState.followEntries = null
+        newState.myFollowing = null
+      }
+
       return newState
     case 'GET_TARGET_ENTRIES':
       newState.targetEntries = payload.user_entries
@@ -25,6 +40,7 @@ module.exports = (state, action) => {
       newState.view = 'me'
       return newState
     case 'GO_TO_HOME':
+      console.log("going home");
       newState.isLoading = false;
       newState.view = 'home'
       return newState
@@ -33,6 +49,9 @@ module.exports = (state, action) => {
       return newState
     case 'GO_TO_SIGNUP':
       newState.view = 'signup'
+      return newState
+    case 'GO_TO_FOLLOWS':
+      newState.view = 'follows'
       return newState
     case 'TOGGLE_FLUKE':
       flukeReducer(newState, payload)
@@ -45,6 +64,8 @@ module.exports = (state, action) => {
       newState.entryComments = null
       return newState
     case 'RECIEVE_COMMENTS':
+      newState.view = 'home'
+      newState.isLoading = false
       newState.entryComments = payload.entry_comments
       return newState
     case 'HIDE_COMMENTS':

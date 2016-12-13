@@ -6,13 +6,17 @@ const comments = require('./comments')
 
 
 function renderEntries (state, dispatch, entries) {
-  return yo `
-    <div class='entries'>
-      ${entries.map( (entry) => {
-        return renderEntry(entry, state, dispatch)
-      } )}
-    </div>
-  `
+  if( entries == null) dispatch({type:"GO_TO_HOME"})
+  else {
+    return yo `
+      <div class='entries'>
+        ${entries.map( (entry) => {
+          return renderEntry(entry, state, dispatch)
+        } )}
+      </div>
+    `
+  }
+
 }
 
 function renderEntry(entry, state, dispatch) {
