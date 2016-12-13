@@ -19,33 +19,46 @@ input {
   text-align: center;
   width:80%;
   padding: 12px 20px;
-  margin: auto;
-  border: solid grey 5px;
+  margin: 0 auto;
+  border: solid grey 1px;
   border-radius: 15px;
   box-sizing: border-box;
+}
+
+div .login {
+  text-align: center;
+  margin-top: 50%;
 }
 
 #username, #password {
+  font-family: 'Raleway', sans-serif;
   font-size: 25px;
   box-sizing: border-box;
-  margin: auto;
-  border: solid grey 5px;
+  margin: 1%;
+  border: solid #94004a 1px;
   border-radius: 15px;
+  width: 70%;
+
 }
 
-.loginBtn, .signupBtn {
-  text-align: center;
-  width:80%;
+.loginBtn {
+  font-family: 'Raleway', sans-serif;
+  width:50%;
   padding: 12px 20px;
-  margin: auto;
-  margin-top: 10vh;
-  border: solid grey 5px;
+  margin-top: 5%;
+  border: solid #94004a 1px;
   border-radius: 15px;
+  background-color: white;
 }
 
-.login, .homediv {
-  margin-top: 15vh;
-  margin-bottom: 15vh;
+.signupBtn {
+  font-family: 'Raleway', sans-serif;
+  width:40%;
+  margin-top: 54%;
+  padding: 4px 10px;
+  border: solid #94004a 1px;
+  border-radius: 15px;
+  background-color: white;
 }
 
 .entries h3 {
@@ -146,4 +159,8 @@ input {
 i {
   font-size: 48px;
   color: white;
+}
+
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px white inset;
 }
