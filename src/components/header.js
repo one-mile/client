@@ -11,9 +11,9 @@ function header (state, dispatch, refresh) {
   return yo `
     <div class="pageHeader">
       ${refresh != null
-        ? yo`<h1 onclick=${() => refresh(state, dispatch, true)}>f<span class='lookFlooki'>look</span>i
+        ? yo`<h1 id="refresh" onclick=${() => refresh(state, dispatch, true)}>f<span class='lookFlooki'>look</span>i
         </h1>`
-        : ""
+        : yo`<h2 id="noRefresh">f<span class='lookFlooki'>look</span>i</h2>`
       }
       ${state.user ? shotsRemaining(state) : ''}
       ${headerName
@@ -26,6 +26,8 @@ function header (state, dispatch, refresh) {
     </div>
   `
 }
+
+
 
 function goHome(dispatch) {
   dispatch({type: "GO_TO_HOME"})

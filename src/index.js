@@ -62,7 +62,6 @@ function render (state, dispatch) {
     default:
       return App(state, dispatch, login)
   }
-
 }
 
 store.dispatch({type: 'INIT'})
