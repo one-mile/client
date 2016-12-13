@@ -10,7 +10,6 @@ const renderEntries = require('./renderEntries')
 function home (state, dispatch) {
   return yo `
   <div class="homediv">
-    "home"
     ${state.isLoading ? yo`<p>loading</p>` : renderEntries(state, dispatch, state.entries)}
     ${getEntries(state, dispatch)}
     <button onclick=${()=>{getEntries(state, dispatch, true)}}>click me man</button>
@@ -28,6 +27,7 @@ function getEntries (state, dispatch, bool) {
         if (error) console.log(error);
         else {
           dispatch({type: 'RECEIVE_ENTRIES', payload: res.body})
+          dispatch({type: "TOGGLE_LOADING"})
         }
       })
   }
