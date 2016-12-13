@@ -48,9 +48,9 @@ subscribe(() => {
 function render (state, dispatch) {
   switch(state.view) {
     case 'login':
-      return App(state, dispatch, login)
+      return App(state, dispatch, login, null)
     case 'signup':
-      return App(state, dispatch, signup)
+      return App(state, dispatch, signup, null)
     case 'home':
       return App(state, dispatch, home, homeRefresh)
     case 'follows':
@@ -60,7 +60,7 @@ function render (state, dispatch) {
     case 'me':
       return App(state, dispatch, user, userRefresh)
     default:
-      return App(state, dispatch, login)
+      return App(state, dispatch, login, null)
   }
 
 }
