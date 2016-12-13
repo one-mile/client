@@ -27,15 +27,16 @@ function login (state, dispatch) {
   }
 
   return yo`
-    <div>
+    <div class="login">
     ${state.isLoading ? yo`<h3 class="loading">Loading...</h3>`
       : yo`<form class="login">
-      <h3 class="loginTitle">Login</h3>
       <input id='username' type='text' placeholder='username'/>
       <input id='password' type='password' placeholder='password'/>
-      <button onclick=${onSubmit} class='loginBtn' type='submit'>Log In</button>
       </form>`}
+      <button onclick=${onSubmit} class='loginBtn' type='submit'>Log In</button>
+      <br>
       <button onclick=${ () => dispatch({type: 'GO_TO_SIGNUP'})} class='signupBtn' type='submit'>Sign Up</button>
+
     </div>
   `
 }

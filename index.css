@@ -1,10 +1,15 @@
+main {
+  font-family: 'Raleway', sans-serif;
+  font-size: .7em;
+  }
+
 body {
   padding: 0;
   margin: 0;
 }
 
 h1 {
-  text-align: center;
+  text-align: cenfont-family: 'Raleway', sans-serif;ter;
 }
 
 img {
@@ -19,33 +24,50 @@ input {
   text-align: center;
   width:80%;
   padding: 12px 20px;
-  margin: auto;
-  border: solid grey 5px;
+  margin: 0 auto;
+  border: solid grey 1px;
   border-radius: 15px;
   box-sizing: border-box;
 }
 
-#username, #password {
-  font-size: 25px;
-  box-sizing: border-box;
-  margin: auto;
-  border: solid grey 5px;
-  border-radius: 15px;
-}
-
-.loginBtn, .signupBtn {
+div .login, .signup {
   text-align: center;
-  width:80%;
-  padding: 12px 20px;
-  margin: auto;
-  margin-top: 10vh;
-  border: solid grey 5px;
-  border-radius: 15px;
+  margin-top: 50%;
 }
 
-.login, .homediv {
-  margin-top: 15vh;
-  margin-bottom: 15vh;
+#username, #password, #rpt-password, #email {
+  font-family: 'Raleway', sans-serif;
+  font-size: 20px;
+  box-sizing: border-box;
+  margin: 1%;
+  border: solid #94004a 1px;
+  border-radius: 15px;
+  width: 70%;
+
+}
+
+.loginBtn, .createBtn {
+  font-family: 'Raleway', sans-serif;
+  width:50%;
+  padding: 12px 20px;
+  margin-top: 5%;
+  border: solid #94004a 1px;
+  border-radius: 15px;
+  background-color: white;
+}
+
+.signupBtn, .backBtn {
+  font-family: 'Raleway', sans-serif;
+  width:40%;
+  margin-top: 54%;
+  padding: 4px 10px;
+  border: solid #94004a 1px;
+  border-radius: 15px;
+  background-color: white;
+}
+
+.backBtn {
+  margin-top: 25%;
 }
 
 .entries h3 {
@@ -64,14 +86,13 @@ input {
   position: fixed;
 }
 
-
 .pageHeader h1 {
   color: white;
   display: inline-block;
   font-family: 'Josefin Slab', serif;
   font-size: 36px;
   text-align: center;
-  opacity: 0.6;
+  opacity: 0.8;
 }
 
 .pageHeader, .pageFooter, .image-header { /* .pageFooter, */
@@ -131,7 +152,42 @@ input {
   box-shadow: 10px 10px 5px grey;
 }
 
+#homeButton {
+  text-align: left;
+}
+
+
+#cameraButton {
+  text-align: center;
+}
+
+
+#profileButton {
+  text-align: right;
+}
 i {
   font-size: 48px;
   color: white;
+}
+
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px white inset;
+}
+
+::-webkit-input-placeholder {
+   color: #bca8af;
+   font-size: 20px;
+   font-family: 'Rajdhani', sans-serif;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+   color: #bca8af;
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+   color: #bca8af;
+}
+
+:-ms-input-placeholder {
+   color: #bca8af;
 }
