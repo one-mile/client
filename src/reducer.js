@@ -1,4 +1,5 @@
 const clone = require('clone')
+const moment = require('moment')
 const flukeReducer = require('./components/flukeReduce')
 
 module.exports = (state, action) => {
@@ -70,11 +71,12 @@ module.exports = (state, action) => {
 }
 
 function constructEntry({entry_id, image_url}, username) {
+  var justNow = moment()
   return {
     entry_id,
     image_url,
     commentCount: 0,
-    entry_created_at: null,
+    entry_created_at: justNow._d,
     flukes: 0,
     username
   }
