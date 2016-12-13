@@ -10822,7 +10822,7 @@ const url = require('./requestUrl');
 //
 function accessCamera(state, dispatch) {
   if (state.user.shotsRemaining > 0) {
-    cloudinary.openUploadWidget({ cloud_name: 'toothandpail', upload_preset: 'fasiveib' }, function (err, result) {
+    cloudinary.openUploadWidget({ cloud_name: 'toothandpail', upload_preset: 'fasiveib', sources: ['camera'], default_source: 'local', multiple: false }, function (err, result) {
       if (result) {
         request.post(`${ url }entries/new`).type('application/json').send({ user_id: state.user.user_id, image_url: result[0].secure_url }).end((err, response) => {
           if (err) console.log(err);
@@ -10978,6 +10978,9 @@ function shotsView(shotsRemaining) {
   }
   return shotsView;
 }
+
+// var btnText = document.querySelector('select_file')
+// if (btnText) btnText.innerHTML = 'test'
 
 module.exports = {
   header,
@@ -11150,7 +11153,7 @@ module.exports = renderEntries;
 },{"./comments":47,"./requestUrl":53,"moment":13,"superagent":34,"yo-yo":43}],53:[function(require,module,exports){
 var heroku = 'https://one-shot-api.herokuapp.com/api/v1/';
 var local = 'http://localhost:3000/api/v1/';
-var url = heroku;
+var url = local;
 
 module.exports = url;
 
