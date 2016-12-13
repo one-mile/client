@@ -8,10 +8,7 @@ var home = require('./components/home')
 var target = require('./components/target')
 var user = require('./components/user')
 var signup = require('./components/signup')
-var follows = require('./components/follows')
 var App = require('./components/app')
-
-var followRefresh = require('./components/refreshFunctions/followEntries')
 
 var request = require('superagent')
 
@@ -25,11 +22,8 @@ var initialState = {
   authError: null,
   isLoading: false,
   entries: [],
-  followEntries: [],
-  myFollowing: [],
   myEntries: [],
   targetEntries: [],
-  targetId: null,
   myFlukes: [],
   entryForComments: null,
   entryComments : []
@@ -50,8 +44,6 @@ function render (state, dispatch) {
       return App(state, dispatch, signup)
     case 'home':
       return App(state, dispatch, home)
-    case 'follows':
-      return App(state, dispatch, follows)
     case 'target':
       return App(state, dispatch, target)
     case 'me':

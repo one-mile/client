@@ -12,7 +12,6 @@ function header (state, dispatch) {
     <div class="pageHeader">
       <h1>f<span class='lookFlooki'>look</span>i</h1>
       ${state.user ? shotsRemaining(state) : ''}
-      <h4 class='pageUserName'>${headerName}</h4>
     </div>
   `
 }

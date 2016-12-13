@@ -15,35 +15,38 @@ module.exports = (state, action) => {
       newState.view = 'follows'
       return newState
     case 'RECEIVE_ENTRIES':
+      newState.targetId = null
       newState.isLoading = false
       newState.entries = payload.entries
       newState.myFlukes = payload.myFlukes
       return newState
     case 'RECIEVE_FOLLOW_ENTRIES':
-      console.log("recieve follows");
-      newState.isLoading = false
+      newState.targetId = null
       if (payload != null) {
         newState.followEntries = payload.followed_entries
         newState.myFollowing = payload.following_list
       } else {
-        console.log("null");
         newState.followEntries = null
-        newState.myFollowing = null
+        newState.myFollowing = []
       }
-
+      newState.isLoading = false;
       return newState
     case 'GET_TARGET_ENTRIES':
-      newState.targetEntries = payload.user_entries
+      newState.targetEntries = payload.body.user_entries
+      newState.targetId = payload.id
       newState.view = 'target'
+      newState.isLoading = false;
       return newState
     case 'GET_MY_ENTRIES':
-      newState.myEntries = payload.user_entries
+      newState.myEntries = payload.body.user_entries
       newState.view = 'me'
+      newState.targetId = null
+      newState.isLoading = false;
       return newState
     case 'GO_TO_HOME':
-      console.log("going home");
       newState.isLoading = false;
       newState.view = 'home'
+      newState.targetId = null
       return newState
     case 'GO_TO_LOGIN':
       newState.view = 'login'
@@ -52,7 +55,11 @@ module.exports = (state, action) => {
       newState.view = 'signup'
       return newState
     case 'GO_TO_FOLLOWS':
+      newState.targetId = null
       newState.view = 'follows'
+      return newState
+    case 'GO_TO_USER':
+      newState.view = 'me'
       return newState
     case 'TOGGLE_FLUKE':
       flukeReducer(newState, payload)
