@@ -15,7 +15,6 @@ function accessCamera (state, dispatch) {
             .send({user_id: state.user.user_id, image_url: result[0].secure_url })
             .end((err, response) => {
               if(err) console.log(err);
-              console.log("response is", response)
               var newPhoto = {}
               dispatch({type: 'ADD_NEW_PHOTO', payload: {"entry_id": response.body.entry_id, "image_url": result[0].secure_url}})
             })

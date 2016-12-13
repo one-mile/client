@@ -1,5 +1,4 @@
 function flukeReduce(entries, payload) {
-  console.log({entries});
   if (payload.action === 'fluke') {
     var flukedEntry = entries.find( (entry) => entry.entry_id === payload.entry_id)
     if (flukedEntry) flukedEntry.flukes++
@@ -10,7 +9,6 @@ function flukeReduce(entries, payload) {
 }
 
 function flukeReducer (newState, payload) {
-  console.log("newState", newState)
   if (payload.action === 'fluke') {
     newState.myFlukes.push(payload.entry_id)
   } else if (payload.action === 'defluke') {

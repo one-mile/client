@@ -11,9 +11,10 @@ function follows (state, dispatch) {
       "follows"
       ${state.isLoading ? yo`<p>loading</p>` : renderEntries(state, dispatch, state.followEntries)}
     ${followEntries(state, dispatch)}
-    <button onclick=${()=>{followEntries(state, dispatch, true)}}>get follows</button>
   </div>
   `
 }
 
 module.exports = follows
+
+// <button onclick=${()=>{followEntries(state, dispatch, true)}}>get follows</button>

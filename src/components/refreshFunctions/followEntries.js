@@ -2,13 +2,12 @@ const request = require('superagent')
 const url = require('../requestUrl')
 
 function getFollows (state, dispatch, bool) {
-  if (state.myFollowing != null) {
+  if (state.followEntries != null) {
     if (state.followEntries.length === 0 && !state.isLoading || bool) {
       dispatch({type: "TOGGLE_LOADING"})
       request
         .get(url + 'entries/follows/' + state.user.user_id)
         .end( (error, res) => {
-          console.log("memes", res);
           if (error) console.log(error);
           else if (res.body.followed_entries.length == 0) {
             dispatch({type: 'RECIEVE_FOLLOW_ENTRIES', payload: null})

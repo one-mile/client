@@ -27,6 +27,7 @@ var initialState = {
   myFollowing: [],
   myEntries: [],
   targetEntries: [],
+  targetId: null,
   myFlukes: [],
   entryForComments: null,
   entryComments : []
@@ -46,10 +47,8 @@ function render (state, dispatch) {
     case 'signup':
       return App(state, dispatch, signup)
     case 'home':
-      console.log("home view");
       return App(state, dispatch, home)
     case 'follows':
-      console.log("follows view");
       return App(state, dispatch, follows)
     case 'target':
       return App(state, dispatch, target)

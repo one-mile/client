@@ -14,9 +14,11 @@ function home (state, dispatch) {
     "home"
     ${state.isLoading ? yo`<p>loading</p>` : renderEntries(state, dispatch, state.entries)}
     ${homeEntries(state, dispatch)}
-    <button onclick=${()=>{homeEntries(state, dispatch, true)}}>click me man</button>
+
   </div>
   `
 }
 
 module.exports = home
+
+// <button onclick=${()=>{homeEntries(state, dispatch, true)}}>click me man</button>
