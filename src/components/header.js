@@ -15,10 +15,10 @@ function header (state, dispatch) {
       ${headerName
         ?
         state.myFollowing.includes(state.targetId)
-          ? yo`<h1 class="following" onclick=${() => followUser(state.targetId, state.user.id)}">${headerName}</h1>`
-          : yo`<h1 class="notFollowing" onclick=${() => unFollowUser(state.targetId, state.user.id)}">${headerName}</h1>`
+          ? yo`<h1 class="following" onclick=${() => unFollowUser(state.targetId, state.user.id)}">${headerName}</h1>`
+          : yo`<h1 class="notFollowing" onclick=${() => followUser(state.targetId, state.user.id)}">${headerName}</h1>`
         : ""
-      }<h1 class='pageUserName'>${headerName}</h1>
+      }
     </div>
   `
 }

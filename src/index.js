@@ -11,6 +11,8 @@ var signup = require('./components/signup')
 var follows = require('./components/follows')
 var App = require('./components/app')
 
+var followRefresh = require('./components/refreshFunctions/followEntries')
+
 var request = require('superagent')
 
 var app = document.createElement('div')
