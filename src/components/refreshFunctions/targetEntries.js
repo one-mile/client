@@ -6,6 +6,7 @@ function goToTarget(state, dispatch, id, boolean) {
     dispatch({type: "TOGGLE_LOADING"})
     request
       .get(`${url}entries/user/${id}`)
+      .withCredentials()
       .end((err, res) => {
         if (err) {
           dispatch({type: "TOGGLE_LOADING"})
@@ -14,7 +15,7 @@ function goToTarget(state, dispatch, id, boolean) {
           var dType = "GET_TARGET_ENTRIES"
           if (id == state.user.user_id) dType = "GET_MY_ENTRIES"
           // console.log(dType, id);
-          dispatch({type: dType, payload: {body: res.body, id}})
+          dispatch({type: dType, payload: {body: res.body, id: id || state.user.user_id}})
         }
       })
   }
