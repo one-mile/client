@@ -11278,7 +11278,7 @@ module.exports = renderEntries;
 },{"./comments":47,"./formatDate":50,"./refreshFunctions/targetEntries":56,"./requestUrl":59,"superagent":34,"yo-yo":43}],59:[function(require,module,exports){
 var heroku = 'https://one-shot-api.herokuapp.com/api/v1/';
 var local = 'http://localhost:3000/api/v1/';
-var url = local;
+var url = heroku;
 
 module.exports = url;
 
