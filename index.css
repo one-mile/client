@@ -28,10 +28,6 @@ input {
   border-radius: 15px;
 }
 
-#commentField {
-  padding: 7px;
-}
-
 div .login, .signup {
   text-align: center;
 }
@@ -56,9 +52,10 @@ form .login {
 
 #commentField {
   font-family: 'Raleway', sans-serif;
-  border: solid #94004a 1px;
+  border: solid rgba(148,0,74, 0.3) 1px;
   border-radius: 7px;
   width: 100%;
+  padding: 7px;
 }
 
 .loginBtn, .createBtn {
@@ -83,8 +80,12 @@ form .login {
 
 #commentButton {
   font-family: 'Raleway', sans-serif;
-  width: 20%;
   margin-top: 4px;
+  width: 100%;
+  border: none;
+  background-color: white;
+  text-align: right;
+
 }
 
 .backBtn {
@@ -135,6 +136,11 @@ h1 {
 
 .commentsShow {
   text-align: right;
+  color:rgba(148,0,74, 0.3)
+}
+
+.commentCount {
+  color: rgba(148,0,74, 0.5)
 }
 
 #user-name, .flukeCount {
