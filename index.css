@@ -36,6 +36,14 @@ form .login {
   margin-top: 50%;
 }
 
+hr {
+  width: 100%;
+}
+
+h2 {
+  margin: 13px;
+}
+
 #username, #password, #rpt-password, #email  {
   font-family: 'Raleway', sans-serif;
   font-size: 20px;
@@ -48,6 +56,13 @@ form .login {
 
 #username {
   margin-top: 50%;
+}
+
+#noRefresh, #refresh {
+    font-family: 'Josefin Slab', serif;
+    font-size: 30px;
+    text-align: center;
+    color: white;
 }
 
 #commentField {
@@ -71,7 +86,7 @@ form .login {
 .signupBtn, .backBtn {
   font-family: 'Raleway', sans-serif;
   width:40%;
-  margin-top: 54%;
+  margin-top: 40%;
   padding: 4px 10px;
   border: solid #94004a 1px;
   border-radius: 15px;
@@ -92,21 +107,14 @@ form .login {
   margin-top: 25%;
 }
 
-.pageHeader {
-  color: #4a4a4a;
-  display: inline-block;
-  opacity: 0.8;
-  z-index: 1;
-  height: 8%;
-  position: fixed;
-}
-
-.pageHeader, .pageFooter { /* .pageFooter, */
+.pageHeader { /* .pageFooter, */
   width: 100%;
   background: #4a4a4a;
-  z-index: 1;
+  height: 8%;
+  z-index: 9;
   position: fixed;
-  color: #94004a;
+  opacity: 0.8;
+
   /*-webkit-filter: blur(3px);*/
 }
 
@@ -118,6 +126,8 @@ h1 {
 }
 
 .pageFooter {
+  width: 100%;
+  background: #4a4a4a;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
@@ -155,14 +165,6 @@ h1 {
   width: 50%;
 }
 
-
-
-/*
-.image-header{
-  margin-top: 7%;
-  margin-bottom: 12%;
-}*/
-
 #hideInput {
   width: 0;
   height: 0;
@@ -178,7 +180,6 @@ h1 {
   top: 20%;
 margin: 3px;
 }
-
 
 div .entry {
   width: 80%;

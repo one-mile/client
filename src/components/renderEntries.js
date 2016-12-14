@@ -10,7 +10,12 @@ function renderEntries (state, dispatch, entries) {
   if( entries == null) dispatch({type:"GO_TO_HOME"})
   else {
     return yo `
+
       <div class='entries'>
+      <br>
+      <br>
+      <br>
+      <br>
         ${entries.map( (entry) => {
           return renderEntry(entry, state, dispatch)
         } )}
@@ -27,6 +32,7 @@ function renderEntry(entry, state, dispatch) {
         onclick=${() => fluke(entry.entry_id, state.user.user_id, dispatch)} src=${entry.image_url}></img>
       <h2 id='f'>${state.myFlukes.includes(entry.entry_id) ? 'f' : ''}</h2>
       ${entryFooter(entry, state, dispatch)}
+      <hr>
   </div>
   `
 }
@@ -64,7 +70,6 @@ function entryFooter(entry, state, dispatch) {
         <br>
         <br>
         <br>
-        <hr>
         </div>
         `}
         ${state.entryForComments != entry.entry_id
@@ -77,7 +82,6 @@ function entryFooter(entry, state, dispatch) {
           ${comments.renderComments(entry.entry_id, state, dispatch)}
           </div>
           <br>
-          <hr>
           </div>
           `
         }
