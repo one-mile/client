@@ -4,7 +4,7 @@ const moment = require('moment')
 const url = require('./requestUrl')
 const comments = require('./comments')
 const goToUser = require('./refreshFunctions/targetEntries')
-
+const formatDate = require('./formatDate')
 
 function renderEntries (state, dispatch, entries) {
   if( entries == null) dispatch({type:"GO_TO_HOME"})
@@ -30,10 +30,8 @@ function renderEntry(entry, state, dispatch) {
   `
 }
 
-
-
 function entryHeader(entry, state, dispatch) {
-  var formattedDate = moment(entry.entry_created_at).format(' HH:mma, Do MMM')
+  var formattedDate = formatDate(entry.entry_created_at)
   return yo`
     <div>
         <h3 class='entry-info' onclick=${() => goToUser(state, dispatch, entry.user_id, true)}>
