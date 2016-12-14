@@ -19,6 +19,10 @@ function renderEntries (state, dispatch, entries) {
         ${entries.map( (entry) => {
           return renderEntry(entry, state, dispatch)
         } )}
+        <br>
+        <br>
+        <br>
+        <br>
       </div>
     `
   }
