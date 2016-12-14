@@ -17,7 +17,7 @@ function goToTarget(state, dispatch, id, boolean) {
           // console.log(dType, id);
           dispatch({type: dType, payload: {body: res.body, id: id || state.user.user_id}})
         }
-      })
+    })
   }
 }
 

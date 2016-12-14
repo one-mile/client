@@ -2,6 +2,7 @@ var yo = require('yo-yo')
 const accessCamera = require ('./camera')
 const request = require('superagent')
 const url = require('./requestUrl')
+const refreshFollows = require('./refreshFunctions/followEntries')
 
 function header (state, dispatch, refresh) {
   // console.log("Render header follow list", state.myFollowing);
@@ -40,6 +41,7 @@ function header (state, dispatch, refresh) {
       .withCredentials()
       .end((err, res) => {
         if(err) console.log({err});
+        console.log("follow request", {res});
         if(res.text === "success") {
             dispatch({type: "TOGGLE_FOLLOW", payload: followed_user_id})
         } else console.log("failed");
@@ -66,7 +68,7 @@ function footer (state, dispatch) {
       <i class=${viewIconTurner("home", "ion-ios-home")} id='homeButton' onclick=${() => goHome(dispatch)}></i>
       <i class='ion-ios-circle-outline' onclick=${() => accessCamera(state, dispatch)} id="upload_widget_opener"></i>
       <i class=${viewIconTurner("me", "ion-ios-person")} id='profileButton' onclick=${() => goToUser(dispatch)}></i>
-      ${state.myFollowing != null ? yo`<i class=${viewIconTurner("follows", 'ion-ios-people')} id='followButton' onclick=${() => goToFollows(dispatch)}></i>` : ""}
+      <i class=${viewIconTurner("follows", 'ion-ios-people')} id='followButton' onclick=${() => goToFollows(dispatch)}></i>
     </div>
     `
   }
