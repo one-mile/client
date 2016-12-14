@@ -34,11 +34,10 @@ function login (state, dispatch) {
       : yo`<form class="login">
       <input id='username' type='text' placeholder='username'/>
       <input id='password' type='password' placeholder='password'/>
-      </form>`}
       <button onclick=${onSubmit} class='loginBtn' type='submit'>Log In</button>
       <br>
       <button onclick=${ () => dispatch({type: 'GO_TO_SIGNUP'})} class='signupBtn' type='submit'>Sign Up</button>
-
+      </form>`}
     </div>
   `
 }

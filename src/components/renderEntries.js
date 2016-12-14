@@ -25,6 +25,7 @@ function renderEntry(entry, state, dispatch) {
       ${entryHeader(entry, state, dispatch)}
         <img class=${state.myFlukes.includes(entry.entry_id) ? 'flukedByMe' : 'notFlukedByMe'}
         onclick=${() => fluke(entry.entry_id, state.user.user_id, dispatch)} src=${entry.image_url}></img>
+      <h2 id='f'>${state.myFlukes.includes(entry.entry_id) ? 'f' : ''}</h2>
       ${entryFooter(entry, state, dispatch)}
   </div>
   `
@@ -33,12 +34,9 @@ function renderEntry(entry, state, dispatch) {
 function entryHeader(entry, state, dispatch) {
   var formattedDate = formatDate(entry.entry_created_at)
   return yo`
-    <div>
-        <h3 class='entry-info' onclick=${() => {
-          // console.log(entry.entry_id, state.targetId)
-          goToUser(state, dispatch, entry.user_id, true)
-        }}>
-        <span class='user-name'>${entry.username}</span> ${formattedDate}</h3>
+    <div class='entry-info'>
+        <h4 id='user-name' onclick=${() => goToUser(state, dispatch, entry.user_id, true)}>${entry.username} </h4>
+        <h4 id="entry-date">${formattedDate}</h4>
     </div>
   `
 }
@@ -59,17 +57,27 @@ function entryFooter(entry, state, dispatch) {
           ? "comments"
           :"comment"}</h3>`
         : yo`
+        <div>
         <h3 class="commentCount" onclick=${() => comments.showComments(entry, state, dispatch)}>
           Add Comment
         </h3>
+        <br>
+        <br>
+        <br>
+        <hr>
+        </div>
         `}
         ${state.entryForComments != entry.entry_id
           ? ""
           :
           yo`
+          <div>
           <div class="comments">
           <h3 class="commentsShow" onclick=${() => comments.hideComments(dispatch)}>Hide Comments</h3>
           ${comments.renderComments(entry.entry_id, state, dispatch)}
+          </div>
+          <br>
+          <hr>
           </div>
           `
         }
