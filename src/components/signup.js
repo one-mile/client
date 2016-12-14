@@ -21,6 +21,7 @@ function signup (state, dispatch) {
       </form>
     </div>
   `
+
   function handleSignup(e) {
     // dispatch({type: "TOGGLE_LOADING"})
     e.preventDefault()
@@ -32,6 +33,10 @@ function signup (state, dispatch) {
       dispatch({type: "AUTH_ERROR", payload: "Please complete all fields"})
     } else if (password !== rptPassword) {
       dispatch({type: "AUTH_ERROR", payload: "Passwords do not match"})
+    } else if (username.length > 12) {
+      dispatch({type: 'AUTH_ERROR', payload: 'Username must be 12 characters or shorter'})
+    } else if (password.length < 6) {
+      dispatch({type: 'AUTH_ERROR', payload: 'Password must be at least 6 characters long'})
     } else if (!email.includes('.') && !email.includes('@') ) {
       dispatch({type: "AUTH_ERROR", payload: "Please enter a valid email address"})
     } else {
@@ -51,6 +56,7 @@ function signup (state, dispatch) {
               .end((error, response) => {
                 if (error) {
                   console.log(error, 'Error goes here')
+                  dispatch({type: "AUTH_ERROR", payload: "An error has occurred. Please try again."})
                 } else {
                   dispatch({type: 'RECEIVE_USER', payload: response.body.user})
                   dispatch({type: "TOGGLE_LOADING"})

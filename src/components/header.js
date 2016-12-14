@@ -4,7 +4,7 @@ const request = require('superagent')
 const url = require('./requestUrl')
 
 function header (state, dispatch, refresh) {
-  console.log("Render header follow list", state.myFollowing);
+  // console.log("Render header follow list", state.myFollowing);
   // console.log("start of header state", state);
   var headerName
   if (state.view === 'me') {
