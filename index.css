@@ -3,11 +3,6 @@ main {
   font-size: .7em;
   }
 
-html {
-  /*background-color: blue;*/
-
-}
-
 body {
   padding: 0;
   margin: 0;
@@ -86,48 +81,62 @@ div .login, .signup {
   height: 8%;
   bottom:0;
   position: fixed;
+  opacity: 0.8;
 }
 
 .pageHeader {
-  color: white;
+  color: #4a4a4a;
   display: inline-block;
-  font-family: 'Josefin Slab', serif;
-  font-size: 36px;
-  text-align: center;
   opacity: 0.8;
   z-index: 1;
-  height: 10%;
-  top:0;
+  height: 8%;
+
   position: fixed;
 }
 
-.pageHeader, .pageFooter, .image-header { /* .pageFooter, */
+.pageHeader, .pageFooter { /* .pageFooter, */
   width: 100%;
-  background: rgba(255,255,255,0.4);
+  background: #4a4a4a;
   z-index: 1;
   position: fixed;
+  color: #94004a;
   /*-webkit-filter: blur(3px);*/
 }
 
-.image-footer {
-
+h1 {
+  font-family: 'Josefin Slab', serif;
+  font-size: 30px;
+  color: white;
   text-align: center;
 }
+
+.pageFooter {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+/*.image-footer {
+
+  text-align: center;
+}*/
 
 .commentCount, .commentsShow, .flukeCount {
   color: #554b4b;
   font-weight: lighter;
 }
-#user-name {
+#user-name, .commentCount {
+  float: left;
   text-align: left;
-  display: inline-block;
-  width: 40%;
+  width: 50%;
 }
 
-#entry-date {
+#entry-date, .flukeCount{
+  float: right;
   text-align: right;
-  display: inline-block;
-  width: 40%;
+  width: 50%;
 }
 
 
@@ -173,19 +182,6 @@ div .entry {
   z-index: 0;
 }
 
-#homeButton {
-  text-align: left;
-}
-
-
-#cameraButton {
-  text-align: center;
-}
-
-
-#profileButton {
-  text-align: right;
-}
 i {
   font-size: 48px;
   color: white;
