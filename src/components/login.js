@@ -7,7 +7,7 @@ const url = require('./requestUrl')
 function login (state, dispatch) {
   return yo`
     <div class="login">
-    ${state.isLoading ? yo`<h3 class="loading">Loading...</h3>`
+    ${state.isLoading ? yo`<h3 class="loading"> </h3>`
       : yo`<form class="login">
       <input id='username' type='text' placeholder='username'/>
       <input id='password' type='password' placeholder='password'/>
