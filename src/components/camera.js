@@ -13,6 +13,7 @@ function accessCamera (state, dispatch) {
             .post(`${url}entries/new`)
             .type('application/json')
             .send({user_id: state.user.user_id, image_url: result[0].secure_url })
+            .withCredentials()
             .end((err, response) => {
               if(err) console.log(err)
               var newPhoto = {}

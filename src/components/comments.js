@@ -25,6 +25,7 @@ function renderComments(entry_id, state, dispatch) {
     request
       .post(`${url}entries/comments/new`)
       .send(obj)
+      .withCredentials()
       .end((err, res) => {
         if (err) console.log(err);
         else dispatch({type: "POST_COMMENT", payload: {comment, entry_id}})
@@ -51,6 +52,7 @@ function showComments(entry, state, dispatch) {
   dispatch({type: "SHOW_COMMENTS", payload: entry.entry_id})
   request
     .get(`${url}entries/comments/${entry.entry_id}`)
+    .withCredentials()
     .end((err, res) => {
       dispatch({type: 'RECIEVE_COMMENTS', payload: res.body})
     })

@@ -4,7 +4,7 @@ const moment = require('moment')
 const url = require('./requestUrl')
 const comments = require('./comments')
 const goToUser = require('./refreshFunctions/targetEntries')
-
+const formatDate = require('./formatDate')
 
 function renderEntries (state, dispatch, entries) {
   if( entries == null) dispatch({type:"GO_TO_HOME"})
@@ -32,7 +32,7 @@ function renderEntry(entry, state, dispatch) {
 }
 
 function entryHeader(entry, state, dispatch) {
-  var formattedDate = moment(entry.entry_created_at).format(' HH:mma, Do MMM')
+  var formattedDate = formatDate(entry.entry_created_at)
   return yo`
     <div class='entry-info'>
         <h4 id='user-name' onclick=${() => goToUser(state, dispatch, entry.user_id, true)}>${entry.username} </h4>
@@ -89,6 +89,7 @@ function fluke(entry_id, user_id, dispatch) {
   request
   .post(url + 'entries/fluke')
   .send({entry_id, user_id})
+  .withCredentials()
   .end((err, res) => {
     if (res.body.success) {
       dispatch({type: 'TOGGLE_FLUKE', payload: res.body})

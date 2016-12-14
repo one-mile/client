@@ -47,6 +47,7 @@ function signup (state, dispatch) {
             request
               .post(url + 'users/login')
               .send({username, password})
+              .withCredentials()
               .end((error, response) => {
                 if (error) {
                   console.log(error, 'Error goes here')
