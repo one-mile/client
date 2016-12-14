@@ -1,7 +1,4 @@
 const yo = require('yo-yo')
-const request = require('superagent')
-const onload = require('on-load')
-const url = require('./requestUrl')
 const renderEntries = require('./renderEntries')
 const followEntries = require('./refreshFunctions/followEntries')
 

@@ -2,12 +2,22 @@ const yo = require('yo-yo')
 const request = require('superagent')
 const header = require ('./header').header
 const footer = require ('./header').footer
-
 const url = require('./requestUrl')
 
-module.exports = login
-
 function login (state, dispatch) {
+  return yo`
+    <div class="login">
+    ${state.isLoading ? yo`<h3 class="loading">Loading...</h3>`
+      : yo`<form class="login">
+      <input id='username' type='text' placeholder='username'/>
+      <input id='password' type='password' placeholder='password'/>
+      ${state.authError ? yo`<h3>${state.authError}</h3>` : ""}
+      <button onclick=${onSubmit} class='loginBtn' type='submit'>Log In</button>
+      <br>
+      <button onclick=${ () => dispatch({type: 'GO_TO_SIGNUP'})} class='signupBtn' type='submit'>Sign Up</button>
+      </form>`}
+    </div>
+  `
   function onSubmit (e) {
     e.preventDefault()
     var username = document.getElementById('username').value
@@ -31,18 +41,6 @@ function login (state, dispatch) {
       })
     }
   }
-
-  return yo`
-    <div class="login">
-    ${state.isLoading ? yo`<h3 class="loading">Loading...</h3>`
-      : yo`<form class="login">
-      <input id='username' type='text' placeholder='username'/>
-      <input id='password' type='password' placeholder='password'/>
-      ${state.authError ? yo`<h3>${state.authError}</h3>` : ""}
-      <button onclick=${onSubmit} class='loginBtn' type='submit'>Log In</button>
-      <br>
-      <button onclick=${ () => dispatch({type: 'GO_TO_SIGNUP'})} class='signupBtn' type='submit'>Sign Up</button>
-      </form>`}
-    </div>
-  `
 }
+
+module.exports = login
