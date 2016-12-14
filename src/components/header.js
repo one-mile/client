@@ -4,7 +4,8 @@ const request = require('superagent')
 const url = require('./requestUrl')
 
 function header (state, dispatch, refresh) {
-  console.log("my following", state);
+  console.log("Render header follow list", state.myFollowing);
+  // console.log("start of header state", state);
   var headerName
   if (state.view === 'me') {
     headerName = state.user.username
@@ -23,43 +24,29 @@ function header (state, dispatch, refresh) {
     </div>
   `
   function displayUser() {
-    console.log("target id", state.targetId);
+    console.log("state following list", state.myFollowing);
+    console.log("is following", state.myFollowing.includes(state.targetId))
     if (state.myFollowing.includes(state.targetId)) {
-      return yo`<h1 class="following" onclick=${() => followHandler(state.targetId, state.user.user_id, state, dispatch, false)}">u ${headerName}</h1>`
+      return yo`<h1 class="following" onclick=${() => followHandler(state.targetId, state.user.user_id)}">u ${headerName}</h1>`
     } else {
-      console.log("NO");
-      return yo`<h1 class="notFollowing" onclick=${() => followHandler(state.targetId, state.user.user_id, state, dispatch, true)}">f ${headerName}</h1>`
+      return yo`<h1 class="notFollowing" onclick=${() => followHandler(state.targetId, state.user.user_id)}">f ${headerName}</h1>`
     }
   }
-}
-
-
-
-function followHandler(followed_user_id, following_user_id, state, dispatch, bool) {
-  var endpoint = 'new'
-  console.log("follow handler following", state);
-  if (bool === false) {
-    // console.log("I should delete");
-    endpoint = 'delete'
-  }
-  request
-    .post(`${url}entries/follows/${endpoint}`)
-    .send({followed_user_id, following_user_id})
-    .end((err, res) => {
-      if(err) console.log({err});
-      // console.log("user followed by user", followed_user_id, following_user_id);
-      var dtype = "UNFOLLOW_USER"
-      // console.log({res});
-      if(res.text === "success") {
-        if(endpoint === 'new') {
-          dtype = "FOLLOW_USER"
+  function followHandler(followed_user_id, following_user_id) {
+    var endpoint = (state.myFollowing.includes(followed_user_id))
+      ?  "delete" : "new"
+    console.log(endpoint);
+    request
+      .post(`${url}entries/follows/${endpoint}`)
+      .send({followed_user_id, following_user_id})
+      .end((err, res) => {
+        if(err) console.log({err});
+        if(res.text === "success") {
+            dispatch({type: "TOGGLE_FOLLOW", payload: followed_user_id})
         }
-        dispatch({type: dtype, payload: followed_user_id})
-      }
     })
-
+  }
 }
-
 
 function goHome(dispatch) {
   dispatch({type: "GO_TO_HOME"})

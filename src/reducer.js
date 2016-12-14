@@ -94,17 +94,19 @@ module.exports = (state, action) => {
       newState.entries.unshift(entry)
       newState.myEntries.unshift(entry)
       return newState
-    case "FOLLOW_USER":
-      // console.log("reducer follow following before",newState.myFollowing);
-      if (!newState.myFollowing.includes(payload)) {
-        newState.myFollowing.push(payload)
+    case "TOGGLE_FOLLOW":
+      var id = payload
+
+      if (newState.myFollowing.includes(payload)) {
+        while (newState.myFollowing.includes(payload)) {
+          var i = newState.myFollowing.indexOf(payload)
+          newState.myFollowing.splice(i, 1)
+        }
+      } else {
+        if (!newState.myFollowing.includes(payload)) {
+          newState.myFollowing.push(payload)
+        }
       }
-      // console.log("reducer follow following after",newState.myFollowing);
-      return newState
-    case "UNFOLLOW_USER":
-      var i = newState.myFollowing.indexOf(payload)
-      newState.myFollowing.splice(i, 1)
-      // console.log(" reducer unfollow following", newState.myFollowing);
       return newState
     default:
       return newState
