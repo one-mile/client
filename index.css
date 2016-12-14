@@ -86,17 +86,7 @@ form .login {
   background-color: white;
   text-align: right;
 
-.following h2 {
-  background-color: green;
 }
-
-.notFollowing h2{
-  background-color: red;
-}
-
-.backBtn {
-  margin-top: 25%;
- }
 
 .backBtn {
   margin-top: 25%;
@@ -165,6 +155,14 @@ h1 {
   width: 50%;
 }
 
+
+
+/*
+.image-header{
+  margin-top: 7%;
+  margin-bottom: 12%;
+}*/
+
 #hideInput {
   width: 0;
   height: 0;
@@ -191,11 +189,6 @@ div .entry {
 i {
   font-size: 48px;
   color: white;
-}
-
-.entries {
-  margin-top: 12vh;
-  margin-bottom: 12vh;
 }
 
 input:-webkit-autofill {
