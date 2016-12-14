@@ -1,6 +1,6 @@
 # client
 
-Client side for Flooki (originally One Shot).
+Client side for Flooki (originally One Shot). Try it out [here](https://one-mile.github.io/client/)!
 
 #### Setup information:
 * Clone down repo; install node modules with `npm install`
@@ -8,4 +8,4 @@ Client side for Flooki (originally One Shot).
 * Live reloading app at `http://localhost:9966/`
 * The API is fully documented [here](https://github.com/one-mile/server/blob/master/documentation.md).
 
-The site is live [here](https://one-mile.github.io/client/).
+Flooki is an Android-first app and does not have full functionality on iOS.
