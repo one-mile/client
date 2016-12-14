@@ -1,14 +1,18 @@
 var yo = require('yo-yo')
 const accessCamera = require ('./camera')
+const request = require('superagent')
+const url = require('./requestUrl')
 
 function header (state, dispatch, refresh) {
+  console.log("Render header follow list", state.myFollowing);
+  // console.log("start of header state", state);
   var headerName
   if (state.view === 'me') {
     headerName = state.user.username
   } else if (state.view === 'target') {
     headerName = state.targetEntries[0].username
   } else headerName = null
-  return yo `
+  return yo`
     <div class="pageHeader">
       ${refresh != null
         ? yo`<h1 id="refresh" onclick=${() => refresh(state, dispatch, true)}>f<span class='lookFlooki'>look</span>i
@@ -16,18 +20,32 @@ function header (state, dispatch, refresh) {
         : yo`<h2 id="noRefresh">f<span class='lookFlooki'>look</span>i</h2>`
       }
       ${state.user ? shotsRemaining(state) : ''}
-      ${headerName
-        ?
-        state.myFollowing.includes(state.targetId)
-          ? yo`<h1 class="following" onclick=${() => unFollowUser(state.targetId, state.user.id)}">${headerName}</h1>`
-          : yo`<h1 class="notFollowing" onclick=${() => followUser(state.targetId, state.user.id)}">${headerName}</h1>`
-        : ""
-      }
+      ${headerName ? displayUser(state, dispatch) : ""}
     </div>
   `
+  function displayUser() {
+    console.log("state following list", state.myFollowing);
+    console.log("is following", state.myFollowing.includes(state.targetId))
+    if (state.myFollowing.includes(state.targetId)) {
+      return yo`<h1 class="following" onclick=${() => followHandler(state.targetId, state.user.user_id)}">u ${headerName}</h1>`
+    } else {
+      return yo`<h1 class="notFollowing" onclick=${() => followHandler(state.targetId, state.user.user_id)}">f ${headerName}</h1>`
+    }
+  }
+  function followHandler(followed_user_id, following_user_id) {
+    console.log("toggle follow");
+    request
+      .post(`${url}entries/follows/new`)
+      .send({followed_user_id, following_user_id})
+      .withCredentials()
+      .end((err, res) => {
+        if(err) console.log({err});
+        if(res.text === "success") {
+            dispatch({type: "TOGGLE_FOLLOW", payload: followed_user_id})
+        } else console.log("failed");
+    })
+  }
 }
-
-
 
 function goHome(dispatch) {
   dispatch({type: "GO_TO_HOME"})

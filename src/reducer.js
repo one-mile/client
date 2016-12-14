@@ -15,17 +15,19 @@ module.exports = (state, action) => {
       newState.view = 'follows'
       return newState
     case 'RECEIVE_ENTRIES':
-      newState.targetId = null
+      // newState.targetId = null
       newState.isLoading = false
       newState.entries = payload.entries
       newState.myFlukes = payload.myFlukes
       return newState
     case 'RECIEVE_FOLLOW_ENTRIES':
-      newState.targetId = null
+      // newState.targetId = null
       if (payload != null) {
+        // console.log("RECIEVE FOLLOW ENTRIES", {payload});
         newState.followEntries = payload.followed_entries
         newState.myFollowing = payload.following_list
       } else {
+        // console.log("I AM WIPING WITHIN THE REDUCER");
         newState.followEntries = null
         newState.myFollowing = []
       }
@@ -40,13 +42,13 @@ module.exports = (state, action) => {
     case 'GET_MY_ENTRIES':
       newState.myEntries = payload.body.user_entries
       newState.view = 'me'
-      newState.targetId = null
+      newState.targetId = newState.user.user_id
       newState.isLoading = false;
       return newState
     case 'GO_TO_HOME':
       newState.isLoading = false;
       newState.view = 'home'
-      newState.targetId = null
+      // newState.targetId = null
       return newState
     case 'GO_TO_LOGIN':
       newState.view = 'login'
@@ -55,7 +57,7 @@ module.exports = (state, action) => {
       newState.view = 'signup'
       return newState
     case 'GO_TO_FOLLOWS':
-      newState.targetId = null
+      // newState.targetId = null
       newState.view = 'follows'
       return newState
     case 'GO_TO_USER':
@@ -72,7 +74,6 @@ module.exports = (state, action) => {
       newState.entryComments = null
       return newState
     case 'RECIEVE_COMMENTS':
-      newState.view = 'home'
       newState.isLoading = false
       newState.entryComments = payload.entry_comments
       return newState
@@ -92,6 +93,20 @@ module.exports = (state, action) => {
       var entry = constructEntry(payload, newState.user.username)
       newState.entries.unshift(entry)
       newState.myEntries.unshift(entry)
+      return newState
+    case "TOGGLE_FOLLOW":
+      var id = payload
+
+      if (newState.myFollowing.includes(payload)) {
+        while (newState.myFollowing.includes(payload)) {
+          var i = newState.myFollowing.indexOf(payload)
+          newState.myFollowing.splice(i, 1)
+        }
+      } else {
+        if (!newState.myFollowing.includes(payload)) {
+          newState.myFollowing.push(payload)
+        }
+      }
       return newState
     default:
       return newState

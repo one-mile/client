@@ -6,8 +6,8 @@ function getEntries (state, dispatch, bool) {
     dispatch({type: "TOGGLE_LOADING"})
     request
       .get(url + 'entries/' + state.user.user_id)
+      .withCredentials()
       .end( (error, res) => {
-
         if (error) console.log(error);
         else {
           dispatch({type: 'RECEIVE_ENTRIES', payload: res.body})
