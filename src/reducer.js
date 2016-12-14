@@ -43,6 +43,7 @@ module.exports = (state, action) => {
       newState.myEntries = payload.body.user_entries
       newState.view = 'me'
       newState.targetId = newState.user.user_id
+      console.log("target id:",newState.targetId);
       newState.isLoading = false;
       return newState
     case 'GO_TO_HOME':
