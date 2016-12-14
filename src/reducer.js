@@ -30,7 +30,7 @@ module.exports = (state, action) => {
       newState.isLoading = false;
       return newState
     case 'GET_TARGET_ENTRIES':
-    console.log({payload});
+      console.log({payload});
       newState.targetEntries = payload.body.user_entries
       newState.targetId = payload.id
       newState.view = 'target'
@@ -49,9 +49,11 @@ module.exports = (state, action) => {
       return newState
     case 'GO_TO_LOGIN':
       newState.view = 'login'
+      newState.authError = null
       return newState
     case 'GO_TO_SIGNUP':
       newState.view = 'signup'
+      newState.authError = null
       return newState
     case 'GO_TO_FOLLOWS':
       newState.view = 'follows'
@@ -63,6 +65,9 @@ module.exports = (state, action) => {
       flukeReducer(newState, payload)
       return newState
     case 'AUTH_ERROR':
+      newState.authError = payload
+      return newState
+    case 'LOGIN_ERROR':
       newState.authError = payload
       return newState
     case 'SHOW_COMMENTS':
