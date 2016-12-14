@@ -1,6 +1,6 @@
-var test = require ('tape')
-var freeze = require('deep-freeze')
-var reducer = require('../reducer')
+// var test = require('tape')
+// var freeze = require('deep-freeze')
+// var reducer = require('../reducer')
 
 // test('GO_TO_HOME redirects user to home view', function(t) {
 //

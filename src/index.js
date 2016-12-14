@@ -2,7 +2,6 @@ var redux = require('redux')
 var morphdom = require('morphdom')
 
 var reducer = require('./reducer')
-var header = require('./components/header')
 var login = require('./components/login')
 var home = require('./components/home')
 var target = require('./components/target')
@@ -15,8 +14,6 @@ var followRefresh = require('./components/refreshFunctions/followEntries')
 var homeRefresh = require('./components/refreshFunctions/homeEntries')
 var targetRefresh = require('./components/refreshFunctions/targetEntries')
 var userRefresh = require('./components/refreshFunctions/userEntries')
-
-var request = require('superagent')
 
 var app = document.createElement('div')
 document.querySelector('main').appendChild(app)
@@ -35,8 +32,8 @@ var initialState = {
   targetId: null,
   myFlukes: [],
   entryForComments: null,
-  entryComments : []
- }
+  entryComments: []
+}
 
 var store = redux.createStore(reducer, initialState)
 const {getState, dispatch, subscribe} = store
@@ -46,7 +43,7 @@ subscribe(() => {
 })
 
 function render (state, dispatch) {
-  switch(state.view) {
+  switch (state.view) {
     case 'login':
       return App(state, dispatch, login)
     case 'signup':

@@ -1,7 +1,5 @@
 const yo = require('yo-yo')
 const request = require('superagent')
-const header = require ('./header').header
-const footer = require ('./header').footer
 const url = require('./requestUrl')
 
 function login (state, dispatch) {
@@ -11,10 +9,10 @@ function login (state, dispatch) {
       : yo`<form class="login">
       <input id='username' type='text' placeholder='username'/>
       <input id='password' type='password' placeholder='password'/>
-      ${state.authError ? yo`<h3>${state.authError}</h3>` : ""}
+      ${state.authError ? yo`<h3>${state.authError}</h3>` : ''}
       <button onclick=${onSubmit} class='loginBtn' type='submit'>Log In</button>
       <br>
-      <button onclick=${ () => dispatch({type: 'GO_TO_SIGNUP'})} class='signupBtn' type='submit'>Sign Up</button>
+      <button onclick=${() => dispatch({type: 'GO_TO_SIGNUP'})} class='signupBtn' type='submit'>Sign Up</button>
       </form>`}
     </div>
   `
@@ -22,10 +20,10 @@ function login (state, dispatch) {
     e.preventDefault()
     var username = document.getElementById('username').value
     var password = document.getElementById('password').value
-    if ( !(username && password) ) {
+    if (!(username && password)) {
       dispatch({type: 'LOGIN_ERROR', payload: 'Please complete both fields'})
     } else {
-      dispatch({type: "TOGGLE_LOADING"})
+      dispatch({type: 'TOGGLE_LOADING'})
       request
       .post(url + 'users/login')
       .send({username, password})
@@ -33,10 +31,10 @@ function login (state, dispatch) {
       .end((error, response) => {
         if (error) {
           dispatch({type: 'LOGIN_ERROR', payload: 'Invalid login'})
-          dispatch({type: "TOGGLE_LOADING"})
+          dispatch({type: 'TOGGLE_LOADING'})
         } else {
           dispatch({type: 'RECEIVE_USER', payload: response.body.user})
-          dispatch({type: "TOGGLE_LOADING"})
+          dispatch({type: 'TOGGLE_LOADING'})
         }
       })
     }

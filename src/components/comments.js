@@ -3,7 +3,7 @@ const url = require('./requestUrl')
 const yo = require('yo-yo')
 const formatDate = require('./formatDate')
 
-function renderComments(entry_id, state, dispatch) {
+function renderComments (entry_id, state, dispatch) {
   var comments = state.entryComments || []
   return yo`
     <form>
@@ -14,7 +14,7 @@ function renderComments(entry_id, state, dispatch) {
       </div>
     </form>
   `
-  function postComment(e) {
+  function postComment (e) {
     e.preventDefault()
     var comment = document.getElementById('commentField').value
     var obj = {
@@ -27,13 +27,13 @@ function renderComments(entry_id, state, dispatch) {
       .send(obj)
       .withCredentials()
       .end((err, res) => {
-        if (err) console.log(err);
-        else dispatch({type: "POST_COMMENT", payload: {comment, entry_id}})
+        if (err) console.log(err)
+        else dispatch({type: 'POST_COMMENT', payload: {comment, entry_id}})
       })
   }
 }
 
-function renderComment(comment, dispatch) {
+function renderComment (comment, dispatch) {
   var formattedDate = formatDate(comment.comment_created_at)
   return yo`
     <div class="comment">
@@ -44,12 +44,12 @@ function renderComment(comment, dispatch) {
   `
 }
 
-function hideComments(dispatch) {
-  dispatch({type: "HIDE_COMMENTS"})
+function hideComments (dispatch) {
+  dispatch({type: 'HIDE_COMMENTS'})
 }
 
-function showComments(entry, state, dispatch) {
-  dispatch({type: "SHOW_COMMENTS", payload: entry.entry_id})
+function showComments (entry, state, dispatch) {
+  dispatch({type: 'SHOW_COMMENTS', payload: entry.entry_id})
   request
     .get(`${url}entries/comments/${entry.entry_id}`)
     .withCredentials()
