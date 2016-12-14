@@ -11181,6 +11181,7 @@ module.exports = goToUser;
 },{"../requestUrl":59,"superagent":34}],58:[function(require,module,exports){
 const yo = require('yo-yo');
 const request = require('superagent');
+const moment = require('moment');
 const url = require('./requestUrl');
 const comments = require('./comments');
 const goToUser = require('./refreshFunctions/targetEntries');
@@ -11275,7 +11276,7 @@ function fluke(entry_id, user_id, dispatch) {
 
 module.exports = renderEntries;
 
-},{"./comments":47,"./formatDate":50,"./refreshFunctions/targetEntries":56,"./requestUrl":59,"superagent":34,"yo-yo":43}],59:[function(require,module,exports){
+},{"./comments":47,"./formatDate":50,"./refreshFunctions/targetEntries":56,"./requestUrl":59,"moment":13,"superagent":34,"yo-yo":43}],59:[function(require,module,exports){
 var heroku = 'https://one-shot-api.herokuapp.com/api/v1/';
 var local = 'http://localhost:3000/api/v1/';
 var url = heroku;
