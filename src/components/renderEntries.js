@@ -91,7 +91,7 @@ function fluke(entry_id, user_id, dispatch) {
   .send({entry_id, user_id})
   .withCredentials()
   .end((err, res) => {
-    if (res.body.success) {
+    if (res.body.success != null) {
       dispatch({type: 'TOGGLE_FLUKE', payload: res.body})
     } else {
       console.log("ERROR")
