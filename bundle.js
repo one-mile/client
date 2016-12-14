@@ -10802,10 +10802,10 @@ var yo = require('yo-yo');
 const header = require('./header').header;
 const footer = require('./header').footer;
 
-function App(state, dispatch, child) {
+function App(state, dispatch, child, refresh) {
   return yo`
     <div id="app">
-      ${ header(state, dispatch) }
+      ${ header(state, dispatch, refresh) }
       ${ child(state, dispatch) }
       ${ footer(state, dispatch) }
     </div>
@@ -10814,7 +10814,7 @@ function App(state, dispatch, child) {
 
 module.exports = App;
 
-},{"./header":49,"yo-yo":43}],46:[function(require,module,exports){
+},{"./header":51,"yo-yo":43}],46:[function(require,module,exports){
 var yo = require('yo-yo');
 const request = require('superagent');
 const url = require('./requestUrl');
@@ -10822,9 +10822,9 @@ const url = require('./requestUrl');
 //
 function accessCamera(state, dispatch) {
   if (state.user.shotsRemaining > 0) {
-    cloudinary.openUploadWidget({ cloud_name: 'toothandpail', upload_preset: 'fasiveib', sources: ['camera'], default_source: 'local', multiple: false }, function (err, result) {
+    cloudinary.openUploadWidget({ cloud_name: 'toothandpail', upload_preset: 'fasiveib', sources: ['camera'], default_source: 'local', multiple: false, theme: 'minimal', button_class: 'flooki_button' }, function (err, result) {
       if (result) {
-        request.post(`${ url }entries/new`).type('application/json').send({ user_id: state.user.user_id, image_url: result[0].secure_url }).end((err, response) => {
+        request.post(`${ url }entries/new`).type('application/json').send({ user_id: state.user.user_id, image_url: result[0].secure_url }).withCredentials().end((err, response) => {
           if (err) console.log(err);
           var newPhoto = {};
           dispatch({ type: 'ADD_NEW_PHOTO', payload: { "entry_id": response.body.entry_id, "image_url": result[0].secure_url } });
@@ -10839,18 +10839,19 @@ module.exports = accessCamera;
 // cloud_name: 'toothandpail', upload_preset: 'fasiveib'
 // cloud_name: 'dr2qeam2p', upload_preset: 'iyjqsx0w'
 
-},{"./requestUrl":53,"superagent":34,"yo-yo":43}],47:[function(require,module,exports){
+},{"./requestUrl":59,"superagent":34,"yo-yo":43}],47:[function(require,module,exports){
 const request = require('superagent');
 const url = require('./requestUrl');
 const yo = require('yo-yo');
 const moment = require('moment');
+const formatDate = require('./formatDate');
 
 function renderComments(entry_id, state, dispatch) {
   var comments = state.entryComments || [];
   return yo`
     <form>
       <input id="commentField" type="text" placeholder="post your comment here"/>
-      <button id="commentButton" onclick=${ postComment } type="submit">Post Comment</button>
+      <button id="commentButton" onclick=${ postComment } type="submit">Post</button>
       <div class="comments">
         ${ comments.map(comment => renderComment(comment)) }
       </div>
@@ -10864,14 +10865,14 @@ function renderComments(entry_id, state, dispatch) {
       user_id: state.user.user_id,
       comment
     };
-    request.post(`${ url }entries/comments/new`).send(obj).end((err, res) => {
+    request.post(`${ url }entries/comments/new`).send(obj).withCredentials().end((err, res) => {
       if (err) console.log(err);else dispatch({ type: "POST_COMMENT", payload: { comment, entry_id } });
     });
   }
 }
 
 function renderComment(comment, dispatch) {
-  var formattedDate = moment(comment.comment_created_at).format('HH:mma, MMM Do');
+  var formattedDate = formatDate(comment.comment_created_at);
   return yo`
     <div class="comment">
       <h3>${ comment.username }</h3>
@@ -10887,7 +10888,7 @@ function hideComments(dispatch) {
 
 function showComments(entry, state, dispatch) {
   dispatch({ type: "SHOW_COMMENTS", payload: entry.entry_id });
-  request.get(`${ url }entries/comments/${ entry.entry_id }`).end((err, res) => {
+  request.get(`${ url }entries/comments/${ entry.entry_id }`).withCredentials().end((err, res) => {
     dispatch({ type: 'RECIEVE_COMMENTS', payload: res.body });
   });
 }
@@ -10898,9 +10899,8 @@ module.exports = {
   showComments
 };
 
-},{"./requestUrl":53,"moment":13,"superagent":34,"yo-yo":43}],48:[function(require,module,exports){
+},{"./formatDate":50,"./requestUrl":59,"moment":13,"superagent":34,"yo-yo":43}],48:[function(require,module,exports){
 function flukeReduce(entries, payload) {
-  console.log({ entries });
   if (payload.action === 'fluke') {
     var flukedEntry = entries.find(entry => entry.entry_id === payload.entry_id);
     if (flukedEntry) flukedEntry.flukes++;
@@ -10911,7 +10911,6 @@ function flukeReduce(entries, payload) {
 }
 
 function flukeReducer(newState, payload) {
-  console.log("newState", newState);
   if (payload.action === 'fluke') {
     newState.myFlukes.push(payload.entry_id);
   } else if (payload.action === 'defluke') {
@@ -10926,38 +10925,116 @@ function flukeReducer(newState, payload) {
 module.exports = flukeReducer;
 
 },{}],49:[function(require,module,exports){
+const yo = require('yo-yo');
+const request = require('superagent');
+const onload = require('on-load');
+const url = require('./requestUrl');
+const renderEntries = require('./renderEntries');
+const followEntries = require('./refreshFunctions/followEntries');
+
+function follows(state, dispatch) {
+  return yo`
+  <div class="homediv">
+    ${ state.isLoading ? yo`<p>loading</p>` : renderEntries(state, dispatch, state.followEntries) }
+    ${ followEntries(state, dispatch) }
+  </div>
+  `;
+}
+
+module.exports = follows;
+
+},{"./refreshFunctions/followEntries":54,"./renderEntries":58,"./requestUrl":59,"on-load":15,"superagent":34,"yo-yo":43}],50:[function(require,module,exports){
+const moment = require('moment');
+
+module.exports = formatDate;
+
+function formatDate(timeinUTC) {
+
+  var setUTC = moment.utc(timeinUTC).format();
+  var localTime = moment(setUTC).local().format();
+  var formatted = moment(localTime).format('HH:mma, Do MMM');
+
+  // console.log("UTC date is: ", setUTC)
+  // console.log("localDate is: ", localTime)
+  // console.log("now formatted: ", formatted)
+
+  return formatted;
+}
+
+// Testing
+// var inUTC = '2016-12-13 21:46:45'
+// formatDate(inUTC)
+
+},{"moment":13}],51:[function(require,module,exports){
 var yo = require('yo-yo');
 const accessCamera = require('./camera');
+const request = require('superagent');
+const url = require('./requestUrl');
+const refreshFollows = require('./refreshFunctions/followEntries');
 
-function header(state, dispatch) {
+function header(state, dispatch, refresh) {
+  // console.log("Render header follow list", state.myFollowing);
+  // console.log("start of header state", state);
   var headerName;
   if (state.view === 'me') {
     headerName = state.user.username;
   } else if (state.view === 'target') {
     headerName = state.targetEntries[0].username;
-  }
+  } else headerName = null;
   return yo`
     <div class="pageHeader">
-      <h1>f<span class='lookFlooki'>look</span>i</h1>
+      ${ refresh != null ? yo`<h1 id="refresh" onclick=${ () => refresh(state, dispatch, true) }>f<span class='lookFlooki'>look</span>i
+        </h1>` : yo`<h2 id="noRefresh">f<span class='lookFlooki'>look</span>i</h2>` }
       ${ state.user ? shotsRemaining(state) : '' }
-      <h4 class='pageUserName'>${ headerName }</h4>
+      ${ headerName ? displayUser(state, dispatch) : "" }
     </div>
   `;
+  function displayUser() {
+    console.log("state following list", state.myFollowing);
+    console.log("is following", state.myFollowing.includes(state.targetId));
+    if (state.myFollowing.includes(state.targetId)) {
+      return yo`<h1 class="following" onclick=${ () => followHandler(state.targetId, state.user.user_id) }">u ${ headerName }</h1>`;
+    } else {
+      return yo`<h1 class="notFollowing" onclick=${ () => followHandler(state.targetId, state.user.user_id) }">f ${ headerName }</h1>`;
+    }
+  }
+  function followHandler(followed_user_id, following_user_id) {
+    console.log("toggle follow");
+    request.post(`${ url }entries/follows/new`).send({ followed_user_id, following_user_id }).withCredentials().end((err, res) => {
+      if (err) console.log({ err });
+      console.log("follow request", { res });
+      if (res.text === "success") {
+        dispatch({ type: "TOGGLE_FOLLOW", payload: followed_user_id });
+      } else console.log("failed");
+    });
+  }
 }
 
 function goHome(dispatch) {
   dispatch({ type: "GO_TO_HOME" });
 }
 
+function goToFollows(dispatch) {
+  dispatch({ type: "GO_TO_FOLLOWS" });
+}
+
+function goToUser(dispatch) {
+  dispatch({ type: "GO_TO_USER" });
+}
+
 function footer(state, dispatch) {
   if (state.user) {
     return yo`
     <div class="pageFooter">
-      <i class='ion-ios-home-outline' id='homeButton' onclick=${ () => goHome(dispatch) }></i>
-      <i class='ion-ios-circle-outline' id='cameraButton' onclick=${ () => accessCamera(state, dispatch) } id="upload_widget_opener"></i>
-      <i class='ion-ios-person-outline' id='profileButton'></i>
+      <i class=${ viewIconTurner("home", "ion-ios-home") } id='homeButton' onclick=${ () => goHome(dispatch) }></i>
+      <i class='ion-ios-circle-outline' onclick=${ () => accessCamera(state, dispatch) } id="upload_widget_opener"></i>
+      <i class=${ viewIconTurner("me", "ion-ios-person") } id='profileButton' onclick=${ () => goToUser(dispatch) }></i>
+      <i class=${ viewIconTurner("follows", 'ion-ios-people') } id='followButton' onclick=${ () => goToFollows(dispatch) }></i>
     </div>
     `;
+  }
+  function viewIconTurner(view, icon) {
+    return state.view == view ? icon : `${ icon }-outline`;
   }
 }
 
@@ -10987,7 +11064,7 @@ module.exports = {
   footer
 };
 
-},{"./camera":46,"yo-yo":43}],50:[function(require,module,exports){
+},{"./camera":46,"./refreshFunctions/followEntries":54,"./requestUrl":59,"superagent":34,"yo-yo":43}],52:[function(require,module,exports){
 const yo = require('yo-yo');
 const request = require('superagent');
 const onload = require('on-load');
@@ -10996,35 +11073,20 @@ const header = require('./header').header;
 const footer = require('./header').footer;
 const url = require('./requestUrl');
 const renderEntries = require('./renderEntries');
+const homeEntries = require('./refreshFunctions/homeEntries');
 
 function home(state, dispatch) {
   return yo`
   <div class="homediv">
     ${ state.isLoading ? yo`<p>loading</p>` : renderEntries(state, dispatch, state.entries) }
-    ${ getEntries(state, dispatch) }
-    <button onclick=${ () => {
-    getEntries(state, dispatch, true);
-  } }>click me man</button>
+    ${ homeEntries(state, dispatch) }
   </div>
   `;
 }
 
-function getEntries(state, dispatch, bool) {
-  if (state.entries.length === 0 && !state.isLoading || bool) {
-    dispatch({ type: "TOGGLE_LOADING" });
-    request.get(url + 'entries/' + state.user.user_id).end((error, res) => {
-
-      if (error) console.log(error);else {
-        dispatch({ type: 'RECEIVE_ENTRIES', payload: res.body });
-        dispatch({ type: "TOGGLE_LOADING" });
-      }
-    });
-  }
-}
-
 module.exports = home;
 
-},{"./header":49,"./renderEntries":52,"./requestUrl":53,"on-load":15,"superagent":34,"yo-yo":43}],51:[function(require,module,exports){
+},{"./header":51,"./refreshFunctions/homeEntries":55,"./renderEntries":58,"./requestUrl":59,"on-load":15,"superagent":34,"yo-yo":43}],53:[function(require,module,exports){
 const yo = require('yo-yo');
 const request = require('superagent');
 const header = require('./header').header;
@@ -11039,45 +11101,152 @@ function login(state, dispatch) {
     e.preventDefault();
     var username = document.getElementById('username').value;
     var password = document.getElementById('password').value;
-    dispatch({ type: "TOGGLE_LOADING" });
-    request.post(url + 'users/login').send({ username, password }).end((error, response) => {
-      if (error) {
-        console.log(error, 'Error goes here');
-      } else {
-        dispatch({ type: 'RECEIVE_USER', payload: response.body.user });
-        dispatch({ type: "TOGGLE_LOADING" });
-      }
-    });
+    if (!(username && password)) {
+      dispatch({ type: 'LOGIN_ERROR', payload: 'Please complete both fields' });
+    } else {
+      dispatch({ type: "TOGGLE_LOADING" });
+      request.post(url + 'users/login').send({ username, password }).withCredentials().end((error, response) => {
+        if (error) {
+          dispatch({ type: 'LOGIN_ERROR', payload: 'Invalid login' });
+          dispatch({ type: "TOGGLE_LOADING" });
+        } else {
+          dispatch({ type: 'RECEIVE_USER', payload: response.body.user });
+          dispatch({ type: "TOGGLE_LOADING" });
+        }
+      });
+    }
   }
 
   return yo`
-    <div>
+    <div class="login">
     ${ state.isLoading ? yo`<h3 class="loading">Loading...</h3>` : yo`<form class="login">
-      <h3>Login</h3>
       <input id='username' type='text' placeholder='username'/>
       <input id='password' type='password' placeholder='password'/>
+      ${ state.authError ? yo`<h3>${ state.authError }</h3>` : "" }
       <button onclick=${ onSubmit } class='loginBtn' type='submit'>Log In</button>
-      </form>` }
+      <br>
       <button onclick=${ () => dispatch({ type: 'GO_TO_SIGNUP' }) } class='signupBtn' type='submit'>Sign Up</button>
+      </form>` }
     </div>
   `;
 }
 
-},{"./header":49,"./requestUrl":53,"superagent":34,"yo-yo":43}],52:[function(require,module,exports){
+},{"./header":51,"./requestUrl":59,"superagent":34,"yo-yo":43}],54:[function(require,module,exports){
+const request = require('superagent');
+const url = require('../requestUrl');
+
+function getFollows(state, dispatch, bool) {
+  if (state.followEntries != null || bool) {
+    if (state.followEntries.length === 0 && !state.isLoading && state.myFollowing.length == 0 || bool) {
+      dispatch({ type: "TOGGLE_LOADING" });
+      request.get(url + 'entries/follows/' + state.user.user_id).withCredentials().end((error, res) => {
+        if (error) console.log(error);
+        console.log({ res });
+        if (res.body.followed_entries.length == 0) {
+          dispatch({ type: 'GO_TO_FOLLOWS', payload: null });
+        } else {
+          console.log("dispatching entries");
+          dispatch({ type: 'RECIEVE_FOLLOW_ENTRIES', payload: res.body });
+        }
+      });
+    }
+  } else if (!state.isLoading) {
+    console.log("redirect to home from follows load");
+    dispatch({ type: "GO_TO_FOLLOWS" });
+    // dispatch({type: "TOGGLE_LOADING"})
+    // request
+    //   .get(url + 'entries/' + state.user.user_id)
+    //   .withCredentials()
+    //   .end( (error, res) => {
+    //     if (error) console.log(error);
+    //     else {
+    //       dispatch({type: 'RECEIVE_ENTRIES', payload: res.body})
+    //     }
+    //   })
+  }
+}
+
+module.exports = getFollows;
+
+},{"../requestUrl":59,"superagent":34}],55:[function(require,module,exports){
+const request = require('superagent');
+const url = require('../requestUrl');
+
+function getEntries(state, dispatch, bool) {
+  if (state.entries.length === 0 && !state.isLoading || bool) {
+    dispatch({ type: "TOGGLE_LOADING" });
+    request.get(url + 'entries/' + state.user.user_id).withCredentials().end((error, res) => {
+      if (error) console.log(error);else {
+        dispatch({ type: 'RECEIVE_ENTRIES', payload: res.body });
+      }
+    });
+  }
+}
+module.exports = getEntries;
+
+},{"../requestUrl":59,"superagent":34}],56:[function(require,module,exports){
+const request = require('superagent');
+const url = require('../requestUrl');
+
+function goToTarget(state, dispatch, id, boolean) {
+  if (!state.isLoading || boolean) {
+    dispatch({ type: "TOGGLE_LOADING" });
+    request.get(`${ url }entries/user/${ id }`).withCredentials().end((err, res) => {
+      if (err) {
+        dispatch({ type: "TOGGLE_LOADING" });
+      } else {
+        var dType = "GET_TARGET_ENTRIES";
+        if (id == state.user.user_id) dType = "GET_MY_ENTRIES";
+        // console.log(dType, id);
+        dispatch({ type: dType, payload: { body: res.body, id: id || state.user.user_id } });
+      }
+    });
+  }
+}
+
+module.exports = goToTarget;
+
+},{"../requestUrl":59,"superagent":34}],57:[function(require,module,exports){
+const request = require('superagent');
+const url = require('../requestUrl');
+
+function goToUser(state, dispatch, boolean) {
+  if (!state.isLoading && state.myEntries.length == 0 || boolean) {
+    dispatch({ type: "TOGGLE_LOADING" });
+    request.get(`${ url }entries/user/${ state.user.user_id }`).withCredentials().end((err, res) => {
+      console.log("user entries", { res });
+      if (err) {
+        dispatch({ type: "TOGGLE_LOADING" });
+      } else if (res.body.user_entries.length == 0) {
+        dispatch({ type: "GO_TO_USER" });
+      } else {
+        dispatch({ type: "GET_MY_ENTRIES", payload: { body: res.body } });
+      }
+    });
+  }
+}
+
+module.exports = goToUser;
+
+},{"../requestUrl":59,"superagent":34}],58:[function(require,module,exports){
 const yo = require('yo-yo');
 const request = require('superagent');
 const moment = require('moment');
 const url = require('./requestUrl');
 const comments = require('./comments');
+const goToUser = require('./refreshFunctions/targetEntries');
+const formatDate = require('./formatDate');
 
 function renderEntries(state, dispatch, entries) {
-  return yo`
-    <div class='entries'>
-      ${ entries.map(entry => {
-    return renderEntry(entry, state, dispatch);
-  }) }
-    </div>
-  `;
+  if (entries == null) dispatch({ type: "GO_TO_HOME" });else {
+    return yo`
+      <div class='entries'>
+        ${ entries.map(entry => {
+      return renderEntry(entry, state, dispatch);
+    }) }
+      </div>
+    `;
+  }
 }
 
 function renderEntry(entry, state, dispatch) {
@@ -11086,22 +11255,24 @@ function renderEntry(entry, state, dispatch) {
       ${ entryHeader(entry, state, dispatch) }
         <img class=${ state.myFlukes.includes(entry.entry_id) ? 'flukedByMe' : 'notFlukedByMe' }
         onclick=${ () => fluke(entry.entry_id, state.user.user_id, dispatch) } src=${ entry.image_url }></img>
+      <h2 id='f'>${ state.myFlukes.includes(entry.entry_id) ? 'f' : '' }</h2>
       ${ entryFooter(entry, state, dispatch) }
   </div>
   `;
 }
 
 function entryHeader(entry, state, dispatch) {
-  var formattedDate = moment(entry.entry_created_at).format(' HH:mma, Do MMM');
+  var formattedDate = formatDate(entry.entry_created_at);
   return yo`
-    <div>
-        <h3 class='entry-info' onclick=${ () => goToUser(state, dispatch, entry.user_id) }>
-        <span class='user-name'>${ entry.username }</span> ${ formattedDate }</h3>
+    <div class='entry-info'>
+        <h4 id='user-name' onclick=${ () => goToUser(state, dispatch, entry.user_id, true) }>${ entry.username } </h4>
+        <h4 id="entry-date">${ formattedDate }</h4>
     </div>
   `;
 }
 
 function entryFooter(entry, state, dispatch) {
+  var justNow = moment();
   return yo`
     <div class='image-footer'>
       ${ entry.flukes > 0 ? yo`<h3 class="flukeCount">${ entry.flukes }
@@ -11110,14 +11281,24 @@ function entryFooter(entry, state, dispatch) {
       ${ entry.comment_count > 0 ? yo`<h3 class="commentCount" onclick=${ () => comments.showComments(entry, state, dispatch) }>
         ${ entry.comment_count }
         ${ entry.comment_count != 1 ? "comments" : "comment" }</h3>` : yo`
+        <div>
         <h3 class="commentCount" onclick=${ () => comments.showComments(entry, state, dispatch) }>
           Add Comment
         </h3>
+        <br>
+        <br>
+        <br>
+        <hr>
+        </div>
         ` }
         ${ state.entryForComments != entry.entry_id ? "" : yo`
+          <div>
           <div class="comments">
           <h3 class="commentsShow" onclick=${ () => comments.hideComments(dispatch) }>Hide Comments</h3>
           ${ comments.renderComments(entry.entry_id, state, dispatch) }
+          </div>
+          <br>
+          <hr>
           </div>
           ` }
     </div>
@@ -11125,8 +11306,8 @@ function entryFooter(entry, state, dispatch) {
 }
 
 function fluke(entry_id, user_id, dispatch) {
-  request.post(url + 'entries/fluke').send({ entry_id, user_id }).end((err, res) => {
-    if (res.body.success) {
+  request.post(url + 'entries/fluke').send({ entry_id, user_id }).withCredentials().end((err, res) => {
+    if (res.body.success != null) {
       dispatch({ type: 'TOGGLE_FLUKE', payload: res.body });
     } else {
       console.log("ERROR");
@@ -11134,30 +11315,16 @@ function fluke(entry_id, user_id, dispatch) {
   });
 }
 
-function goToUser(state, dispatch, id) {
-  dispatch({ type: "TOGGLE_LOADING" });
-  request.get(`${ url }entries/user/${ id }`).end((err, res) => {
-    if (err) {
-      dispatch({ type: "TOGGLE_LOADING" });
-    } else {
-      var dType = "GET_TARGET_ENTRIES";
-      if (id == state.user.user_id) dType = "GET_MY_ENTRIES";
-      dispatch({ type: dType, payload: res.body });
-      dispatch({ type: "TOGGLE_LOADING" });
-    }
-  });
-}
-
 module.exports = renderEntries;
 
-},{"./comments":47,"./requestUrl":53,"moment":13,"superagent":34,"yo-yo":43}],53:[function(require,module,exports){
+},{"./comments":47,"./formatDate":50,"./refreshFunctions/targetEntries":56,"./requestUrl":59,"moment":13,"superagent":34,"yo-yo":43}],59:[function(require,module,exports){
 var heroku = 'https://one-shot-api.herokuapp.com/api/v1/';
 var local = 'http://localhost:3000/api/v1/';
-var url = heroku;
+var url = local;
 
 module.exports = url;
 
-},{}],54:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 const yo = require('yo-yo');
 const request = require('superagent');
 
@@ -11168,19 +11335,20 @@ module.exports = signup;
 
 function signup(state, dispatch) {
   return yo`
-    <div class='homediv'>
-      <h1>Sign Up</h1>
+    <div class='signup'>
       <form class='signup'>
-        <input id='username' type='text' placeholder='Choose username'/>
-        <input id='password' type='text' placeholder='Choose password'/>
-        <input id='rpt-password' type='text' placeholder='Confirm password'/>
-        <input id='email' type='text' placeholder='Enter email'/>
+        <input id='username' type='text' placeholder='choose username'/>
+        <input id='password' type='password' placeholder='choose password'/>
+        <input id='rpt-password' type='password' placeholder='confirm password'/>
+        <input id='email' type='text' placeholder='enter email'/>
         ${ state.authError ? yo`<h3>${ state.authError }</h3>` : "" }
-        <button onclick=${ handleSignup } class='signupBtn' type='submit'>Create Account</button>
-        <button class='loginBtn' onclick=${ () => dispatch({ type: "GO_TO_LOGIN" }) }>Back to Login</button>
+        <button onclick=${ handleSignup } class='createBtn' type='submit'>Create Account</button>
+        <br>
+        <button class='backBtn' onclick=${ () => dispatch({ type: "GO_TO_LOGIN" }) }>Back to Login</button>
       </form>
     </div>
   `;
+
   function handleSignup(e) {
     // dispatch({type: "TOGGLE_LOADING"})
     e.preventDefault();
@@ -11192,6 +11360,10 @@ function signup(state, dispatch) {
       dispatch({ type: "AUTH_ERROR", payload: "Please complete all fields" });
     } else if (password !== rptPassword) {
       dispatch({ type: "AUTH_ERROR", payload: "Passwords do not match" });
+    } else if (username.length > 12) {
+      dispatch({ type: 'AUTH_ERROR', payload: 'Username must be 12 characters or shorter' });
+    } else if (password.length < 6) {
+      dispatch({ type: 'AUTH_ERROR', payload: 'Password must be at least 6 characters long' });
     } else if (!email.includes('.') && !email.includes('@')) {
       dispatch({ type: "AUTH_ERROR", payload: "Please enter a valid email address" });
     } else {
@@ -11201,9 +11373,10 @@ function signup(state, dispatch) {
           dispatch({ type: "AUTH_ERROR", payload: "Username already taken" });
           return;
         }
-        request.post(url + 'users/login').send({ username, password }).end((error, response) => {
+        request.post(url + 'users/login').send({ username, password }).withCredentials().end((error, response) => {
           if (error) {
             console.log(error, 'Error goes here');
+            dispatch({ type: "AUTH_ERROR", payload: "An error has occurred. Please try again." });
           } else {
             dispatch({ type: 'RECEIVE_USER', payload: response.body.user });
             dispatch({ type: "TOGGLE_LOADING" });
@@ -11214,7 +11387,7 @@ function signup(state, dispatch) {
   }
 }
 
-},{"./header":49,"./requestUrl":53,"superagent":34,"yo-yo":43}],55:[function(require,module,exports){
+},{"./header":51,"./requestUrl":59,"superagent":34,"yo-yo":43}],61:[function(require,module,exports){
 function userPageSyntax(count) {
   if (count === 1) {
     return 'entry';
@@ -11225,7 +11398,7 @@ function userPageSyntax(count) {
 
 module.exports = userPageSyntax;
 
-},{}],56:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 var yo = require('yo-yo');
 const header = require('./header').header;
 const footer = require('./header').footer;
@@ -11244,28 +11417,32 @@ function target(state, dispatch) {
 
 module.exports = target;
 
-},{"./header":49,"./renderEntries":52,"./requestUrl":53,"./syntax":55,"yo-yo":43}],57:[function(require,module,exports){
+},{"./header":51,"./renderEntries":58,"./requestUrl":59,"./syntax":61,"yo-yo":43}],63:[function(require,module,exports){
 var yo = require('yo-yo');
 const header = require('./header').header;
 const footer = require('./header').footer;
 const renderEntries = require('./renderEntries');
 const userPageSyntax = require('./syntax');
 const url = require('./requestUrl');
+const goToMyUser = require('./refreshFunctions/userEntries');
 
 function user(state, dispatch) {
   return yo`
   <div class="homediv">
     <p>${ state.user.username } has made ${ state.myEntries.length } ${ userPageSyntax(state.myEntries.length) }.</p>
     ${ renderEntries(state, dispatch, state.myEntries) }
+    ${ goToMyUser(state, dispatch) }
   </div>
   `;
 }
 
 module.exports = user;
 
-},{"./header":49,"./renderEntries":52,"./requestUrl":53,"./syntax":55,"yo-yo":43}],58:[function(require,module,exports){
+},{"./header":51,"./refreshFunctions/userEntries":57,"./renderEntries":58,"./requestUrl":59,"./syntax":61,"yo-yo":43}],64:[function(require,module,exports){
 const clone = require('clone');
+const moment = require('moment');
 const flukeReducer = require('./components/flukeReduce');
+const followEntries = require('./components/refreshFunctions/followEntries');
 
 module.exports = (state, action) => {
   var newState = require('clone')(state);
@@ -11275,20 +11452,40 @@ module.exports = (state, action) => {
       newState.isLoading = !newState.isLoading;
       return newState;
     case 'RECEIVE_USER':
+      newState.isLoading = false;
       newState.user = payload;
-      newState.view = 'home';
+      newState.view = 'follows';
       return newState;
     case 'RECEIVE_ENTRIES':
+      newState.isLoading = false;
       newState.entries = payload.entries;
       newState.myFlukes = payload.myFlukes;
       return newState;
+    case 'RECIEVE_FOLLOW_ENTRIES':
+      console.log({ payload });
+      if (payload != null) {
+        newState.followEntries = payload.followed_entries;
+        newState.myFollowing = payload.following_list;
+      } else {
+        console.log("no entries");
+        newState.followEntries = null;
+        newState.myFollowing = [];
+      }
+      newState.isLoading = false;
+      return newState;
     case 'GET_TARGET_ENTRIES':
-      newState.targetEntries = payload.user_entries;
+      console.log({ payload });
+      newState.targetEntries = payload.body.user_entries;
+      newState.targetId = payload.id;
       newState.view = 'target';
+      newState.isLoading = false;
       return newState;
     case 'GET_MY_ENTRIES':
-      newState.myEntries = payload.user_entries;
+      newState.myEntries = payload.body.user_entries;
       newState.view = 'me';
+      newState.targetId = newState.user.user_id;
+      console.log("target id:", newState.targetId);
+      newState.isLoading = false;
       return newState;
     case 'GO_TO_HOME':
       newState.isLoading = false;
@@ -11296,9 +11493,24 @@ module.exports = (state, action) => {
       return newState;
     case 'GO_TO_LOGIN':
       newState.view = 'login';
+      newState.authError = null;
       return newState;
     case 'GO_TO_SIGNUP':
       newState.view = 'signup';
+      newState.authError = null;
+      return newState;
+    case 'GO_TO_FOLLOWS':
+      if (newState.myFollowing == null || newState.myFollowing.length == 0) {
+        alert(`you aren't following any users!`);
+        console.log("redirecting to home");
+        newState.view = 'home';
+      } else newState.view = 'follows';
+      return newState;
+    case 'GO_TO_USER':
+      if (newState.myEntries == null || newState.myEntries.length == 0) {
+        alert(`you haven't posted any photos yet!`);
+        newState.view = 'home';
+      } else newState.view = 'me';
       return newState;
     case 'TOGGLE_FLUKE':
       flukeReducer(newState, payload);
@@ -11306,11 +11518,15 @@ module.exports = (state, action) => {
     case 'AUTH_ERROR':
       newState.authError = payload;
       return newState;
+    case 'LOGIN_ERROR':
+      newState.authError = payload;
+      return newState;
     case 'SHOW_COMMENTS':
       newState.entryForComments = payload;
       newState.entryComments = null;
       return newState;
     case 'RECIEVE_COMMENTS':
+      newState.isLoading = false;
       newState.entryComments = payload.entry_comments;
       return newState;
     case 'HIDE_COMMENTS':
@@ -11330,17 +11546,31 @@ module.exports = (state, action) => {
       newState.entries.unshift(entry);
       newState.myEntries.unshift(entry);
       return newState;
+    case "TOGGLE_FOLLOW":
+      var id = payload;
+      if (newState.myFollowing.includes(payload)) {
+        while (newState.myFollowing.includes(payload)) {
+          var i = newState.myFollowing.indexOf(payload);
+          newState.myFollowing.splice(i, 1);
+        }
+      } else {
+        if (!newState.myFollowing.includes(payload)) {
+          newState.myFollowing.push(payload);
+        }
+      }
+      return newState;
     default:
       return newState;
   }
 };
 
 function constructEntry({ entry_id, image_url }, username) {
+  var justNow = moment();
   return {
     entry_id,
     image_url,
     commentCount: 0,
-    entry_created_at: null,
+    entry_created_at: justNow._d,
     flukes: 0,
     username
   };
@@ -11362,7 +11592,7 @@ function incrementCommentCount(entry_id, entries) {
   }
 }
 
-},{"./components/flukeReduce":48,"clone":5}],59:[function(require,module,exports){
+},{"./components/flukeReduce":48,"./components/refreshFunctions/followEntries":54,"clone":5,"moment":13}],65:[function(require,module,exports){
 var redux = require('redux');
 var morphdom = require('morphdom');
 
@@ -11373,7 +11603,13 @@ var home = require('./components/home');
 var target = require('./components/target');
 var user = require('./components/user');
 var signup = require('./components/signup');
+var follows = require('./components/follows');
 var App = require('./components/app');
+
+var followRefresh = require('./components/refreshFunctions/followEntries');
+var homeRefresh = require('./components/refreshFunctions/homeEntries');
+var targetRefresh = require('./components/refreshFunctions/targetEntries');
+var userRefresh = require('./components/refreshFunctions/userEntries');
 
 var request = require('superagent');
 
@@ -11387,8 +11623,11 @@ var initialState = {
   authError: null,
   isLoading: false,
   entries: [],
+  followEntries: [],
+  myFollowing: [],
   myEntries: [],
   targetEntries: [],
+  targetId: null,
   myFlukes: [],
   entryForComments: null,
   entryComments: []
@@ -11408,11 +11647,13 @@ function render(state, dispatch) {
     case 'signup':
       return App(state, dispatch, signup);
     case 'home':
-      return App(state, dispatch, home);
+      return App(state, dispatch, home, homeRefresh);
+    case 'follows':
+      return App(state, dispatch, follows, followRefresh);
     case 'target':
-      return App(state, dispatch, target);
+      return App(state, dispatch, target, targetRefresh);
     case 'me':
-      return App(state, dispatch, user);
+      return App(state, dispatch, user, userRefresh);
     default:
       return App(state, dispatch, login);
   }
@@ -11420,4 +11661,4 @@ function render(state, dispatch) {
 
 store.dispatch({ type: 'INIT' });
 
-},{"./components/app":45,"./components/header":49,"./components/home":50,"./components/login":51,"./components/signup":54,"./components/target":56,"./components/user":57,"./reducer":58,"morphdom":14,"redux":22,"superagent":34}]},{},[59]);
+},{"./components/app":45,"./components/follows":49,"./components/header":51,"./components/home":52,"./components/login":53,"./components/refreshFunctions/followEntries":54,"./components/refreshFunctions/homeEntries":55,"./components/refreshFunctions/targetEntries":56,"./components/refreshFunctions/userEntries":57,"./components/signup":60,"./components/target":62,"./components/user":63,"./reducer":64,"morphdom":14,"redux":22,"superagent":34}]},{},[65]);
