@@ -4,14 +4,14 @@ const request = require('superagent')
 const url = require('./requestUrl')
 
 function header (state, dispatch, refresh) {
-  // console.log("my following", state);
+  console.log("my following", state);
   var headerName
   if (state.view === 'me') {
     headerName = state.user.username
   } else if (state.view === 'target') {
     headerName = state.targetEntries[0].username
   } else headerName = null
-  return yo `
+  return yo`
     <div class="pageHeader">
       ${refresh != null
         ? yo`<h1 id="refresh" onclick=${() => refresh(state, dispatch, true)}>f<span class='lookFlooki'>look</span>i
@@ -19,22 +19,26 @@ function header (state, dispatch, refresh) {
         : yo`<h2 id="noRefresh">f<span class='lookFlooki'>look</span>i</h2>`
       }
       ${state.user ? shotsRemaining(state) : ''}
-      ${headerName
-        ?
-        state.myFollowing.includes(state.targetId)
-          ? yo`<h2 class="following" onclick=${() => followHandler(state.targetId, state.user.user_id, state, dispatch)}">${headerName}</h2>`
-          : yo`<h2 class="notFollowing" onclick=${() => followHandler(state.targetId, state.user.user_id, state, dispatch)}">${headerName}</h2>`
-        : ""
-      }
+      ${headerName ? displayUser(state, dispatch) : ""}
     </div>
   `
-
+  function displayUser() {
+    console.log("target id", state.targetId);
+    if (state.myFollowing.includes(state.targetId)) {
+      return yo`<h1 class="following" onclick=${() => followHandler(state.targetId, state.user.user_id, state, dispatch, false)}">u ${headerName}</h1>`
+    } else {
+      console.log("NO");
+      return yo`<h1 class="notFollowing" onclick=${() => followHandler(state.targetId, state.user.user_id, state, dispatch, true)}">f ${headerName}</h1>`
+    }
+  }
 }
 
-function followHandler(followed_user_id, following_user_id, state, dispatch) {
+
+
+function followHandler(followed_user_id, following_user_id, state, dispatch, bool) {
   var endpoint = 'new'
   console.log("follow handler following", state);
-  if (state.myFollowing.includes(followed_user_id)) {
+  if (bool === false) {
     // console.log("I should delete");
     endpoint = 'delete'
   }
