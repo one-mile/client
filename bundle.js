@@ -10815,7 +10815,6 @@ function App(state, dispatch, child, refresh) {
 module.exports = App;
 
 },{"./header":51,"yo-yo":43}],46:[function(require,module,exports){
-var yo = require('yo-yo');
 const request = require('superagent');
 const url = require('./requestUrl');
 
@@ -10825,17 +10824,16 @@ function accessCamera(state, dispatch) {
       if (result) {
         request.post(`${ url }entries/new`).type('application/json').send({ user_id: state.user.user_id, image_url: result[0].secure_url }).withCredentials().end((err, response) => {
           if (err) console.log(err);
-          var newPhoto = {};
-          dispatch({ type: 'ADD_NEW_PHOTO', payload: { "entry_id": response.body.entry_id, "image_url": result[0].secure_url } });
+          dispatch({ type: 'ADD_NEW_PHOTO', payload: { 'entry_id': response.body.entry_id, 'image_url': result[0].secure_url } });
         });
       } else if (err) console.log(err);
     }, false);
-  } else alert("You have no shots left for today");
+  } else alert('You have no shots left for today'); // FIX
 }
 
 module.exports = accessCamera;
 
-},{"./requestUrl":59,"superagent":34,"yo-yo":43}],47:[function(require,module,exports){
+},{"./requestUrl":59,"superagent":34}],47:[function(require,module,exports){
 const request = require('superagent');
 const url = require('./requestUrl');
 const yo = require('yo-yo');
@@ -10861,7 +10859,7 @@ function renderComments(entry_id, state, dispatch) {
       comment
     };
     request.post(`${ url }entries/comments/new`).send(obj).withCredentials().end((err, res) => {
-      if (err) console.log(err);else dispatch({ type: "POST_COMMENT", payload: { comment, entry_id } });
+      if (err) console.log(err);else dispatch({ type: 'POST_COMMENT', payload: { comment, entry_id } });
     });
   }
 }
@@ -10878,11 +10876,11 @@ function renderComment(comment, dispatch) {
 }
 
 function hideComments(dispatch) {
-  dispatch({ type: "HIDE_COMMENTS" });
+  dispatch({ type: 'HIDE_COMMENTS' });
 }
 
 function showComments(entry, state, dispatch) {
-  dispatch({ type: "SHOW_COMMENTS", payload: entry.entry_id });
+  dispatch({ type: 'SHOW_COMMENTS', payload: entry.entry_id });
   request.get(`${ url }entries/comments/${ entry.entry_id }`).withCredentials().end((err, res) => {
     dispatch({ type: 'RECIEVE_COMMENTS', payload: res.body });
   });
@@ -10941,7 +10939,6 @@ const moment = require('moment');
 module.exports = formatDate;
 
 function formatDate(timeinUTC) {
-
   var setUTC = moment.utc(timeinUTC).format();
   var localTime = moment(setUTC).local().format();
   var formatted = moment(localTime).format('HH:mma, Do MMM');
@@ -10966,7 +10963,7 @@ function header(state, dispatch, refresh) {
       ${ refresh != null ? yo`<h1 id="refresh" onclick=${ () => refresh(state, dispatch, true) }>f<span class='lookFlooki'>look</span>i
         </h1>` : yo`<h2 id="noRefresh">f<span class='lookFlooki'>look</span>i</h2>` }
       ${ state.user ? shotsRemaining(state) : '' }
-      ${ headerName ? displayUser(state, dispatch) : "" }
+      ${ headerName ? displayUser(state, dispatch) : '' }
     </div>
   `;
   function displayUser() {
@@ -10979,32 +10976,32 @@ function header(state, dispatch, refresh) {
   function followHandler(followed_user_id, following_user_id) {
     request.post(`${ url }entries/follows/new`).send({ followed_user_id, following_user_id }).withCredentials().end((err, res) => {
       if (err) console.log({ err });
-      if (res.text === "success") {
-        dispatch({ type: "TOGGLE_FOLLOW", payload: followed_user_id });
-      } else console.log("failed");
+      if (res.text === 'success') {
+        dispatch({ type: 'TOGGLE_FOLLOW', payload: followed_user_id });
+      } else console.log('failed');
     });
   }
 }
 
 function goHome(dispatch) {
-  dispatch({ type: "GO_TO_HOME" });
+  dispatch({ type: 'GO_TO_HOME' });
 }
 
 function goToFollows(dispatch) {
-  dispatch({ type: "GO_TO_FOLLOWS" });
+  dispatch({ type: 'GO_TO_FOLLOWS' });
 }
 
 function goToUser(dispatch) {
-  dispatch({ type: "GO_TO_USER" });
+  dispatch({ type: 'GO_TO_USER' });
 }
 
 function footer(state, dispatch) {
   if (state.user) {
     return yo`
     <div class="pageFooter">
-      <i class=${ viewIconTurner("home", "ion-ios-home") } id='homeButton' onclick=${ () => goHome(dispatch) }></i>
-      <i class=${ viewIconTurner("me", "ion-ios-person") } id='profileButton' onclick=${ () => goToUser(dispatch) }></i>
-      <i class=${ viewIconTurner("follows", 'ion-ios-people') } id='followButton' onclick=${ () => goToFollows(dispatch) }></i>
+      <i class=${ viewIconTurner('home', 'ion-ios-home') } id='homeButton' onclick=${ () => goHome(dispatch) }></i>
+      <i class=${ viewIconTurner('me', 'ion-ios-person') } id='profileButton' onclick=${ () => goToUser(dispatch) }></i>
+      <i class=${ viewIconTurner('follows', 'ion-ios-people') } id='followButton' onclick=${ () => goToFollows(dispatch) }></i>
       <i class='ion-ios-circle-outline' onclick=${ () => accessCamera(state, dispatch) } id="upload_widget_opener"></i>
     </div>
     `;
@@ -11056,17 +11053,15 @@ module.exports = home;
 },{"./refreshFunctions/homeEntries":55,"./renderEntries":58,"yo-yo":43}],53:[function(require,module,exports){
 const yo = require('yo-yo');
 const request = require('superagent');
-const header = require('./header').header;
-const footer = require('./header').footer;
 const url = require('./requestUrl');
 
 function login(state, dispatch) {
   return yo`
     <div class="login">
-    ${ state.isLoading ? yo`<h3 class="loading">Loading...</h3>` : yo`<form class="login">
+    ${ state.isLoading ? yo`<h3 class="loading"> </h3>` : yo`<form class="login">
       <input id='username' type='text' placeholder='username'/>
       <input id='password' type='password' placeholder='password'/>
-      ${ state.authError ? yo`<h3>${ state.authError }</h3>` : "" }
+      ${ state.authError ? yo`<h3>${ state.authError }</h3>` : '' }
       <button onclick=${ onSubmit } class='loginBtn' type='submit'>Log In</button>
       <br>
       <button onclick=${ () => dispatch({ type: 'GO_TO_SIGNUP' }) } class='signupBtn' type='submit'>Sign Up</button>
@@ -11080,14 +11075,14 @@ function login(state, dispatch) {
     if (!(username && password)) {
       dispatch({ type: 'LOGIN_ERROR', payload: 'Please complete both fields' });
     } else {
-      dispatch({ type: "TOGGLE_LOADING" });
+      dispatch({ type: 'TOGGLE_LOADING' });
       request.post(url + 'users/login').send({ username, password }).withCredentials().end((error, response) => {
         if (error) {
           dispatch({ type: 'LOGIN_ERROR', payload: 'Invalid login' });
-          dispatch({ type: "TOGGLE_LOADING" });
+          dispatch({ type: 'TOGGLE_LOADING' });
         } else {
           dispatch({ type: 'RECEIVE_USER', payload: response.body.user });
-          dispatch({ type: "TOGGLE_LOADING" });
+          dispatch({ type: 'TOGGLE_LOADING' });
         }
       });
     }
@@ -11096,14 +11091,14 @@ function login(state, dispatch) {
 
 module.exports = login;
 
-},{"./header":51,"./requestUrl":59,"superagent":34,"yo-yo":43}],54:[function(require,module,exports){
+},{"./requestUrl":59,"superagent":34,"yo-yo":43}],54:[function(require,module,exports){
 const request = require('superagent');
 const url = require('../requestUrl');
 
 function getFollows(state, dispatch, bool) {
   if (state.followEntries != null || bool) {
     if (state.followEntries.length === 0 && !state.isLoading && state.myFollowing.length == 0 || bool) {
-      dispatch({ type: "TOGGLE_LOADING" });
+      dispatch({ type: 'TOGGLE_LOADING' });
       request.get(url + 'entries/follows/' + state.user.user_id).withCredentials().end((error, res) => {
         if (error) console.log(error);
         if (res.body.followed_entries.length == 0) {
@@ -11114,7 +11109,7 @@ function getFollows(state, dispatch, bool) {
       });
     }
   } else if (!state.isLoading) {
-    dispatch({ type: "GO_TO_FOLLOWS" });
+    dispatch({ type: 'GO_TO_FOLLOWS' });
   }
 }
 
@@ -11126,7 +11121,7 @@ const url = require('../requestUrl');
 
 function getEntries(state, dispatch, bool) {
   if (state.entries.length === 0 && !state.isLoading || bool) {
-    dispatch({ type: "TOGGLE_LOADING" });
+    dispatch({ type: 'TOGGLE_LOADING' });
     request.get(url + 'entries/' + state.user.user_id).withCredentials().end((error, res) => {
       if (error) console.log(error);else {
         dispatch({ type: 'RECEIVE_ENTRIES', payload: res.body });
@@ -11142,13 +11137,13 @@ const url = require('../requestUrl');
 
 function goToTarget(state, dispatch, id, boolean) {
   if (!state.isLoading || boolean) {
-    dispatch({ type: "TOGGLE_LOADING" });
+    dispatch({ type: 'TOGGLE_LOADING' });
     request.get(`${ url }entries/user/${ id }`).withCredentials().end((err, res) => {
       if (err) {
-        dispatch({ type: "TOGGLE_LOADING" });
+        dispatch({ type: 'TOGGLE_LOADING' });
       } else {
-        var dType = "GET_TARGET_ENTRIES";
-        if (id == state.user.user_id) dType = "GET_MY_ENTRIES";
+        var dType = 'GET_TARGET_ENTRIES';
+        if (id == state.user.user_id) dType = 'GET_MY_ENTRIES';
         dispatch({ type: dType, payload: { body: res.body, id: id || state.user.user_id } });
       }
     });
@@ -11163,14 +11158,14 @@ const url = require('../requestUrl');
 
 function goToUser(state, dispatch, boolean) {
   if (!state.isLoading && state.myEntries.length == 0 || boolean) {
-    dispatch({ type: "TOGGLE_LOADING" });
+    dispatch({ type: 'TOGGLE_LOADING' });
     request.get(`${ url }entries/user/${ state.user.user_id }`).withCredentials().end((err, res) => {
       if (err) {
-        dispatch({ type: "TOGGLE_LOADING" });
+        dispatch({ type: 'TOGGLE_LOADING' });
       } else if (res.body.user_entries.length == 0) {
-        dispatch({ type: "GO_TO_USER" });
+        dispatch({ type: 'GO_TO_USER' });
       } else {
-        dispatch({ type: "GET_MY_ENTRIES", payload: { body: res.body } });
+        dispatch({ type: 'GET_MY_ENTRIES', payload: { body: res.body } });
       }
     });
   }
@@ -11181,17 +11176,17 @@ module.exports = goToUser;
 },{"../requestUrl":59,"superagent":34}],58:[function(require,module,exports){
 const yo = require('yo-yo');
 const request = require('superagent');
-const moment = require('moment');
 const url = require('./requestUrl');
 const comments = require('./comments');
 const goToUser = require('./refreshFunctions/targetEntries');
 const formatDate = require('./formatDate');
 
 function renderEntries(state, dispatch, entries) {
-  if (entries == null) dispatch({ type: "GO_TO_HOME" });else {
+  if (entries == null) dispatch({ type: 'GO_TO_HOME' });else {
     return yo`
 
       <div class='entries'>
+      <br>
       <br>
       <br>
       <br>
@@ -11233,15 +11228,14 @@ function entryHeader(entry, state, dispatch) {
 }
 
 function entryFooter(entry, state, dispatch) {
-  var justNow = moment();
   return yo`
     <div class='image-footer'>
       ${ entry.flukes > 0 ? yo`<h3 class="flukeCount">${ entry.flukes }
-        ${ entry.flukes != 1 ? "flukes" : "fluke" }
-        </h3>` : "" }
+        ${ entry.flukes != 1 ? 'flukes' : 'fluke' }
+        </h3>` : '' }
       ${ entry.comment_count > 0 ? yo`<h3 class="commentCount" onclick=${ () => comments.showComments(entry, state, dispatch) }>
         ${ entry.comment_count }
-        ${ entry.comment_count != 1 ? "comments" : "comment" }</h3>` : yo`
+        ${ entry.comment_count != 1 ? 'comments' : 'comment' }</h3>` : yo`
         <div>
         <h3 class="commentCount" onclick=${ () => comments.showComments(entry, state, dispatch) }>
           Add Comment
@@ -11251,7 +11245,7 @@ function entryFooter(entry, state, dispatch) {
         <br>
         </div>
         ` }
-        ${ state.entryForComments != entry.entry_id ? "" : yo`
+        ${ state.entryForComments != entry.entry_id ? '' : yo`
           <div>
           <div class="comments">
           <h3 class="commentsShow" onclick=${ () => comments.hideComments(dispatch) }>Hide Comments</h3>
@@ -11269,14 +11263,14 @@ function fluke(entry_id, user_id, dispatch) {
     if (res.body.success != null) {
       dispatch({ type: 'TOGGLE_FLUKE', payload: res.body });
     } else {
-      console.log("ERROR");
+      console.log('ERROR');
     }
   });
 }
 
 module.exports = renderEntries;
 
-},{"./comments":47,"./formatDate":50,"./refreshFunctions/targetEntries":56,"./requestUrl":59,"moment":13,"superagent":34,"yo-yo":43}],59:[function(require,module,exports){
+},{"./comments":47,"./formatDate":50,"./refreshFunctions/targetEntries":56,"./requestUrl":59,"superagent":34,"yo-yo":43}],59:[function(require,module,exports){
 var heroku = 'https://one-shot-api.herokuapp.com/api/v1/';
 var local = 'http://localhost:3000/api/v1/';
 var url = heroku;
@@ -11286,7 +11280,6 @@ module.exports = url;
 },{}],60:[function(require,module,exports){
 const yo = require('yo-yo');
 const request = require('superagent');
-const header = require('./header').header;
 const url = require('./requestUrl');
 
 module.exports = signup;
@@ -11299,10 +11292,10 @@ function signup(state, dispatch) {
         <input id='password' type='password' placeholder='choose password'/>
         <input id='rpt-password' type='password' placeholder='confirm password'/>
         <input id='email' type='text' placeholder='enter email'/>
-        ${ state.authError ? yo`<h3>${ state.authError }</h3>` : "" }
+        ${ state.authError ? yo`<h3>${ state.authError }</h3>` : '' }
         <button onclick=${ handleSignup } class='createBtn' type='submit'>Create Account</button>
         <br>
-        <button class='backBtn' onclick=${ () => dispatch({ type: "GO_TO_LOGIN" }) }>Back to Login</button>
+        <button class='backBtn' onclick=${ () => dispatch({ type: 'GO_TO_LOGIN' }) }>Back to Login</button>
       </form>
     </div>
   `;
@@ -11314,28 +11307,28 @@ function signup(state, dispatch) {
     var rptPassword = document.getElementById('rpt-password').value;
     var email = document.getElementById('email').value;
     if (!(username && password && rptPassword && email)) {
-      dispatch({ type: "AUTH_ERROR", payload: "Please complete all fields" });
+      dispatch({ type: 'AUTH_ERROR', payload: 'Please complete all fields' });
     } else if (password !== rptPassword) {
-      dispatch({ type: "AUTH_ERROR", payload: "Passwords do not match" });
+      dispatch({ type: 'AUTH_ERROR', payload: 'Passwords do not match' });
     } else if (username.length > 12) {
       dispatch({ type: 'AUTH_ERROR', payload: 'Username must be 12 characters or shorter' });
     } else if (password.length < 6) {
       dispatch({ type: 'AUTH_ERROR', payload: 'Password must be at least 6 characters long' });
     } else if (!email.includes('.') && !email.includes('@')) {
-      dispatch({ type: "AUTH_ERROR", payload: "Please enter a valid email address" });
+      dispatch({ type: 'AUTH_ERROR', payload: 'Please enter a valid email address' });
     } else {
-      dispatch({ type: "TOGGLE_LOADING" });
+      dispatch({ type: 'TOGGLE_LOADING' });
       request.post(url + 'users/signup').send({ username, password, email }).end((err, response) => {
         if (response.body.user_id === 0) {
-          dispatch({ type: "AUTH_ERROR", payload: "Username already taken" });
+          dispatch({ type: 'AUTH_ERROR', payload: 'Username already taken' });
           return;
         }
         request.post(url + 'users/login').send({ username, password }).withCredentials().end((error, response) => {
           if (error) {
-            dispatch({ type: "AUTH_ERROR", payload: "An error has occurred. Please try again." });
+            dispatch({ type: 'AUTH_ERROR', payload: 'An error has occurred. Please try again.' });
           } else {
             dispatch({ type: 'RECEIVE_USER', payload: response.body.user });
-            dispatch({ type: "TOGGLE_LOADING" });
+            dispatch({ type: 'TOGGLE_LOADING' });
           }
         });
       });
@@ -11343,7 +11336,7 @@ function signup(state, dispatch) {
   }
 }
 
-},{"./header":51,"./requestUrl":59,"superagent":34,"yo-yo":43}],61:[function(require,module,exports){
+},{"./requestUrl":59,"superagent":34,"yo-yo":43}],61:[function(require,module,exports){
 function userPageSyntax(count) {
   if (count === 1) {
     return 'entry';
@@ -11394,7 +11387,7 @@ const moment = require('moment');
 const flukeReducer = require('./components/flukeReduce');
 
 module.exports = (state, action) => {
-  var newState = require('clone')(state);
+  var newState = clone(state);
   const { payload, type } = action;
   switch (type) {
     case 'TOGGLE_LOADING':
@@ -11488,8 +11481,7 @@ module.exports = (state, action) => {
       newState.entries.unshift(entry);
       newState.myEntries.unshift(entry);
       return newState;
-    case "TOGGLE_FOLLOW":
-      var id = payload;
+    case 'TOGGLE_FOLLOW':
       if (newState.myFollowing.includes(payload)) {
         while (newState.myFollowing.includes(payload)) {
           var i = newState.myFollowing.indexOf(payload);
@@ -11539,7 +11531,6 @@ var redux = require('redux');
 var morphdom = require('morphdom');
 
 var reducer = require('./reducer');
-var header = require('./components/header');
 var login = require('./components/login');
 var home = require('./components/home');
 var target = require('./components/target');
@@ -11552,8 +11543,6 @@ var followRefresh = require('./components/refreshFunctions/followEntries');
 var homeRefresh = require('./components/refreshFunctions/homeEntries');
 var targetRefresh = require('./components/refreshFunctions/targetEntries');
 var userRefresh = require('./components/refreshFunctions/userEntries');
-
-var request = require('superagent');
 
 var app = document.createElement('div');
 document.querySelector('main').appendChild(app);
@@ -11603,4 +11592,4 @@ function render(state, dispatch) {
 
 store.dispatch({ type: 'INIT' });
 
-},{"./components/app":45,"./components/follows":49,"./components/header":51,"./components/home":52,"./components/login":53,"./components/refreshFunctions/followEntries":54,"./components/refreshFunctions/homeEntries":55,"./components/refreshFunctions/targetEntries":56,"./components/refreshFunctions/userEntries":57,"./components/signup":60,"./components/target":62,"./components/user":63,"./reducer":64,"morphdom":14,"redux":22,"superagent":34}]},{},[65]);
+},{"./components/app":45,"./components/follows":49,"./components/home":52,"./components/login":53,"./components/refreshFunctions/followEntries":54,"./components/refreshFunctions/homeEntries":55,"./components/refreshFunctions/targetEntries":56,"./components/refreshFunctions/userEntries":57,"./components/signup":60,"./components/target":62,"./components/user":63,"./reducer":64,"morphdom":14,"redux":22}]},{},[65]);
