@@ -6,5 +6,6 @@ Client side for Flooki (originally One Shot).
 * Clone down repo; install node modules with `npm install`
 * Start server with `npm start`
 * Live reloading app at `http://localhost:9966/`
+* The API is fully documented [here](https://github.com/one-mile/server/blob/master/documentation.md).
 
-The API is fully documented [here](https://github.com/one-mile/server/blob/master/documentation.md).
+The site is live [here](https://one-mile.github.io/client/).

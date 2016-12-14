@@ -59,9 +59,9 @@ function footer (state, dispatch) {
     return yo `
     <div class="pageFooter">
       <i class=${viewIconTurner("home", "ion-ios-home")} id='homeButton' onclick=${() => goHome(dispatch)}></i>
-      <i class='ion-ios-circle-outline' onclick=${() => accessCamera(state, dispatch)} id="upload_widget_opener"></i>
       <i class=${viewIconTurner("me", "ion-ios-person")} id='profileButton' onclick=${() => goToUser(dispatch)}></i>
       <i class=${viewIconTurner("follows", 'ion-ios-people')} id='followButton' onclick=${() => goToFollows(dispatch)}></i>
+      <i class='ion-ios-circle-outline' onclick=${() => accessCamera(state, dispatch)} id="upload_widget_opener"></i>
     </div>
     `
   }
