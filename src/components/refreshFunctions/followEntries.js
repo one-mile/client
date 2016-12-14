@@ -10,28 +10,15 @@ function getFollows (state, dispatch, bool) {
         .withCredentials()
         .end( (error, res) => {
           if (error) console.log(error);
-          console.log({res});
           if (res.body.followed_entries.length == 0) {
             dispatch({type: 'GO_TO_FOLLOWS', payload: null})
           } else {
-            console.log("dispatching entries");
             dispatch({type: 'RECIEVE_FOLLOW_ENTRIES', payload: res.body})
           }
         })
     }
   } else if (!state.isLoading){
-    console.log("redirect to home from follows load");
     dispatch({type: "GO_TO_FOLLOWS"})
-    // dispatch({type: "TOGGLE_LOADING"})
-    // request
-    //   .get(url + 'entries/' + state.user.user_id)
-    //   .withCredentials()
-    //   .end( (error, res) => {
-    //     if (error) console.log(error);
-    //     else {
-    //       dispatch({type: 'RECEIVE_ENTRIES', payload: res.body})
-    //     }
-    //   })
   }
 }
 

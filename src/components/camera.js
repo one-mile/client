@@ -2,8 +2,6 @@ var yo = require('yo-yo')
 const request = require('superagent')
 const url = require('./requestUrl')
 
-
-//
 function accessCamera (state, dispatch) {
   if(state.user.shotsRemaining > 0) {
     cloudinary.openUploadWidget({ cloud_name: 'flooki', upload_preset: 'clientuploads', sources: ['camera'], default_source: 'local', multiple: false, theme: 'minimal', button_class: 'flooki_button' },

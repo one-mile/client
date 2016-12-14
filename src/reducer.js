@@ -1,7 +1,6 @@
 const clone = require('clone')
 const moment = require('moment')
 const flukeReducer = require('./components/flukeReduce')
-const followEntries = require('./components/refreshFunctions/followEntries')
 
 module.exports = (state, action) => {
   var newState = require('clone')(state)
@@ -21,19 +20,16 @@ module.exports = (state, action) => {
       newState.myFlukes = payload.myFlukes
       return newState
     case 'RECIEVE_FOLLOW_ENTRIES':
-      console.log({payload});
       if (payload != null) {
         newState.followEntries = payload.followed_entries
         newState.myFollowing = payload.following_list
       } else {
-        console.log("no entries");
         newState.followEntries = null
         newState.myFollowing = []
       }
       newState.isLoading = false;
       return newState
     case 'GET_TARGET_ENTRIES':
-      console.log({payload});
       newState.targetEntries = payload.body.user_entries
       newState.targetId = payload.id
       newState.view = 'target'
@@ -43,7 +39,6 @@ module.exports = (state, action) => {
       newState.myEntries = payload.body.user_entries
       newState.view = 'me'
       newState.targetId = newState.user.user_id
-      console.log("target id:",newState.targetId);
       newState.isLoading = false;
       return newState
     case 'GO_TO_HOME':
@@ -60,14 +55,11 @@ module.exports = (state, action) => {
       return newState
     case 'GO_TO_FOLLOWS':
       if (newState.myFollowing == null || newState.myFollowing.length == 0) {
-        alert(`you aren't following any users!`)
-        console.log("redirecting to home");
         newState.view = 'home'
       } else newState.view = 'follows'
       return newState
     case 'GO_TO_USER':
       if (newState.myEntries == null || newState.myEntries.length == 0) {
-        alert(`you haven't posted any photos yet!`)
         newState.view = 'home'
       } else newState.view = 'me'
       return newState

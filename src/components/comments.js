@@ -1,7 +1,6 @@
 const request = require('superagent')
 const url = require('./requestUrl')
 const yo = require('yo-yo')
-const moment = require('moment')
 const formatDate = require('./formatDate')
 
 function renderComments(entry_id, state, dispatch) {

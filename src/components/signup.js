@@ -1,7 +1,6 @@
 const yo = require('yo-yo')
 const request = require('superagent')
-
-var header = require ('./header').header
+const header = require ('./header').header
 const url = require('./requestUrl')
 
 module.exports = signup
@@ -23,7 +22,6 @@ function signup (state, dispatch) {
   `
 
   function handleSignup(e) {
-    // dispatch({type: "TOGGLE_LOADING"})
     e.preventDefault()
     var username = document.getElementById('username').value
     var password = document.getElementById('password').value
@@ -55,14 +53,13 @@ function signup (state, dispatch) {
               .withCredentials()
               .end((error, response) => {
                 if (error) {
-                  console.log(error, 'Error goes here')
                   dispatch({type: "AUTH_ERROR", payload: "An error has occurred. Please try again."})
                 } else {
                   dispatch({type: 'RECEIVE_USER', payload: response.body.user})
                   dispatch({type: "TOGGLE_LOADING"})
                 }
               })
-          })
+        })
     }
   }
 }

@@ -8,7 +8,6 @@ function goToUser(state, dispatch, boolean) {
       .get(`${url}entries/user/${state.user.user_id}`)
       .withCredentials()
       .end((err, res) => {
-        console.log("user entries",{res});
         if (err) {
           dispatch({type: "TOGGLE_LOADING"})
         } else if (res.body.user_entries.length == 0) {

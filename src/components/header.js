@@ -2,11 +2,8 @@ var yo = require('yo-yo')
 const accessCamera = require ('./camera')
 const request = require('superagent')
 const url = require('./requestUrl')
-const refreshFollows = require('./refreshFunctions/followEntries')
 
 function header (state, dispatch, refresh) {
-  // console.log("Render header follow list", state.myFollowing);
-  // console.log("start of header state", state);
   var headerName
   if (state.view === 'me') {
     headerName = state.user.username
@@ -25,8 +22,6 @@ function header (state, dispatch, refresh) {
     </div>
   `
   function displayUser() {
-    console.log("state following list", state.myFollowing);
-    console.log("is following", state.myFollowing.includes(state.targetId))
     if (state.myFollowing.includes(state.targetId)) {
       return yo`<h1 class="following" onclick=${() => followHandler(state.targetId, state.user.user_id)}">u ${headerName}</h1>`
     } else {
@@ -34,14 +29,12 @@ function header (state, dispatch, refresh) {
     }
   }
   function followHandler(followed_user_id, following_user_id) {
-    console.log("toggle follow");
     request
       .post(`${url}entries/follows/new`)
       .send({followed_user_id, following_user_id})
       .withCredentials()
       .end((err, res) => {
         if(err) console.log({err});
-        console.log("follow request", {res});
         if(res.text === "success") {
             dispatch({type: "TOGGLE_FOLLOW", payload: followed_user_id})
         } else console.log("failed");
@@ -77,8 +70,6 @@ function footer (state, dispatch) {
   }
 }
 
-
-
 function shotsRemaining(state) {
   return yo `
     <h1 class='shots-remaining'>
@@ -96,9 +87,6 @@ function shotsView(shotsRemaining) {
   }
   return shotsView
 }
-
-// var btnText = document.querySelector('select_file')
-// if (btnText) btnText.innerHTML = 'test'
 
 module.exports = {
   header,
