@@ -15,25 +15,22 @@ module.exports = (state, action) => {
       newState.view = 'follows'
       return newState
     case 'RECEIVE_ENTRIES':
-      // newState.targetId = null
       newState.isLoading = false
       newState.entries = payload.entries
       newState.myFlukes = payload.myFlukes
       return newState
     case 'RECIEVE_FOLLOW_ENTRIES':
-      // newState.targetId = null
       if (payload != null) {
-        // console.log("RECIEVE FOLLOW ENTRIES", {payload});
         newState.followEntries = payload.followed_entries
         newState.myFollowing = payload.following_list
       } else {
-        // console.log("I AM WIPING WITHIN THE REDUCER");
         newState.followEntries = null
         newState.myFollowing = []
       }
       newState.isLoading = false;
       return newState
     case 'GET_TARGET_ENTRIES':
+    console.log({payload});
       newState.targetEntries = payload.body.user_entries
       newState.targetId = payload.id
       newState.view = 'target'
@@ -49,7 +46,6 @@ module.exports = (state, action) => {
     case 'GO_TO_HOME':
       newState.isLoading = false;
       newState.view = 'home'
-      // newState.targetId = null
       return newState
     case 'GO_TO_LOGIN':
       newState.view = 'login'
@@ -58,7 +54,6 @@ module.exports = (state, action) => {
       newState.view = 'signup'
       return newState
     case 'GO_TO_FOLLOWS':
-      // newState.targetId = null
       newState.view = 'follows'
       return newState
     case 'GO_TO_USER':
@@ -97,7 +92,6 @@ module.exports = (state, action) => {
       return newState
     case "TOGGLE_FOLLOW":
       var id = payload
-
       if (newState.myFollowing.includes(payload)) {
         while (newState.myFollowing.includes(payload)) {
           var i = newState.myFollowing.indexOf(payload)
