@@ -15,6 +15,7 @@ function renderEntries (state, dispatch, entries) {
       <br>
       <br>
       <br>
+      <br>
         ${entries.map((entry) => {
           return renderEntry(entry, state, dispatch)
         })}
