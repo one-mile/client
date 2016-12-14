@@ -3,7 +3,7 @@ const moment = require('moment')
 const flukeReducer = require('./components/flukeReduce')
 
 module.exports = (state, action) => {
-  var newState = require('clone')(state)
+  var newState = clone(state)
   const {payload, type} = action
   switch (type) {
     case 'TOGGLE_LOADING':
@@ -27,22 +27,22 @@ module.exports = (state, action) => {
         newState.followEntries = null
         newState.myFollowing = []
       }
-      newState.isLoading = false;
+      newState.isLoading = false
       return newState
     case 'GET_TARGET_ENTRIES':
       newState.targetEntries = payload.body.user_entries
       newState.targetId = payload.id
       newState.view = 'target'
-      newState.isLoading = false;
+      newState.isLoading = false
       return newState
     case 'GET_MY_ENTRIES':
       newState.myEntries = payload.body.user_entries
       newState.view = 'me'
       newState.targetId = newState.user.user_id
-      newState.isLoading = false;
+      newState.isLoading = false
       return newState
     case 'GO_TO_HOME':
-      newState.isLoading = false;
+      newState.isLoading = false
       newState.view = 'home'
       return newState
     case 'GO_TO_LOGIN':
@@ -89,7 +89,7 @@ module.exports = (state, action) => {
         comment: payload.comment,
         username: newState.user.username
       }
-      incrementCommentCounts (payload.entry_id, newState)
+      incrementCommentCounts(payload.entry_id, newState)
       newState.entryComments.unshift(commentObj)
       return newState
     case 'ADD_NEW_PHOTO':
@@ -97,8 +97,7 @@ module.exports = (state, action) => {
       newState.entries.unshift(entry)
       newState.myEntries.unshift(entry)
       return newState
-    case "TOGGLE_FOLLOW":
-      var id = payload
+    case 'TOGGLE_FOLLOW':
       if (newState.myFollowing.includes(payload)) {
         while (newState.myFollowing.includes(payload)) {
           var i = newState.myFollowing.indexOf(payload)
@@ -115,7 +114,7 @@ module.exports = (state, action) => {
   }
 }
 
-function constructEntry({entry_id, image_url}, username) {
+function constructEntry ({entry_id, image_url}, username) {
   var justNow = moment()
   return {
     entry_id,
@@ -136,7 +135,7 @@ function incrementCommentCounts (entry_id, state) {
 function incrementCommentCount (entry_id, entries) {
   var i = null
   entries.forEach((entry, index) => {
-    if(entry.entry_id == entry_id) i = index
+    if (entry.entry_id == entry_id) i = index
   })
   if (i != null) {
     entries[i].comment_count++

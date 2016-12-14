@@ -1,9 +1,9 @@
-function flukeReduce(entries, payload) {
+function flukeReduce (entries, payload) {
   if (payload.action === 'fluke') {
-    var flukedEntry = entries.find( (entry) => entry.entry_id === payload.entry_id)
+    var flukedEntry = entries.find((entry) => entry.entry_id === payload.entry_id)
     if (flukedEntry) flukedEntry.flukes++
   } else if (payload.action === 'defluke') {
-    var deFlukedEntry = entries.find( (entry) => entry.entry_id === payload.entry_id)
+    var deFlukedEntry = entries.find((entry) => entry.entry_id === payload.entry_id)
     if (deFlukedEntry) deFlukedEntry.flukes--
   }
 }
