@@ -83,6 +83,7 @@ function fluke(entry_id, user_id, dispatch) {
   request
   .post(url + 'entries/fluke')
   .send({entry_id, user_id})
+  .withCredentials()
   .end((err, res) => {
     if (res.body.success) {
       dispatch({type: 'TOGGLE_FLUKE', payload: res.body})

@@ -33,17 +33,16 @@ function header (state, dispatch, refresh) {
     }
   }
   function followHandler(followed_user_id, following_user_id) {
-    var endpoint = (state.myFollowing.includes(followed_user_id))
-      ?  "delete" : "new"
-    console.log(endpoint);
+    console.log("toggle follow");
     request
-      .post(`${url}entries/follows/${endpoint}`)
+      .post(`${url}entries/follows/new`)
       .send({followed_user_id, following_user_id})
+      .withCredentials()
       .end((err, res) => {
         if(err) console.log({err});
         if(res.text === "success") {
             dispatch({type: "TOGGLE_FOLLOW", payload: followed_user_id})
-        }
+        } else console.log("failed");
     })
   }
 }

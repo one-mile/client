@@ -6,6 +6,7 @@ function goToUser(state, dispatch, boolean) {
     dispatch({type: "TOGGLE_LOADING"})
     request
       .get(`${url}entries/user/${state.user.user_id}`)
+      .withCredentials()
       .end((err, res) => {
         if (err) {
           dispatch({type: "TOGGLE_LOADING"})

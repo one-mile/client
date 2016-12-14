@@ -32,7 +32,7 @@ var initialState = {
   myFollowing: [],
   myEntries: [],
   targetEntries: [],
-  targetId: 0,
+  targetId: null,
   myFlukes: [],
   entryForComments: null,
   entryComments : []
