@@ -8,13 +8,13 @@ function formatDate(timeinUTC) {
  var localTime = moment(setUTC).local().format()
  var formatted = moment(localTime).format('HH:mma, Do MMM')
 
- console.log("UTC date is: ", setUTC)
- console.log("localDate is: ", localTime)
- console.log("now formatted: ", formatted)
+ // console.log("UTC date is: ", setUTC)
+ // console.log("localDate is: ", localTime)
+ // console.log("now formatted: ", formatted)
 
  return formatted
 }
 
 // Testing
-var inUTC = '2016-12-13 21:46:45'
-formatDate(inUTC)
+// var inUTC = '2016-12-13 21:46:45'
+// formatDate(inUTC)
