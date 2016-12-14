@@ -1,4 +1,6 @@
 main {
+  padding: 0;
+  margin: 0;
   font-family: 'Raleway', sans-serif;
   font-size: .7em;
   }
@@ -15,7 +17,6 @@ img {
   border-radius: 5px;
   left: 0
   top: 0
-
 }
 
 input {
@@ -24,13 +25,18 @@ input {
   width:80%;
   padding: 12px 20px;
   margin: 0 auto;
-  border: solid grey 1px;
   border-radius: 15px;
-  box-sizing: border-box;
+}
+
+#commentField {
+  padding: 7px;
 }
 
 div .login, .signup {
   text-align: center;
+}
+
+form .login {
   margin-top: 50%;
 }
 
@@ -44,13 +50,15 @@ div .login, .signup {
   width: 70%;
 }
 
+#username {
+  margin-top: 50%;
+}
+
 #commentField {
   font-family: 'Raleway', sans-serif;
-  font-size: 1px;
-  box-sizing: border-box;
   border: solid #94004a 1px;
-  border-radius: 15px;
-  width: 70%;
+  border-radius: 7px;
+  width: 100%;
 }
 
 .loginBtn, .createBtn {
@@ -73,15 +81,14 @@ div .login, .signup {
   background-color: white;
 }
 
-.backBtn {
-  margin-top: 25%;
+#commentButton {
+  font-family: 'Raleway', sans-serif;
+  width: 20%;
+  margin-top: 4px;
 }
 
-.pageFooter {
-  height: 8%;
-  bottom:0;
-  position: fixed;
-  opacity: 0.8;
+.backBtn {
+  margin-top: 25%;
 }
 
 .pageHeader {
@@ -90,7 +97,6 @@ div .login, .signup {
   opacity: 0.8;
   z-index: 1;
   height: 8%;
-
   position: fixed;
 }
 
@@ -116,24 +122,28 @@ h1 {
   justify-content: space-around;
   flex-wrap: nowrap;
   align-items: center;
+  height: 8%;
+  bottom:0;
+  position: fixed;
+  opacity: 0.8;
 }
-
-/*.image-footer {
-
-  text-align: center;
-}*/
 
 .commentCount, .commentsShow, .flukeCount {
   color: #554b4b;
   font-weight: lighter;
 }
-#user-name, .commentCount {
+
+.commentsShow {
+  text-align: right;
+}
+
+#user-name, .flukeCount {
   float: left;
   text-align: left;
   width: 50%;
 }
 
-#entry-date, .flukeCount{
+#entry-date, .commentCount{
   float: right;
   text-align: right;
   width: 50%;
@@ -153,26 +163,14 @@ h1 {
 }
 
 .remaining, .taken {
-  border-radius: 50%;
-  display: inline-block;
-  padding: 10px;
-  width: 10px;
-  height: 10px;
-  margin: 0 5px;
-}
-
-.remaining {
-  background-color: green;
-}
-
-.taken {
-  background-color: grey;
+  display: none;
 }
 
 #f {
   z-index: 100;
   left: 4%;
   top: 20%;
+margin: 3px;
 }
 
 
