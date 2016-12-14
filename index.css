@@ -36,6 +36,11 @@ form .login {
   margin-top: 50%;
 }
 
+hr {
+  width: 100%;
+}
+
+
 #username, #password, #rpt-password, #email  {
   font-family: 'Raleway', sans-serif;
   font-size: 20px;
@@ -48,6 +53,15 @@ form .login {
 
 #username {
   margin-top: 50%;
+}
+
+#noRefresh, #refresh {
+    font-family: 'Josefin Slab', serif;
+    font-size: 30px;
+    text-align: center;
+    color: white;
+    letter-spacing: 4px;
+    margin: 13px;
 }
 
 #commentField {
@@ -71,7 +85,7 @@ form .login {
 .signupBtn, .backBtn {
   font-family: 'Raleway', sans-serif;
   width:40%;
-  margin-top: 54%;
+  margin-top: 40%;
   padding: 4px 10px;
   border: solid #94004a 1px;
   border-radius: 15px;
@@ -92,32 +106,27 @@ form .login {
   margin-top: 25%;
 }
 
-.pageHeader {
-  color: #4a4a4a;
-  display: inline-block;
-  opacity: 0.8;
-  z-index: 1;
-  height: 8%;
-  position: fixed;
-}
-
-.pageHeader, .pageFooter { /* .pageFooter, */
+.pageHeader { /* .pageFooter, */
   width: 100%;
-  background: #4a4a4a;
-  z-index: 1;
+  background: -moz-linear-gradient(143deg, rgba(137,11,74,1) 0%, rgba(137,11,74,1) 45%, rgba(62,24,43,1) 89%, rgba(44,28,36,1) 100%); /* ff3.6+ */
+  background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, rgba(44,28,36,1)), color-stop(11%, rgba(62,24,43,1)), color-stop(55%, rgba(137,11,74,1)), color-stop(100%, rgba(137,11,74,1))); /* safari4+,chrome */
+  background: -webkit-linear-gradient(143deg, rgba(137,11,74,1) 0%, rgba(137,11,74,1) 45%, rgba(62,24,43,1) 89%, rgba(44,28,36,1) 100%); /* safari5.1+,chrome10+ */
+  background: -o-linear-gradient(143deg, rgba(137,11,74,1) 0%, rgba(137,11,74,1) 45%, rgba(62,24,43,1) 89%, rgba(44,28,36,1) 100%); /* opera 11.10+ */
+  background: -ms-linear-gradient(143deg, rgba(137,11,74,1) 0%, rgba(137,11,74,1) 45%, rgba(62,24,43,1) 89%, rgba(44,28,36,1) 100%); /* ie10+ */
+  background: linear-gradient(307deg, rgba(137,11,74,1) 0%, rgba(137,11,74,1) 45%, rgba(62,24,43,1) 89%, rgba(44,28,36,1) 100%); /* w3c */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2c1c24', endColorstr='#890b4a',GradientType=1 ); /* ie6-9 */
+  height: 8%;
+  z-index: 9;
   position: fixed;
-  color: #94004a;
+  opacity: 0.8;
+
+
   /*-webkit-filter: blur(3px);*/
 }
 
-h1 {
-  font-family: 'Josefin Slab', serif;
-  font-size: 30px;
-  color: white;
-  text-align: center;
-}
-
 .pageFooter {
+  width: 100%;
+  background: #4a4a4a;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
@@ -127,6 +136,13 @@ h1 {
   bottom:0;
   position: fixed;
   opacity: 0.8;
+  background: -moz-linear-gradient(143deg, rgba(108,40,74,1) 0%, rgba(108,40,74,1) 45%, rgba(94,53,74,1) 89%, rgba(91,57,74,1) 100%); /* ff3.6+ */
+  background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, rgba(91,57,74,1)), color-stop(11%, rgba(94,53,74,1)), color-stop(55%, rgba(108,40,74,1)), color-stop(100%, rgba(108,40,74,1))); /* safari4+,chrome */
+  background: -webkit-linear-gradient(143deg, rgba(108,40,74,1) 0%, rgba(108,40,74,1) 45%, rgba(94,53,74,1) 89%, rgba(91,57,74,1) 100%); /* safari5.1+,chrome10+ */
+  background: -o-linear-gradient(143deg, rgba(108,40,74,1) 0%, rgba(108,40,74,1) 45%, rgba(94,53,74,1) 89%, rgba(91,57,74,1) 100%); /* opera 11.10+ */
+  background: -ms-linear-gradient(143deg, rgba(108,40,74,1) 0%, rgba(108,40,74,1) 45%, rgba(94,53,74,1) 89%, rgba(91,57,74,1) 100%); /* ie10+ */
+  background: linear-gradient(307deg, rgba(108,40,74,1) 0%, rgba(108,40,74,1) 45%, rgba(94,53,74,1) 89%, rgba(91,57,74,1) 100%); /* w3c */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#5b394a', endColorstr='#6c284a',GradientType=1 ); /* ie6-9 */
 }
 
 .commentCount, .commentsShow, .flukeCount {
@@ -155,30 +171,27 @@ h1 {
   width: 50%;
 }
 
-
-
-/*
-.image-header{
-  margin-top: 7%;
-  margin-bottom: 12%;
-}*/
-
 #hideInput {
   width: 0;
   height: 0;
 }
 
 .remaining, .taken {
-  display: none;
+  border-radius: 50%;
+  display: inline-block;
+  padding: 10px;
+  width: 10px;
+  height: 10px;
+  margin: 0 5px;
 }
 
-#f {
-  z-index: 100;
-  left: 4%;
-  top: 20%;
-margin: 3px;
+.remaining {
+  background-color: green;
 }
 
+.taken {
+   background-color: grey;
+ }
 
 div .entry {
   width: 80%;
@@ -186,8 +199,13 @@ div .entry {
   z-index: 0;
 }
 
+#f {
+  font-size: 9px;
+  font-weight: lighter;
+}
+
 i {
-  font-size: 48px;
+  font-size: 36px;
   color: white;
 }
 
