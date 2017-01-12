@@ -52,7 +52,7 @@ hr {
 }
 
 #username {
-  margin-top: 50%;
+  margin-top: 20%;
 }
 
 #noRefresh, #refresh {
@@ -85,7 +85,7 @@ hr {
 .signupBtn, .backBtn {
   font-family: 'Raleway', sans-serif;
   width:40%;
-  margin-top: 40%;
+  margin-top: 20%;
   padding: 4px 10px;
   border: solid #94004a 1px;
   border-radius: 15px;
@@ -248,6 +248,25 @@ input:-webkit-autofill {
     margin-left: auto;
     margin-right: auto;
   }
+
+  #username {
+    margin-top: 12%;
+  }
+
+  .signupBtn, .backBtn {
+    margin-top: 10%;
+    margin-bottom: 10%;
+  }
+
+  .createBtn {
+    margin-top: 3%;
+  }
+
+  .loginBtn, .signupBtn, .backBtn, .createBtn, #username, #password, #rpt-password, #email {
+    max-width: 40%;
+    margin-left: 15%;
+    margin-right: 15%;
+  }
 }
 
 @media (min-width: 1000px) {
@@ -255,5 +274,12 @@ input:-webkit-autofill {
     max-width: 50%;
     margin-left: auto;
     margin-right: auto;
+  }
+
+  .loginBtn, .signupBtn, .backBtn, .createBtn, #username, #password, #rpt-password, #email {
+    max-width: 30%;
+    margin-left: 20%;
+    margin-right: 20%;
+
   }
 }
