@@ -57,10 +57,6 @@ hr {
   color: white;
 }
 
-/*#username {
-  margin-top: 20%;
-}*/
-
 #noRefresh, #refresh {
     font-family: 'Josefin Slab', serif;
     font-size: 30px;
@@ -78,26 +74,6 @@ hr {
   padding: 7px;
 }
 
-/*.loginBtn, .createBtn {
-  font-family: 'Raleway', sans-serif;
-  width:50%;
-  padding: 12px 20px;
-  margin-top: 5%;
-  border: solid #94004a 1px;
-  border-radius: 15px;
-  background-color: white;
-}*/
-
-/*.backBtn {
-  font-family: 'Raleway', sans-serif;
-  width:40%;
-  margin-top: 20%;
-  padding: 4px 10px;
-  border: solid #94004a 1px;
-  border-radius: 15px;
-  background-color: white;
-}*/
-
 #commentButton {
   font-family: 'Raleway', sans-serif;
   margin-top: 4px;
@@ -105,16 +81,11 @@ hr {
   border: none;
   background-color: white;
   text-align: right;
-
 }
 
 #username {
   margin-top: 20%;
 }
-
-/*.backBtn {
-  margin-top: 25%;
-}*/
 
 .pageHeader { /* .pageFooter, */
   width: 100%;
@@ -278,11 +249,6 @@ input:-webkit-autofill {
   #username {
     margin-top: 12%;
   }
-
-  /*.backBtn {
-    margin-top: 10%;
-    margin-bottom: 10%;
-  }*/
 
   .createBtn {
     margin-top: 3%;
