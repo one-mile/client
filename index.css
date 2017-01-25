@@ -40,20 +40,26 @@ hr {
   width: 100%;
 }
 
-
-#username, #password, #rpt-password, #email  {
+#username, #password, #rpt-password, #email, .loginBtn, .createBtn, .signupBtn, .backBtn  {
   font-family: 'Raleway', sans-serif;
-  font-size: 20px;
+  font-size: 15px;
+  background-color: white;
   box-sizing: border-box;
   margin: 1%;
   border: solid #94004a 1px;
   border-radius: 15px;
+  padding: 10px 0;
   width: 70%;
 }
 
-#username {
-  margin-top: 20%;
+.loginBtn:hover, .createBtn:hover, .signupBtn:hover, .backBtn:hover {
+  background-color: #94004a;
+  color: white;
 }
+
+/*#username {
+  margin-top: 20%;
+}*/
 
 #noRefresh, #refresh {
     font-family: 'Josefin Slab', serif;
@@ -72,7 +78,7 @@ hr {
   padding: 7px;
 }
 
-.loginBtn, .createBtn {
+/*.loginBtn, .createBtn {
   font-family: 'Raleway', sans-serif;
   width:50%;
   padding: 12px 20px;
@@ -80,9 +86,9 @@ hr {
   border: solid #94004a 1px;
   border-radius: 15px;
   background-color: white;
-}
+}*/
 
-.signupBtn, .backBtn {
+/*.backBtn {
   font-family: 'Raleway', sans-serif;
   width:40%;
   margin-top: 20%;
@@ -90,7 +96,7 @@ hr {
   border: solid #94004a 1px;
   border-radius: 15px;
   background-color: white;
-}
+}*/
 
 #commentButton {
   font-family: 'Raleway', sans-serif;
@@ -102,9 +108,13 @@ hr {
 
 }
 
-.backBtn {
-  margin-top: 25%;
+#username {
+  margin-top: 20%;
 }
+
+/*.backBtn {
+  margin-top: 25%;
+}*/
 
 .pageHeader { /* .pageFooter, */
   width: 100%;
@@ -165,6 +175,11 @@ hr {
   width: 50%;
 }
 
+#user-name:hover {
+  color: #94004a;
+  text-decoration: underline;
+}
+
 #entry-date, .commentCount{
   float: right;
   text-align: right;
@@ -177,7 +192,17 @@ hr {
 }
 
 .shots-remaining {
-text-align: center;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.following, .notFollowing {
+  margin: 5px 0;
+  text-align: center;
+}
+
+.following:hover, .notFollowing:hover {
+  color: #94004a;
 }
 
 .remaining, .taken {
@@ -201,6 +226,7 @@ text-align: center;
 div .entry {
   width: 80%;
   margin: 0 auto;
+  margin-top: 20px;
   z-index: 0;
 }
 
@@ -253,10 +279,10 @@ input:-webkit-autofill {
     margin-top: 12%;
   }
 
-  .signupBtn, .backBtn {
+  /*.backBtn {
     margin-top: 10%;
     margin-bottom: 10%;
-  }
+  }*/
 
   .createBtn {
     margin-top: 3%;

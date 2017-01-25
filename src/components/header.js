@@ -23,9 +23,9 @@ function header (state, dispatch, refresh) {
   `
   function displayUser () {
     if (state.myFollowing.includes(state.targetId)) {
-      return yo`<h1 class="following" onclick=${() => followHandler(state.targetId, state.user.user_id)}">u ${headerName}</h1>`
+      return yo`<h3 class="following" onclick=${() => followHandler(state.targetId, state.user.user_id)}">unfollow ${headerName}</h1>`
     } else {
-      return yo`<h1 class="notFollowing" onclick=${() => followHandler(state.targetId, state.user.user_id)}">f ${headerName}</h1>`
+      return yo`<h3 class="notFollowing" onclick=${() => followHandler(state.targetId, state.user.user_id)}">follow ${headerName}</h1>`
     }
   }
   function followHandler (followed_user_id, following_user_id) {
