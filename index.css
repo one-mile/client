@@ -1,3 +1,13 @@
+/*
+  ========================================
+  BASICS
+  ========================================
+*/
+
+#app {
+  max-width: 100%;
+}
+
 main {
   padding: 0;
   margin: 0;
@@ -19,6 +29,30 @@ img {
   top: 0
 }
 
+#noRefresh, #refresh {
+    font-family: 'Josefin Slab', serif;
+    font-size: 30px;
+    text-align: center;
+    color: white;
+    letter-spacing: 4px;
+    margin: 13px;
+}
+
+hr {
+  width: 100%;
+}
+
+i {
+  font-size: 36px;
+  color: white;
+}
+
+/*
+  ========================================
+  FORM & INPUTS
+  ========================================
+*/
+
 input {
   box-sizing: border-box;
   text-align: center;
@@ -26,18 +60,6 @@ input {
   padding: 12px 20px;
   margin: 0 auto;
   border-radius: 15px;
-}
-
-div .login, .signup {
-  text-align: center;
-}
-
-form .login {
-  margin-top: 50%;
-}
-
-hr {
-  width: 100%;
 }
 
 #username, #password, #rpt-password, #email, .loginBtn, .createBtn, .signupBtn, .backBtn  {
@@ -57,35 +79,45 @@ hr {
   color: white;
 }
 
-#noRefresh, #refresh {
-    font-family: 'Josefin Slab', serif;
-    font-size: 30px;
-    text-align: center;
-    color: white;
-    letter-spacing: 4px;
-    margin: 13px;
+div .login, .signup {
+  text-align: center;
 }
 
-#commentField {
-  font-family: 'Raleway', sans-serif;
-  border: solid rgba(148,0,74, 0.3) 1px;
-  border-radius: 7px;
-  width: 100%;
-  padding: 7px;
-}
-
-#commentButton {
-  font-family: 'Raleway', sans-serif;
-  margin-top: 4px;
-  width: 100%;
-  border: none;
-  background-color: white;
-  text-align: right;
+form .login {
+  margin-top: 50%;
 }
 
 #username {
   margin-top: 20%;
 }
+
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px white inset;
+}
+
+::-webkit-input-placeholder {
+   color: #bca8af;
+   font-size: 20px;
+   font-family: 'Rajdhani', sans-serif;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+   color: #bca8af;
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+   color: #bca8af;
+}
+
+:-ms-input-placeholder {
+   color: #bca8af;
+}
+
+/*
+  ========================================
+  HEADER AND FOOTER
+  ========================================
+*/
 
 .pageHeader { /* .pageFooter, */
   width: 100%;
@@ -100,9 +132,6 @@ hr {
   z-index: 9;
   position: fixed;
   opacity: 0.8;
-
-
-  /*-webkit-filter: blur(3px);*/
 }
 
 .pageFooter {
@@ -125,6 +154,12 @@ hr {
   background: linear-gradient(307deg, rgba(108,40,74,1) 0%, rgba(108,40,74,1) 45%, rgba(94,53,74,1) 89%, rgba(91,57,74,1) 100%); /* w3c */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#5b394a', endColorstr='#6c284a',GradientType=1 ); /* ie6-9 */
 }
+
+/*
+  ========================================
+  ENTRIES
+  ========================================
+*/
 
 .commentCount, .commentsShow, .flukeCount {
   color: #554b4b;
@@ -157,23 +192,44 @@ hr {
   width: 50%;
 }
 
-#hideInput {
-  width: 0;
-  height: 0;
+div .entry {
+  width: 80%;
+  margin: 0 auto;
+  margin-top: 20px;
+  z-index: 0;
 }
+
+#f {
+  font-size: 9px;
+  font-weight: lighter;
+}
+
+#commentButton {
+  font-family: 'Raleway', sans-serif;
+  margin-top: 4px;
+  width: 100%;
+  border: none;
+  background-color: white;
+  text-align: right;
+}
+
+#commentField {
+  font-family: 'Raleway', sans-serif;
+  border: solid rgba(148,0,74, 0.3) 1px;
+  border-radius: 7px;
+  width: 100%;
+  padding: 7px;
+}
+
+/*
+  ========================================
+  SHOTS REMAINING
+  ========================================
+*/
 
 .shots-remaining {
   text-align: center;
   margin-bottom: 10px;
-}
-
-.following, .notFollowing {
-  margin: 5px 0;
-  text-align: center;
-}
-
-.following:hover, .notFollowing:hover {
-  color: #94004a;
 }
 
 .remaining, .taken {
@@ -191,53 +247,29 @@ hr {
 }
 
 .taken {
-   border: solid 1px #94004a;
- }
-
-div .entry {
-  width: 80%;
-  margin: 0 auto;
-  margin-top: 20px;
-  z-index: 0;
+ border: solid 1px #94004a;
 }
 
-#f {
-  font-size: 9px;
-  font-weight: lighter;
+/*
+  ========================================
+  FOLLOWS
+  ========================================
+*/
+
+.following, .notFollowing {
+  margin: 5px 0;
+  text-align: center;
 }
 
-i {
-  font-size: 36px;
-  color: white;
+.following:hover, .notFollowing:hover {
+  color: #94004a;
 }
 
-input:-webkit-autofill {
-    -webkit-box-shadow: 0 0 0px 1000px white inset;
-}
-
-::-webkit-input-placeholder {
-   color: #bca8af;
-   font-size: 20px;
-   font-family: 'Rajdhani', sans-serif;
-}
-
-:-moz-placeholder { /* Firefox 18- */
-   color: #bca8af;
-}
-
-::-moz-placeholder {  /* Firefox 19+ */
-   color: #bca8af;
-}
-
-:-ms-input-placeholder {
-   color: #bca8af;
-}
-
-
-#app {
-  max-width: 100%;
-}
-
+/*
+  ========================================
+  MEDIA QUERIES
+  ========================================
+*/
 
 @media (min-width: 650px) {
   .homediv {
@@ -274,4 +306,15 @@ input:-webkit-autofill {
     margin-right: 20%;
 
   }
+}
+
+/*
+  ========================================
+  WIDGET
+  ========================================
+*/
+
+#cloudinary-widget {
+ max-width: 100%;
+ min-width: 100%;
 }
