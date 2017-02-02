@@ -7,7 +7,7 @@ function renderComments (entry_id, state, dispatch) {
   var comments = state.entryComments || []
   return yo`
     <form>
-      <input id="commentField" type="text" placeholder="post your comment here"/>
+      <input id="commentField" type="text" placeholder="Write your comment here"/>
       <button id="commentButton" onclick=${postComment} type="submit">Post</button>
       <div class="comments">
         ${comments.map((comment) => renderComment(comment))}
