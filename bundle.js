@@ -8952,7 +8952,7 @@ function createStore(reducer, preloadedState, enhancer) {
     replaceReducer: replaceReducer
   }, _ref2[_symbolObservable2['default']] = observable, _ref2;
 }
-},{"lodash/isPlainObject":22,"symbol-observable":40}],32:[function(require,module,exports){
+},{"lodash/isPlainObject":22,"symbol-observable":41}],32:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -9047,6 +9047,7 @@ var RequestBase = require('./request-base');
 var isObject = require('./is-object');
 var isFunction = require('./is-function');
 var ResponseBase = require('./response-base');
+var shouldRetry = require('./should-retry');
 
 /**
  * Noop.
@@ -9321,8 +9322,7 @@ function isJSON(mime) {
  * @api private
  */
 
-function Response(req, options) {
-  options = options || {};
+function Response(req) {
   this.req = req;
   this.xhr = this.req.xhr;
   // responseText is accessible only if responseType is '' or 'text' and on older browsers
@@ -9558,18 +9558,18 @@ Request.prototype.auth = function(user, pass, options){
 };
 
 /**
-* Add query-string `val`.
-*
-* Examples:
-*
-*   request.get('/shoes')
-*     .query('size=10')
-*     .query({ color: 'blue' })
-*
-* @param {Object|String} val
-* @return {Request} for chaining
-* @api public
-*/
+ * Add query-string `val`.
+ *
+ * Examples:
+ *
+ *   request.get('/shoes')
+ *     .query('size=10')
+ *     .query({ color: 'blue' })
+ *
+ * @param {Object|String} val
+ * @return {Request} for chaining
+ * @api public
+ */
 
 Request.prototype.query = function(val){
   if ('string' != typeof val) val = serialize(val);
@@ -9620,10 +9620,16 @@ Request.prototype._getFormData = function(){
  */
 
 Request.prototype.callback = function(err, res){
+  // console.log(this._retries, this._maxRetries)
+  if (this._maxRetries && this._retries++ < this._maxRetries && shouldRetry(err, res)) {
+    return this._retry();
+  }
+
   var fn = this._callback;
   this.clearTimeout();
 
   if (err) {
+    if (this._maxRetries) err.retries = this._retries - 1;
     this.emit('error', err);
   }
 
@@ -9707,10 +9713,6 @@ Request.prototype._isHost = function _isHost(obj) {
  */
 
 Request.prototype.end = function(fn){
-  var self = this;
-  var xhr = this.xhr = request.getXHR();
-  var data = this._formData || this._data;
-
   if (this._endCalled) {
     console.warn("Warning: .end() was called twice. This is not supported in superagent");
   }
@@ -9718,6 +9720,19 @@ Request.prototype.end = function(fn){
 
   // store callback
   this._callback = fn || noop;
+
+  // querystring
+  this._appendQueryString();
+
+  return this._end();
+};
+
+Request.prototype._end = function() {
+  var self = this;
+  var xhr = this.xhr = request.getXHR();
+  var data = this._formData || this._data;
+
+  this._setTimeouts();
 
   // state change
   xhr.onreadystatechange = function(){
@@ -9761,11 +9776,6 @@ Request.prototype.end = function(fn){
       // https://connect.microsoft.com/IE/feedback/details/837245/xmlhttprequest-upload-throws-invalid-argument-when-used-from-web-worker-context
     }
   }
-
-  // querystring
-  this._appendQueryString();
-
-  this._setTimeouts();
 
   // initiate request
   try {
@@ -9867,16 +9877,19 @@ request.options = function(url, data, fn){
 };
 
 /**
- * DELETE `url` with optional callback `fn(res)`.
+ * DELETE `url` with optional `data` and callback `fn(res)`.
  *
  * @param {String} url
+ * @param {Mixed} [data]
  * @param {Function} [fn]
  * @return {Request}
  * @api public
  */
 
-function del(url, fn){
+function del(url, data, fn){
   var req = request('DELETE', url);
+  if ('function' == typeof data) fn = data, data = null;
+  if (data) req.send(data);
   if (fn) req.end(fn);
   return req;
 };
@@ -9938,7 +9951,7 @@ request.put = function(url, data, fn){
   return req;
 };
 
-},{"./is-function":35,"./is-object":36,"./request-base":37,"./response-base":38,"emitter":6}],35:[function(require,module,exports){
+},{"./is-function":35,"./is-object":36,"./request-base":37,"./response-base":38,"./should-retry":39,"emitter":6}],35:[function(require,module,exports){
 /**
  * Check if `fn` is a function.
  *
@@ -10015,10 +10028,10 @@ function mixin(obj) {
  */
 
 RequestBase.prototype.clearTimeout = function _clearTimeout(){
-  this._timeout = 0;
-  this._responseTimeout = 0;
   clearTimeout(this._timer);
   clearTimeout(this._responseTimeoutTimer);
+  delete this._timer;
+  delete this._responseTimeoutTimer;
   return this;
 };
 
@@ -10100,6 +10113,47 @@ RequestBase.prototype.timeout = function timeout(options){
     this._responseTimeout = options.response;
   }
   return this;
+};
+
+/**
+ * Set number of retry attempts on error.
+ *
+ * Failed requests will be retried 'count' times if timeout or err.code >= 500.
+ *
+ * @param {Number} count
+ * @return {Request} for chaining
+ * @api public
+ */
+
+RequestBase.prototype.retry = function retry(count){
+  // Default to 1 if no count passed or true
+  if (arguments.length === 0 || count === true) count = 1;
+  if (count <= 0) count = 0;
+  this._maxRetries = count;
+  this._retries = 0;
+  return this;
+};
+
+/**
+ * Retry request
+ *
+ * @return {Request} for chaining
+ * @api private
+ */
+
+RequestBase.prototype._retry = function() {
+  this.clearTimeout();
+
+  // node
+  if (this.req) {
+    this.req = null;
+    this.req = this.request();
+  }
+
+  this._aborted = false;
+  this.timedout = false;
+
+  return this._end();
 };
 
 /**
@@ -10649,7 +10703,30 @@ ResponseBase.prototype._setStatusProperties = function(status){
     this.notFound = 404 == status;
 };
 
-},{"./utils":39}],39:[function(require,module,exports){
+},{"./utils":40}],39:[function(require,module,exports){
+var ERROR_CODES = [
+  'ECONNRESET',
+  'ETIMEDOUT',
+  'EADDRINFO',
+  'ESOCKETTIMEDOUT'
+];
+
+/**
+ * Determine if a request should be retried.
+ * (Borrowed from segmentio/superagent-retry)
+ *
+ * @param {Error} err
+ * @param {Response} [res]
+ * @returns {Boolean}
+ */
+module.exports = function shouldRetry(err, res) {
+  if (err && err.code && ~ERROR_CODES.indexOf(err.code)) return true;
+  if (res && res.status && res.status >= 500) return true;
+  // Superagent timeout
+  if (err && 'timeout' in err && err.code == 'ECONNABORTED') return true;
+  return false;
+};
+},{}],40:[function(require,module,exports){
 
 /**
  * Return the mime type for the given `str`.
@@ -10718,11 +10795,10 @@ exports.cleanHeader = function(header, shouldStripCookie){
   }
   return header;
 };
-
-},{}],40:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 module.exports = require('./lib/index');
 
-},{"./lib/index":41}],41:[function(require,module,exports){
+},{"./lib/index":42}],42:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -10754,7 +10830,7 @@ if (typeof self !== 'undefined') {
 var result = (0, _ponyfill2['default'])(root);
 exports['default'] = result;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./ponyfill":42}],42:[function(require,module,exports){
+},{"./ponyfill":43}],43:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -10778,7 +10854,7 @@ function symbolObservablePonyfill(root) {
 
 	return result;
 };
-},{}],43:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 var bel = require('bel') // turns template tag into DOM elements
 var morphdom = require('morphdom') // efficiently diffs + morphs two DOM elements
 var defaultEvents = require('./update-events.js') // default events to be copied when dom elements update
@@ -10807,669 +10883,22 @@ module.exports.update = function (fromNode, toNode, opts) {
         f[ev] = undefined // remove it from existing element
       }
     }
+    var oldValue = f.value
+    var newValue = t.value
     // copy values for form elements
     if ((f.nodeName === 'INPUT' && f.type !== 'file') || f.nodeName === 'SELECT') {
-      if (t.getAttribute('value') === null) t.value = f.value
+      if (!newValue) {
+        t.value = f.value
+      } else if (newValue !== oldValue) {
+        f.value = newValue
+      }
     } else if (f.nodeName === 'TEXTAREA') {
       if (t.getAttribute('value') === null) f.value = t.value
     }
   }
 }
 
-},{"./update-events.js":45,"bel":2,"morphdom":44}],44:[function(require,module,exports){
-'use strict';
-// Create a range object for efficently rendering strings to elements.
-var range;
-
-var doc = typeof document !== 'undefined' && document;
-
-var testEl = doc ?
-    doc.body || doc.createElement('div') :
-    {};
-
-var NS_XHTML = 'http://www.w3.org/1999/xhtml';
-
-var ELEMENT_NODE = 1;
-var TEXT_NODE = 3;
-var COMMENT_NODE = 8;
-
-// Fixes <https://github.com/patrick-steele-idem/morphdom/issues/32>
-// (IE7+ support) <=IE7 does not support el.hasAttribute(name)
-var hasAttributeNS;
-
-if (testEl.hasAttributeNS) {
-    hasAttributeNS = function(el, namespaceURI, name) {
-        return el.hasAttributeNS(namespaceURI, name);
-    };
-} else if (testEl.hasAttribute) {
-    hasAttributeNS = function(el, namespaceURI, name) {
-        return el.hasAttribute(name);
-    };
-} else {
-    hasAttributeNS = function(el, namespaceURI, name) {
-        return !!el.getAttributeNode(name);
-    };
-}
-
-function toElement(str) {
-    if (!range && doc.createRange) {
-        range = doc.createRange();
-        range.selectNode(doc.body);
-    }
-
-    var fragment;
-    if (range && range.createContextualFragment) {
-        fragment = range.createContextualFragment(str);
-    } else {
-        fragment = doc.createElement('body');
-        fragment.innerHTML = str;
-    }
-    return fragment.childNodes[0];
-}
-
-function syncBooleanAttrProp(fromEl, toEl, name) {
-    if (fromEl[name] !== toEl[name]) {
-        fromEl[name] = toEl[name];
-        if (fromEl[name]) {
-            fromEl.setAttribute(name, '');
-        } else {
-            fromEl.removeAttribute(name, '');
-        }
-    }
-}
-
-var specialElHandlers = {
-    /**
-     * Needed for IE. Apparently IE doesn't think that "selected" is an
-     * attribute when reading over the attributes using selectEl.attributes
-     */
-    OPTION: function(fromEl, toEl) {
-        syncBooleanAttrProp(fromEl, toEl, 'selected');
-    },
-    /**
-     * The "value" attribute is special for the <input> element since it sets
-     * the initial value. Changing the "value" attribute without changing the
-     * "value" property will have no effect since it is only used to the set the
-     * initial value.  Similar for the "checked" attribute, and "disabled".
-     */
-    INPUT: function(fromEl, toEl) {
-        syncBooleanAttrProp(fromEl, toEl, 'checked');
-        syncBooleanAttrProp(fromEl, toEl, 'disabled');
-
-        if (fromEl.value !== toEl.value) {
-            fromEl.value = toEl.value;
-        }
-
-        if (!hasAttributeNS(toEl, null, 'value')) {
-            fromEl.removeAttribute('value');
-        }
-    },
-
-    TEXTAREA: function(fromEl, toEl) {
-        var newValue = toEl.value;
-        if (fromEl.value !== newValue) {
-            fromEl.value = newValue;
-        }
-
-        if (fromEl.firstChild) {
-            fromEl.firstChild.nodeValue = newValue;
-        }
-    }
-};
-
-function noop() {}
-
-/**
- * Returns true if two node's names are the same.
- *
- * NOTE: We don't bother checking `namespaceURI` because you will never find two HTML elements with the same
- *       nodeName and different namespace URIs.
- *
- * @param {Element} a
- * @param {Element} b The target element
- * @return {boolean}
- */
-function compareNodeNames(fromEl, toEl) {
-    var fromNodeName = fromEl.nodeName;
-    var toNodeName = toEl.nodeName;
-
-    if (fromNodeName === toNodeName) {
-        return true;
-    }
-
-    if (toEl.actualize &&
-        fromNodeName.charCodeAt(0) < 91 && /* from tag name is upper case */
-        toNodeName.charCodeAt(0) > 90 /* target tag name is lower case */) {
-        // If the target element is a virtual DOM node then we may need to normalize the tag name
-        // before comparing. Normal HTML elements that are in the "http://www.w3.org/1999/xhtml"
-        // are converted to upper case
-        return fromNodeName === toNodeName.toUpperCase();
-    } else {
-        return false;
-    }
-}
-
-/**
- * Create an element, optionally with a known namespace URI.
- *
- * @param {string} name the element name, e.g. 'div' or 'svg'
- * @param {string} [namespaceURI] the element's namespace URI, i.e. the value of
- * its `xmlns` attribute or its inferred namespace.
- *
- * @return {Element}
- */
-function createElementNS(name, namespaceURI) {
-    return !namespaceURI || namespaceURI === NS_XHTML ?
-        doc.createElement(name) :
-        doc.createElementNS(namespaceURI, name);
-}
-
-/**
- * Loop over all of the attributes on the target node and make sure the original
- * DOM node has the same attributes. If an attribute found on the original node
- * is not on the new node then remove it from the original node.
- *
- * @param  {Element} fromNode
- * @param  {Element} toNode
- */
-function morphAttrs(fromNode, toNode) {
-    var attrs = toNode.attributes;
-    var i;
-    var attr;
-    var attrName;
-    var attrNamespaceURI;
-    var attrValue;
-    var fromValue;
-
-    if (toNode.assignAttributes) {
-        toNode.assignAttributes(fromNode);
-    } else {
-        for (i = attrs.length - 1; i >= 0; --i) {
-            attr = attrs[i];
-            attrName = attr.name;
-            attrNamespaceURI = attr.namespaceURI;
-            attrValue = attr.value;
-
-            if (attrNamespaceURI) {
-                attrName = attr.localName || attrName;
-                fromValue = fromNode.getAttributeNS(attrNamespaceURI, attrName);
-
-                if (fromValue !== attrValue) {
-                    fromNode.setAttributeNS(attrNamespaceURI, attrName, attrValue);
-                }
-            } else {
-                fromValue = fromNode.getAttribute(attrName);
-
-                if (fromValue !== attrValue) {
-                    fromNode.setAttribute(attrName, attrValue);
-                }
-            }
-        }
-    }
-
-    // Remove any extra attributes found on the original DOM element that
-    // weren't found on the target element.
-    attrs = fromNode.attributes;
-
-    for (i = attrs.length - 1; i >= 0; --i) {
-        attr = attrs[i];
-        if (attr.specified !== false) {
-            attrName = attr.name;
-            attrNamespaceURI = attr.namespaceURI;
-
-            if (attrNamespaceURI) {
-                attrName = attr.localName || attrName;
-
-                if (!hasAttributeNS(toNode, attrNamespaceURI, attrName)) {
-                    fromNode.removeAttributeNS(attrNamespaceURI, attrName);
-                }
-            } else {
-                if (!hasAttributeNS(toNode, null, attrName)) {
-                    fromNode.removeAttribute(attrName);
-                }
-            }
-        }
-    }
-}
-
-/**
- * Copies the children of one DOM element to another DOM element
- */
-function moveChildren(fromEl, toEl) {
-    var curChild = fromEl.firstChild;
-    while (curChild) {
-        var nextChild = curChild.nextSibling;
-        toEl.appendChild(curChild);
-        curChild = nextChild;
-    }
-    return toEl;
-}
-
-function defaultGetNodeKey(node) {
-    return node.id;
-}
-
-function morphdom(fromNode, toNode, options) {
-    if (!options) {
-        options = {};
-    }
-
-    if (typeof toNode === 'string') {
-        if (fromNode.nodeName === '#document' || fromNode.nodeName === 'HTML') {
-            var toNodeHtml = toNode;
-            toNode = doc.createElement('html');
-            toNode.innerHTML = toNodeHtml;
-        } else {
-            toNode = toElement(toNode);
-        }
-    }
-
-    var getNodeKey = options.getNodeKey || defaultGetNodeKey;
-    var onBeforeNodeAdded = options.onBeforeNodeAdded || noop;
-    var onNodeAdded = options.onNodeAdded || noop;
-    var onBeforeElUpdated = options.onBeforeElUpdated || noop;
-    var onElUpdated = options.onElUpdated || noop;
-    var onBeforeNodeDiscarded = options.onBeforeNodeDiscarded || noop;
-    var onNodeDiscarded = options.onNodeDiscarded || noop;
-    var onBeforeElChildrenUpdated = options.onBeforeElChildrenUpdated || noop;
-    var childrenOnly = options.childrenOnly === true;
-
-    // This object is used as a lookup to quickly find all keyed elements in the original DOM tree.
-    var fromNodesLookup = {};
-    var keyedRemovalList;
-
-    function addKeyedRemoval(key) {
-        if (keyedRemovalList) {
-            keyedRemovalList.push(key);
-        } else {
-            keyedRemovalList = [key];
-        }
-    }
-
-    function walkDiscardedChildNodes(node, skipKeyedNodes) {
-        if (node.nodeType === ELEMENT_NODE) {
-            var curChild = node.firstChild;
-            while (curChild) {
-
-                var key = undefined;
-
-                if (skipKeyedNodes && (key = getNodeKey(curChild))) {
-                    // If we are skipping keyed nodes then we add the key
-                    // to a list so that it can be handled at the very end.
-                    addKeyedRemoval(key);
-                } else {
-                    // Only report the node as discarded if it is not keyed. We do this because
-                    // at the end we loop through all keyed elements that were unmatched
-                    // and then discard them in one final pass.
-                    onNodeDiscarded(curChild);
-                    if (curChild.firstChild) {
-                        walkDiscardedChildNodes(curChild, skipKeyedNodes);
-                    }
-                }
-
-                curChild = curChild.nextSibling;
-            }
-        }
-    }
-
-    /**
-     * Removes a DOM node out of the original DOM
-     *
-     * @param  {Node} node The node to remove
-     * @param  {Node} parentNode The nodes parent
-     * @param  {Boolean} skipKeyedNodes If true then elements with keys will be skipped and not discarded.
-     * @return {undefined}
-     */
-    function removeNode(node, parentNode, skipKeyedNodes) {
-        if (onBeforeNodeDiscarded(node) === false) {
-            return;
-        }
-
-        if (parentNode) {
-            parentNode.removeChild(node);
-        }
-
-        onNodeDiscarded(node);
-        walkDiscardedChildNodes(node, skipKeyedNodes);
-    }
-
-    // // TreeWalker implementation is no faster, but keeping this around in case this changes in the future
-    // function indexTree(root) {
-    //     var treeWalker = document.createTreeWalker(
-    //         root,
-    //         NodeFilter.SHOW_ELEMENT);
-    //
-    //     var el;
-    //     while((el = treeWalker.nextNode())) {
-    //         var key = getNodeKey(el);
-    //         if (key) {
-    //             fromNodesLookup[key] = el;
-    //         }
-    //     }
-    // }
-
-    // // NodeIterator implementation is no faster, but keeping this around in case this changes in the future
-    //
-    // function indexTree(node) {
-    //     var nodeIterator = document.createNodeIterator(node, NodeFilter.SHOW_ELEMENT);
-    //     var el;
-    //     while((el = nodeIterator.nextNode())) {
-    //         var key = getNodeKey(el);
-    //         if (key) {
-    //             fromNodesLookup[key] = el;
-    //         }
-    //     }
-    // }
-
-    function indexTree(node) {
-        if (node.nodeType === ELEMENT_NODE) {
-            var curChild = node.firstChild;
-            while (curChild) {
-                var key = getNodeKey(curChild);
-                if (key) {
-                    fromNodesLookup[key] = curChild;
-                }
-
-                // Walk recursively
-                indexTree(curChild);
-
-                curChild = curChild.nextSibling;
-            }
-        }
-    }
-
-    indexTree(fromNode);
-
-    function handleNodeAdded(el) {
-        onNodeAdded(el);
-
-        var curChild = el.firstChild;
-        while (curChild) {
-            var nextSibling = curChild.nextSibling;
-
-            var key = getNodeKey(curChild);
-            if (key) {
-                var unmatchedFromEl = fromNodesLookup[key];
-                if (unmatchedFromEl && compareNodeNames(curChild, unmatchedFromEl)) {
-                    curChild.parentNode.replaceChild(unmatchedFromEl, curChild);
-                    morphEl(unmatchedFromEl, curChild);
-                }
-            }
-
-            handleNodeAdded(curChild);
-            curChild = nextSibling;
-        }
-    }
-
-    function morphEl(fromEl, toEl, childrenOnly) {
-        var toElKey = getNodeKey(toEl);
-        var curFromNodeKey;
-
-        if (toElKey) {
-            // If an element with an ID is being morphed then it is will be in the final
-            // DOM so clear it out of the saved elements collection
-            delete fromNodesLookup[toElKey];
-        }
-
-        if (toNode.isSameNode && toNode.isSameNode(fromNode)) {
-            return;
-        }
-
-        if (!childrenOnly) {
-            if (onBeforeElUpdated(fromEl, toEl) === false) {
-                return;
-            }
-
-            morphAttrs(fromEl, toEl);
-            onElUpdated(fromEl);
-
-            if (onBeforeElChildrenUpdated(fromEl, toEl) === false) {
-                return;
-            }
-        }
-
-        if (fromEl.nodeName !== 'TEXTAREA') {
-            var curToNodeChild = toEl.firstChild;
-            var curFromNodeChild = fromEl.firstChild;
-            var curToNodeKey;
-
-            var fromNextSibling;
-            var toNextSibling;
-            var matchingFromEl;
-
-            outer: while (curToNodeChild) {
-                toNextSibling = curToNodeChild.nextSibling;
-                curToNodeKey = getNodeKey(curToNodeChild);
-
-                while (curFromNodeChild) {
-                    fromNextSibling = curFromNodeChild.nextSibling;
-
-                    if (curToNodeChild.isSameNode && curToNodeChild.isSameNode(curFromNodeChild)) {
-                        curToNodeChild = toNextSibling;
-                        curFromNodeChild = fromNextSibling;
-                        continue outer;
-                    }
-
-                    curFromNodeKey = getNodeKey(curFromNodeChild);
-
-                    var curFromNodeType = curFromNodeChild.nodeType;
-
-                    var isCompatible = undefined;
-
-                    if (curFromNodeType === curToNodeChild.nodeType) {
-                        if (curFromNodeType === ELEMENT_NODE) {
-                            // Both nodes being compared are Element nodes
-
-                            if (curToNodeKey) {
-                                // The target node has a key so we want to match it up with the correct element
-                                // in the original DOM tree
-                                if (curToNodeKey !== curFromNodeKey) {
-                                    // The current element in the original DOM tree does not have a matching key so
-                                    // let's check our lookup to see if there is a matching element in the original
-                                    // DOM tree
-                                    if ((matchingFromEl = fromNodesLookup[curToNodeKey])) {
-                                        if (curFromNodeChild.nextSibling === matchingFromEl) {
-                                            // Special case for single element removals. To avoid removing the original
-                                            // DOM node out of the tree (since that can break CSS transitions, etc.),
-                                            // we will instead discard the current node and wait until the next
-                                            // iteration to properly match up the keyed target element with its matching
-                                            // element in the original tree
-                                            isCompatible = false;
-                                        } else {
-                                            // We found a matching keyed element somewhere in the original DOM tree.
-                                            // Let's moving the original DOM node into the current position and morph
-                                            // it.
-
-                                            // NOTE: We use insertBefore instead of replaceChild because we want to go through
-                                            // the `removeNode()` function for the node that is being discarded so that
-                                            // all lifecycle hooks are correctly invoked
-                                            fromEl.insertBefore(matchingFromEl, curFromNodeChild);
-
-                                            if (curFromNodeKey) {
-                                                // Since the node is keyed it might be matched up later so we defer
-                                                // the actual removal to later
-                                                addKeyedRemoval(curFromNodeKey);
-                                            } else {
-                                                // NOTE: we skip nested keyed nodes from being removed since there is
-                                                //       still a chance they will be matched up later
-                                                removeNode(curFromNodeChild, fromEl, true /* skip keyed nodes */);
-
-                                            }
-                                            fromNextSibling = curFromNodeChild.nextSibling;
-                                            curFromNodeChild = matchingFromEl;
-                                        }
-                                    } else {
-                                        // The nodes are not compatible since the "to" node has a key and there
-                                        // is no matching keyed node in the source tree
-                                        isCompatible = false;
-                                    }
-                                }
-                            } else if (curFromNodeKey) {
-                                // The original has a key
-                                isCompatible = false;
-                            }
-
-                            isCompatible = isCompatible !== false && compareNodeNames(curFromNodeChild, curToNodeChild);
-                            if (isCompatible) {
-                                // We found compatible DOM elements so transform
-                                // the current "from" node to match the current
-                                // target DOM node.
-                                morphEl(curFromNodeChild, curToNodeChild);
-                            }
-
-                        } else if (curFromNodeType === TEXT_NODE || curFromNodeType == COMMENT_NODE) {
-                            // Both nodes being compared are Text or Comment nodes
-                            isCompatible = true;
-                            // Simply update nodeValue on the original node to
-                            // change the text value
-                            curFromNodeChild.nodeValue = curToNodeChild.nodeValue;
-                        }
-                    }
-
-                    if (isCompatible) {
-                        // Advance both the "to" child and the "from" child since we found a match
-                        curToNodeChild = toNextSibling;
-                        curFromNodeChild = fromNextSibling;
-                        continue outer;
-                    }
-
-                    // No compatible match so remove the old node from the DOM and continue trying to find a
-                    // match in the original DOM. However, we only do this if the from node is not keyed
-                    // since it is possible that a keyed node might match up with a node somewhere else in the
-                    // target tree and we don't want to discard it just yet since it still might find a
-                    // home in the final DOM tree. After everything is done we will remove any keyed nodes
-                    // that didn't find a home
-                    if (curFromNodeKey) {
-                        // Since the node is keyed it might be matched up later so we defer
-                        // the actual removal to later
-                        addKeyedRemoval(curFromNodeKey);
-                    } else {
-                        // NOTE: we skip nested keyed nodes from being removed since there is
-                        //       still a chance they will be matched up later
-                        removeNode(curFromNodeChild, fromEl, true /* skip keyed nodes */);
-                    }
-
-                    curFromNodeChild = fromNextSibling;
-                }
-
-                // If we got this far then we did not find a candidate match for
-                // our "to node" and we exhausted all of the children "from"
-                // nodes. Therefore, we will just append the current "to" node
-                // to the end
-                if (curToNodeKey && (matchingFromEl = fromNodesLookup[curToNodeKey]) && compareNodeNames(matchingFromEl, curToNodeChild)) {
-                    fromEl.appendChild(matchingFromEl);
-                    morphEl(matchingFromEl, curToNodeChild);
-                } else {
-                    var onBeforeNodeAddedResult = onBeforeNodeAdded(curToNodeChild);
-                    if (onBeforeNodeAddedResult !== false) {
-                        if (onBeforeNodeAddedResult) {
-                            curToNodeChild = onBeforeNodeAddedResult;
-                        }
-
-                        if (curToNodeChild.actualize) {
-                            curToNodeChild = curToNodeChild.actualize(fromEl.ownerDocument || doc);
-                        }
-                        fromEl.appendChild(curToNodeChild);
-                        handleNodeAdded(curToNodeChild);
-                    }
-                }
-
-                curToNodeChild = toNextSibling;
-                curFromNodeChild = fromNextSibling;
-            }
-
-            // We have processed all of the "to nodes". If curFromNodeChild is
-            // non-null then we still have some from nodes left over that need
-            // to be removed
-            while (curFromNodeChild) {
-                fromNextSibling = curFromNodeChild.nextSibling;
-                if ((curFromNodeKey = getNodeKey(curFromNodeChild))) {
-                    // Since the node is keyed it might be matched up later so we defer
-                    // the actual removal to later
-                    addKeyedRemoval(curFromNodeKey);
-                } else {
-                    // NOTE: we skip nested keyed nodes from being removed since there is
-                    //       still a chance they will be matched up later
-                    removeNode(curFromNodeChild, fromEl, true /* skip keyed nodes */);
-                }
-                curFromNodeChild = fromNextSibling;
-            }
-        }
-
-        var specialElHandler = specialElHandlers[fromEl.nodeName];
-        if (specialElHandler) {
-            specialElHandler(fromEl, toEl);
-        }
-    } // END: morphEl(...)
-
-    var morphedNode = fromNode;
-    var morphedNodeType = morphedNode.nodeType;
-    var toNodeType = toNode.nodeType;
-
-    if (!childrenOnly) {
-        // Handle the case where we are given two DOM nodes that are not
-        // compatible (e.g. <div> --> <span> or <div> --> TEXT)
-        if (morphedNodeType === ELEMENT_NODE) {
-            if (toNodeType === ELEMENT_NODE) {
-                if (!compareNodeNames(fromNode, toNode)) {
-                    onNodeDiscarded(fromNode);
-                    morphedNode = moveChildren(fromNode, createElementNS(toNode.nodeName, toNode.namespaceURI));
-                }
-            } else {
-                // Going from an element node to a text node
-                morphedNode = toNode;
-            }
-        } else if (morphedNodeType === TEXT_NODE || morphedNodeType === COMMENT_NODE) { // Text or comment node
-            if (toNodeType === morphedNodeType) {
-                morphedNode.nodeValue = toNode.nodeValue;
-                return morphedNode;
-            } else {
-                // Text node to something else
-                morphedNode = toNode;
-            }
-        }
-    }
-
-    if (morphedNode === toNode) {
-        // The "to node" was not compatible with the "from node" so we had to
-        // toss out the "from node" and use the "to node"
-        onNodeDiscarded(fromNode);
-    } else {
-        morphEl(morphedNode, toNode, childrenOnly);
-
-        // We now need to loop over any keyed nodes that might need to be
-        // removed. We only do the removal if we know that the keyed node
-        // never found a match. When a keyed node is matched up we remove
-        // it out of fromNodesLookup and we use fromNodesLookup to determine
-        // if a keyed node has been matched up or not
-        if (keyedRemovalList) {
-            for (var i=0, len=keyedRemovalList.length; i<len; i++) {
-                var elToRemove = fromNodesLookup[keyedRemovalList[i]];
-                if (elToRemove) {
-                    removeNode(elToRemove, elToRemove.parentNode, false);
-                }
-            }
-        }
-    }
-
-    if (!childrenOnly && morphedNode !== fromNode && fromNode.parentNode) {
-        if (morphedNode.actualize) {
-            morphedNode = morphedNode.actualize(fromNode.ownerDocument || doc);
-        }
-        // If we had to swap out the from node with a new node because the old
-        // node was not compatible with the target node then we need to
-        // replace the old DOM node in the original DOM tree. This is only
-        // possible if the original DOM node was part of a DOM tree which
-        // we know is the case if it has a parent node.
-        fromNode.parentNode.replaceChild(morphedNode, fromNode);
-    }
-
-    return morphedNode;
-}
-
-module.exports = morphdom;
-
-},{}],45:[function(require,module,exports){
+},{"./update-events.js":45,"bel":2,"morphdom":24}],45:[function(require,module,exports){
 module.exports = [
   // attribute events (can be set with attributes)
   'onclick',
@@ -11515,16 +10944,16 @@ const footer = require('./header').footer;
 function App(state, dispatch, child, refresh) {
   return yo`
     <div id="app">
-      ${ header(state, dispatch, refresh) }
-      ${ child(state, dispatch) }
-      ${ footer(state, dispatch) }
+      ${header(state, dispatch, refresh)}
+      ${child(state, dispatch)}
+      ${footer(state, dispatch)}
     </div>
   `;
 }
 
 module.exports = App;
 
-},{"./header":52,"yo-yo":43}],47:[function(require,module,exports){
+},{"./header":52,"yo-yo":44}],47:[function(require,module,exports){
 const request = require('superagent');
 const url = require('./requestUrl');
 
@@ -11532,7 +10961,7 @@ function accessCamera(state, dispatch) {
   if (state.user.shotsRemaining > 0) {
     cloudinary.openUploadWidget({ cloud_name: 'flooki', upload_preset: 'clientuploads', sources: ['camera'], default_source: 'local', multiple: false, theme: 'minimal', button_class: 'flooki_button' }, function (err, result) {
       if (result) {
-        request.post(`${ url }entries/new`).type('application/json').send({ user_id: state.user.user_id, image_url: result[0].secure_url }).withCredentials().end((err, response) => {
+        request.post(`${url}entries/new`).type('application/json').send({ user_id: state.user.user_id, image_url: result[0].secure_url }).withCredentials().end((err, response) => {
           if (err) console.log(err);
           dispatch({ type: 'ADD_NEW_PHOTO', payload: { 'entry_id': response.body.entry_id, 'image_url': result[0].secure_url } });
         });
@@ -11553,10 +10982,10 @@ function renderComments(entry_id, state, dispatch) {
   var comments = state.entryComments || [];
   return yo`
     <form>
-      <input id="commentField" type="text" placeholder="post your comment here"/>
-      <button id="commentButton" onclick=${ postComment } type="submit">Post</button>
+      <input id="commentField" type="text" placeholder="Write your comment here"/>
+      <button id="commentButton" onclick=${postComment} type="submit">Post</button>
       <div class="comments">
-        ${ comments.map(comment => renderComment(comment)) }
+        ${comments.map(comment => renderComment(comment))}
       </div>
     </form>
   `;
@@ -11568,7 +10997,7 @@ function renderComments(entry_id, state, dispatch) {
       user_id: state.user.user_id,
       comment
     };
-    request.post(`${ url }entries/comments/new`).send(obj).withCredentials().end((err, res) => {
+    request.post(`${url}entries/comments/new`).send(obj).withCredentials().end((err, res) => {
       if (err) console.log(err);else dispatch({ type: 'POST_COMMENT', payload: { comment, entry_id } });
     });
   }
@@ -11578,9 +11007,9 @@ function renderComment(comment, dispatch) {
   var formattedDate = formatDate(comment.comment_created_at);
   return yo`
     <div class="comment">
-      <h3>${ comment.username }</h3>
-      <p>${ comment.comment }</p>
-      <p>${ formattedDate }</p>
+      <h3>${comment.username}</h3>
+      <p>${comment.comment}</p>
+      <p>${formattedDate}</p>
     </div>
   `;
 }
@@ -11591,7 +11020,7 @@ function hideComments(dispatch) {
 
 function showComments(entry, state, dispatch) {
   dispatch({ type: 'SHOW_COMMENTS', payload: entry.entry_id });
-  request.get(`${ url }entries/comments/${ entry.entry_id }`).withCredentials().end((err, res) => {
+  request.get(`${url}entries/comments/${entry.entry_id}`).withCredentials().end((err, res) => {
     dispatch({ type: 'RECIEVE_COMMENTS', payload: res.body });
   });
 }
@@ -11602,7 +11031,7 @@ module.exports = {
   showComments
 };
 
-},{"./formatDate":51,"./requestUrl":60,"superagent":34,"yo-yo":43}],49:[function(require,module,exports){
+},{"./formatDate":51,"./requestUrl":60,"superagent":34,"yo-yo":44}],49:[function(require,module,exports){
 function flukeReduce(entries, payload) {
   if (payload.action === 'fluke') {
     var flukedEntry = entries.find(entry => entry.entry_id === payload.entry_id);
@@ -11635,15 +11064,15 @@ const followEntries = require('./refreshFunctions/followEntries');
 function follows(state, dispatch) {
   return yo`
   <div class="homediv">
-    ${ state.isLoading ? yo`<p>loading</p>` : renderEntries(state, dispatch, state.followEntries) }
-    ${ followEntries(state, dispatch) }
+    ${state.isLoading ? yo`<p>loading</p>` : renderEntries(state, dispatch, state.followEntries)}
+    ${followEntries(state, dispatch)}
   </div>
   `;
 }
 
 module.exports = follows;
 
-},{"./refreshFunctions/followEntries":55,"./renderEntries":59,"yo-yo":43}],51:[function(require,module,exports){
+},{"./refreshFunctions/followEntries":55,"./renderEntries":59,"yo-yo":44}],51:[function(require,module,exports){
 const moment = require('moment');
 
 module.exports = formatDate;
@@ -11670,21 +11099,21 @@ function header(state, dispatch, refresh) {
   } else headerName = null;
   return yo`
     <div class="pageHeader">
-      ${ refresh != null ? yo`<h1 id="refresh" onclick=${ () => refresh(state, dispatch, true) }>f<span class='lookFlooki'>look</span>i
-        </h1>` : yo`<h2 id="noRefresh">f<span class='lookFlooki'>look</span>i</h2>` }
-      ${ state.user ? shotsRemaining(state) : '' }
-      ${ headerName ? displayUser(state, dispatch) : '' }
+      ${refresh != null ? yo`<h1 id="refresh" onclick=${() => refresh(state, dispatch, true)}>f<span class='lookFlooki'>look</span>i
+        </h1>` : yo`<h2 id="noRefresh">f<span class='lookFlooki'>look</span>i</h2>`}
+      ${state.user ? shotsRemaining(state) : ''}
+      ${headerName ? displayUser(state, dispatch) : ''}
     </div>
   `;
   function displayUser() {
     if (state.myFollowing.includes(state.targetId)) {
-      return yo`<h1 class="following" onclick=${ () => followHandler(state.targetId, state.user.user_id) }">u ${ headerName }</h1>`;
+      return yo`<h3 class="following" onclick=${() => followHandler(state.targetId, state.user.user_id)}">unfollow ${headerName}</h1>`;
     } else {
-      return yo`<h1 class="notFollowing" onclick=${ () => followHandler(state.targetId, state.user.user_id) }">f ${ headerName }</h1>`;
+      return yo`<h3 class="notFollowing" onclick=${() => followHandler(state.targetId, state.user.user_id)}">follow ${headerName}</h1>`;
     }
   }
   function followHandler(followed_user_id, following_user_id) {
-    request.post(`${ url }entries/follows/new`).send({ followed_user_id, following_user_id }).withCredentials().end((err, res) => {
+    request.post(`${url}entries/follows/new`).send({ followed_user_id, following_user_id }).withCredentials().end((err, res) => {
       if (err) console.log({ err });
       if (res.text === 'success') {
         dispatch({ type: 'TOGGLE_FOLLOW', payload: followed_user_id });
@@ -11709,22 +11138,22 @@ function footer(state, dispatch) {
   if (state.user) {
     return yo`
     <div class="pageFooter">
-      <i class=${ viewIconTurner('home', 'ion-ios-home') } id='homeButton' onclick=${ () => goHome(dispatch) }></i>
-      <i class=${ viewIconTurner('me', 'ion-ios-person') } id='profileButton' onclick=${ () => goToUser(dispatch) }></i>
-      <i class=${ viewIconTurner('follows', 'ion-ios-people') } id='followButton' onclick=${ () => goToFollows(dispatch) }></i>
-      <i class='ion-ios-circle-outline' onclick=${ () => accessCamera(state, dispatch) } id="upload_widget_opener"></i>
+      <i class=${viewIconTurner('home', 'ion-ios-home')} id='homeButton' onclick=${() => goHome(dispatch)}></i>
+      <i class=${viewIconTurner('me', 'ion-ios-person')} id='profileButton' onclick=${() => goToUser(dispatch)}></i>
+      <i class=${viewIconTurner('follows', 'ion-ios-people')} id='followButton' onclick=${() => goToFollows(dispatch)}></i>
+      <i class='ion-ios-circle-outline' onclick=${() => accessCamera(state, dispatch)} id="upload_widget_opener"></i>
     </div>
     `;
   }
   function viewIconTurner(view, icon) {
-    return state.view == view ? icon : `${ icon }-outline`;
+    return state.view == view ? icon : `${icon}-outline`;
   }
 }
 
 function shotsRemaining(state) {
   return yo`
     <h1 class='shots-remaining'>
-      ${ shotsView(state.user.shotsRemaining) }
+      ${shotsView(state.user.shotsRemaining)}
     </h1>
   `;
 }
@@ -11733,7 +11162,7 @@ function shotsView(shotsRemaining) {
   var shotsView = [];
   for (var i = 1; i <= 4; i++) {
     shotsView.push(yo`
-       <div class=${ i <= shotsRemaining ? 'remaining' : 'taken' }></div>
+       <div class=${i <= shotsRemaining ? 'remaining' : 'taken'}></div>
        `);
   }
   return shotsView;
@@ -11744,7 +11173,7 @@ module.exports = {
   footer
 };
 
-},{"./camera":47,"./requestUrl":60,"superagent":34,"yo-yo":43}],53:[function(require,module,exports){
+},{"./camera":47,"./requestUrl":60,"superagent":34,"yo-yo":44}],53:[function(require,module,exports){
 const yo = require('yo-yo');
 const renderEntries = require('./renderEntries');
 const homeEntries = require('./refreshFunctions/homeEntries');
@@ -11752,15 +11181,15 @@ const homeEntries = require('./refreshFunctions/homeEntries');
 function home(state, dispatch) {
   return yo`
   <div class="homediv">
-    ${ state.isLoading ? yo`<p>loading</p>` : renderEntries(state, dispatch, state.entries) }
-    ${ homeEntries(state, dispatch) }
+    ${state.isLoading ? yo`<p>loading</p>` : renderEntries(state, dispatch, state.entries)}
+    ${homeEntries(state, dispatch)}
   </div>
   `;
 }
 
 module.exports = home;
 
-},{"./refreshFunctions/homeEntries":56,"./renderEntries":59,"yo-yo":43}],54:[function(require,module,exports){
+},{"./refreshFunctions/homeEntries":56,"./renderEntries":59,"yo-yo":44}],54:[function(require,module,exports){
 const yo = require('yo-yo');
 const request = require('superagent');
 const url = require('./requestUrl');
@@ -11768,14 +11197,14 @@ const url = require('./requestUrl');
 function login(state, dispatch) {
   return yo`
     <div class="login">
-    ${ state.isLoading ? yo`<h3 class="loading"> </h3>` : yo`<form class="login">
+    ${state.isLoading ? yo`<h3 class="loading"> </h3>` : yo`<form class="login">
       <input id='username' type='text' placeholder='username'/>
       <input id='password' type='password' placeholder='password'/>
-      ${ state.authError ? yo`<h3>${ state.authError }</h3>` : '' }
-      <button onclick=${ onSubmit } class='loginBtn' type='submit'>Log In</button>
+      ${state.authError ? yo`<h3>${state.authError}</h3>` : ''}
+      <button onclick=${onSubmit} class='loginBtn' type='submit'>Log In</button>
       <br>
-      <button onclick=${ () => dispatch({ type: 'GO_TO_SIGNUP' }) } class='signupBtn' type='submit'>Sign Up</button>
-      </form>` }
+      <button onclick=${() => dispatch({ type: 'GO_TO_SIGNUP' })} class='signupBtn' type='submit'>Sign Up</button>
+      </form>`}
     </div>
   `;
   function onSubmit(e) {
@@ -11801,7 +11230,7 @@ function login(state, dispatch) {
 
 module.exports = login;
 
-},{"./requestUrl":60,"superagent":34,"yo-yo":43}],55:[function(require,module,exports){
+},{"./requestUrl":60,"superagent":34,"yo-yo":44}],55:[function(require,module,exports){
 const request = require('superagent');
 const url = require('../requestUrl');
 
@@ -11848,7 +11277,7 @@ const url = require('../requestUrl');
 function goToTarget(state, dispatch, id, boolean) {
   if (!state.isLoading || boolean) {
     dispatch({ type: 'TOGGLE_LOADING' });
-    request.get(`${ url }entries/user/${ id }`).withCredentials().end((err, res) => {
+    request.get(`${url}entries/user/${id}`).withCredentials().end((err, res) => {
       if (err) {
         dispatch({ type: 'TOGGLE_LOADING' });
       } else {
@@ -11869,7 +11298,7 @@ const url = require('../requestUrl');
 function goToUser(state, dispatch, boolean) {
   if (!state.isLoading && state.myEntries.length == 0 || boolean) {
     dispatch({ type: 'TOGGLE_LOADING' });
-    request.get(`${ url }entries/user/${ state.user.user_id }`).withCredentials().end((err, res) => {
+    request.get(`${url}entries/user/${state.user.user_id}`).withCredentials().end((err, res) => {
       if (err) {
         dispatch({ type: 'TOGGLE_LOADING' });
       } else if (res.body.user_entries.length == 0) {
@@ -11901,9 +11330,9 @@ function renderEntries(state, dispatch, entries) {
       <br>
       <br>
       <br>
-        ${ entries.map(entry => {
+        ${entries.map(entry => {
       return renderEntry(entry, state, dispatch);
-    }) }
+    })}
         <br>
         <br>
         <br>
@@ -11916,11 +11345,11 @@ function renderEntries(state, dispatch, entries) {
 function renderEntry(entry, state, dispatch) {
   return yo`
   <div class='entry'>
-      ${ entryHeader(entry, state, dispatch) }
-        <img class=${ state.myFlukes.includes(entry.entry_id) ? 'flukedByMe' : 'notFlukedByMe' }
-        onclick=${ () => fluke(entry.entry_id, state.user.user_id, dispatch) } src=${ entry.image_url }></img>
-        <h2 id='f'>${ state.myFlukes.includes(entry.entry_id) ? 'fluked!' : '' }</h2>
-        ${ entryFooter(entry, state, dispatch) }
+      ${entryHeader(entry, state, dispatch)}
+        <img class=${state.myFlukes.includes(entry.entry_id) ? 'flukedByMe' : 'notFlukedByMe'}
+        onclick=${() => fluke(entry.entry_id, state.user.user_id, dispatch)} src=${entry.image_url}></img>
+        <h2 id='f'>${state.myFlukes.includes(entry.entry_id) ? 'fluked!' : ''}</h2>
+        ${entryFooter(entry, state, dispatch)}
 
       <hr>
   </div>
@@ -11931,8 +11360,8 @@ function entryHeader(entry, state, dispatch) {
   var formattedDate = formatDate(entry.entry_created_at);
   return yo`
     <div class='entry-info'>
-        <h4 id='user-name' onclick=${ () => goToUser(state, dispatch, entry.user_id, true) }>${ entry.username } </h4>
-        <h4 id="entry-date">${ formattedDate }</h4>
+        <h4 id='user-name' onclick=${() => goToUser(state, dispatch, entry.user_id, true)}>${entry.username} </h4>
+        <h4 id="entry-date">${formattedDate}</h4>
     </div>
   `;
 }
@@ -11940,30 +11369,30 @@ function entryHeader(entry, state, dispatch) {
 function entryFooter(entry, state, dispatch) {
   return yo`
     <div class='image-footer'>
-      ${ entry.flukes > 0 ? yo`<h3 class="flukeCount">${ entry.flukes }
-        ${ entry.flukes != 1 ? 'flukes' : 'fluke' }
-        </h3>` : '' }
-      ${ entry.comment_count > 0 ? yo`<h3 class="commentCount" onclick=${ () => comments.showComments(entry, state, dispatch) }>
-        ${ entry.comment_count }
-        ${ entry.comment_count != 1 ? 'comments' : 'comment' }</h3>` : yo`
+      ${entry.flukes > 0 ? yo`<h3 class="flukeCount">${entry.flukes}
+        ${entry.flukes != 1 ? 'flukes' : 'fluke'}
+        </h3>` : ''}
+      ${entry.comment_count > 0 ? yo`<h3 class="commentCount" onclick=${() => comments.showComments(entry, state, dispatch)}>
+        ${entry.comment_count}
+        ${entry.comment_count != 1 ? 'comments' : 'comment'}</h3>` : yo`
         <div>
-        <h3 class="commentCount" onclick=${ () => comments.showComments(entry, state, dispatch) }>
+        <h3 class="commentCount" onclick=${() => comments.showComments(entry, state, dispatch)}>
           Add Comment
         </h3>
         <br>
         <br>
         <br>
         </div>
-        ` }
-        ${ state.entryForComments != entry.entry_id ? '' : yo`
+        `}
+        ${state.entryForComments != entry.entry_id ? '' : yo`
           <div>
           <div class="comments">
-          <h3 class="commentsShow" onclick=${ () => comments.hideComments(dispatch) }>Hide Comments</h3>
-          ${ comments.renderComments(entry.entry_id, state, dispatch) }
+          <h3 class="commentsShow" onclick=${() => comments.hideComments(dispatch)}>Hide Comments</h3>
+          ${comments.renderComments(entry.entry_id, state, dispatch)}
           </div>
           <br>
           </div>
-          ` }
+          `}
     </div>
   `;
 }
@@ -11980,7 +11409,7 @@ function fluke(entry_id, user_id, dispatch) {
 
 module.exports = renderEntries;
 
-},{"./comments":48,"./formatDate":51,"./refreshFunctions/targetEntries":57,"./requestUrl":60,"superagent":34,"yo-yo":43}],60:[function(require,module,exports){
+},{"./comments":48,"./formatDate":51,"./refreshFunctions/targetEntries":57,"./requestUrl":60,"superagent":34,"yo-yo":44}],60:[function(require,module,exports){
 var heroku = 'https://one-shot-api.herokuapp.com/api/v1/';
 var local = 'http://localhost:3000/api/v1/';
 var url = heroku;
@@ -12002,10 +11431,10 @@ function signup(state, dispatch) {
         <input id='password' type='password' placeholder='choose password'/>
         <input id='rpt-password' type='password' placeholder='confirm password'/>
         <input id='email' type='text' placeholder='enter email'/>
-        ${ state.authError ? yo`<h3>${ state.authError }</h3>` : '' }
-        <button onclick=${ handleSignup } class='createBtn' type='submit'>Create Account</button>
+        ${state.authError ? yo`<h3>${state.authError}</h3>` : ''}
+        <button onclick=${handleSignup} class='createBtn' type='submit'>Create Account</button>
         <br>
-        <button class='backBtn' onclick=${ () => dispatch({ type: 'GO_TO_LOGIN' }) }>Back to Login</button>
+        <button class='backBtn' onclick=${() => dispatch({ type: 'GO_TO_LOGIN' })}>Back to Login</button>
       </form>
     </div>
   `;
@@ -12046,7 +11475,7 @@ function signup(state, dispatch) {
   }
 }
 
-},{"./requestUrl":60,"superagent":34,"yo-yo":43}],62:[function(require,module,exports){
+},{"./requestUrl":60,"superagent":34,"yo-yo":44}],62:[function(require,module,exports){
 function userPageSyntax(count) {
   if (count === 1) {
     return 'entry';
@@ -12065,15 +11494,15 @@ const userPageSyntax = require('./syntax');
 function target(state, dispatch) {
   return yo`
   <div class='homediv'>
-    <p>${ state.targetEntries[0].username } has made ${ state.targetEntries.length } ${ userPageSyntax(state.targetEntries.length) }.</p>
-    ${ renderEntries(state, dispatch, state.targetEntries) }
+    <p>${userPageSyntax(state.targetEntries.length)}.</p>
+    ${renderEntries(state, dispatch, state.targetEntries)}
   </div>
   `;
 }
 
 module.exports = target;
 
-},{"./renderEntries":59,"./syntax":62,"yo-yo":43}],64:[function(require,module,exports){
+},{"./renderEntries":59,"./syntax":62,"yo-yo":44}],64:[function(require,module,exports){
 var yo = require('yo-yo');
 const renderEntries = require('./renderEntries');
 const userPageSyntax = require('./syntax');
@@ -12082,16 +11511,16 @@ const goToMyUser = require('./refreshFunctions/userEntries');
 function user(state, dispatch) {
   return yo`
   <div class="homediv">
-    <p>${ state.user.username } has made ${ state.myEntries.length } ${ userPageSyntax(state.myEntries.length) }.</p>
-    ${ renderEntries(state, dispatch, state.myEntries) }
-    ${ goToMyUser(state, dispatch) }
+    <p>${state.user.username} has made ${state.myEntries.length} ${userPageSyntax(state.myEntries.length)}.</p>
+    ${renderEntries(state, dispatch, state.myEntries)}
+    ${goToMyUser(state, dispatch)}
   </div>
   `;
 }
 
 module.exports = user;
 
-},{"./refreshFunctions/userEntries":58,"./renderEntries":59,"./syntax":62,"yo-yo":43}],65:[function(require,module,exports){
+},{"./refreshFunctions/userEntries":58,"./renderEntries":59,"./syntax":62,"yo-yo":44}],65:[function(require,module,exports){
 const clone = require('clone');
 const moment = require('moment');
 const flukeReducer = require('./components/flukeReduce');
